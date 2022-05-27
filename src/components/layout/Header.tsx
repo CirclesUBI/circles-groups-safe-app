@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
@@ -5,8 +6,7 @@ import styled from 'styled-components'
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatUnits } from '@ethersproject/units'
 
-import { AlertIcon } from '@/src/components/assets/AlertIcon'
-import { CirclesLogo } from '@/src/components/assets/CirclesLogo'
+import { Alert } from '@/src/components/assets/Alert'
 import { MenuIcon } from '@/src/components/assets/MenuIcon'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { chainsConfig } from '@/src/constants/chains'
@@ -30,14 +30,16 @@ const Wrapper = styled.div`
 `
 const HomeLink = styled.span`
   transition: opacity 0.05s linear;
+  width: 100px;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    width: 130px;
+  }
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    width: 184px;
+  }
   &:active {
     opacity: 0.7;
   }
-`
-
-const Logo = styled(CirclesLogo)`
-  cursor: pointer;
-  max-height: calc(${({ theme }) => theme.header.height} - 20px);
 `
 
 const WrapperBox = styled.div`
@@ -130,7 +132,13 @@ export const Header: React.FC = (props) => {
         <StartWrapper>
           <Link href="/" passHref>
             <HomeLink>
-              <Logo />
+              <Image
+                alt="Circles Groups"
+                height={83}
+                layout="responsive"
+                src="/images/circlesLogo.svg"
+                width={184}
+              />
             </HomeLink>
           </Link>
         </StartWrapper>
@@ -143,7 +151,7 @@ export const Header: React.FC = (props) => {
         </EndWrapper>
       </WrapperBox>
       <ButtonIcon>
-        <AlertIcon />
+        <Alert alerts={4} />
       </ButtonIcon>
     </Wrapper>
   )
