@@ -5,11 +5,10 @@ import styled from 'styled-components'
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatUnits } from '@ethersproject/units'
 
-import { BootNodeLogo } from '@/src/components/assets/BootNodeLogo'
-import { ChevronDown as BaseChevronDown } from '@/src/components/assets/ChevronDown'
-import { Dropdown, DropdownItem } from '@/src/components/dropdown/Dropdown'
+import { AlertIcon } from '@/src/components/assets/AlertIcon'
+import { CirclesLogo } from '@/src/components/assets/CirclesLogo'
+import { MenuIcon } from '@/src/components/assets/MenuIcon'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
-import { InnerContainer as BaseInnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
 import { chainsConfig } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -19,32 +18,41 @@ const vbAddress = '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B'
 
 const Wrapper = styled.div`
   align-items: center;
-  background-color: #000;
   color: #fff;
   display: flex;
   flex-grow: 0;
-  height: ${({ theme }) => theme.header.height};
-  position: sticky;
-  top: 0;
-`
-
-const InnerContainer = styled(BaseInnerContainer)`
-  align-items: center;
-  flex-direction: row;
+  gap: ${({ theme }) => theme.general.space * 2}px;
   justify-content: space-between;
+  padding: ${({ theme }) => theme.general.space * 2}px ${({ theme }) => theme.general.space * 2}px;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    padding: ${({ theme }) => theme.general.space * 3}px ${({ theme }) => theme.general.space * 5}px;
+  }
 `
-
 const HomeLink = styled.span`
   transition: opacity 0.05s linear;
-
   &:active {
     opacity: 0.7;
   }
 `
 
-const Logo = styled(BootNodeLogo)`
+const Logo = styled(CirclesLogo)`
   cursor: pointer;
   max-height: calc(${({ theme }) => theme.header.height} - 20px);
+`
+
+const WrapperBox = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: ${({ theme }) => theme.general.containerWidth};
+`
+
+const ButtonIcon = styled.button`
+  background-color: transparent;
+  display: block;
+  padding: 0;
+  border: none;
+  width: 24px;
+  cursor: pointer;
 `
 
 const StartWrapper = styled.div`
@@ -56,33 +64,15 @@ const EndWrapper = styled.div`
   align-items: center;
   display: flex;
 `
-
-const ButtonWrapper = styled.div`
-  margin-left: 10px;
-`
-
-const ChevronDown = styled(BaseChevronDown)`
-  margin-left: 10px;
-`
-
-const ExtraInfo = styled.div`
-  align-items: center;
-  display: flex;
-`
-
-const Info = styled.div`
-  column-gap: 10px;
-  display: grid;
-  font-size: 11px;
-  grid-template-columns: 1fr 1fr;
-  margin-left: 20px;
-`
-
-const Item = styled.div`
-  max-width: 130px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+const UserInfo = styled.div`
+  background-color: ${({ theme }) => theme.colors.primary};
+  border-radius: ${({ theme }) => theme.general.borderRadius};
+  font-weight: 500;
+  font-size: 1.4rem;
+  padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    font-size: 1.6rem;
+  }
 `
 
 export const Header: React.FC = (props) => {
@@ -133,65 +123,28 @@ export const Header: React.FC = (props) => {
 
   return (
     <Wrapper as="header" {...props}>
-      <InnerContainer>
+      <ButtonIcon>
+        <MenuIcon />
+      </ButtonIcon>
+      <WrapperBox>
         <StartWrapper>
           <Link href="/" passHref>
             <HomeLink>
               <Logo />
             </HomeLink>
           </Link>
-          <ButtonWrapper>
-            <Dropdown
-              currentItem={0}
-              dropdownButtonContent={
-                <ButtonPrimary>
-                  {currentChain}
-                  <ChevronDown />
-                </ButtonPrimary>
-              }
-              items={chainOptions.map((item, index) => (
-                <DropdownItem
-                  key={index}
-                  onClick={() => {
-                    setCurrentChain(item.name)
-                    setAppChainId(item.chainId)
-                  }}
-                >
-                  {item.name}
-                </DropdownItem>
-              ))}
-            />
-          </ButtonWrapper>
-          {isWalletConnected && !isAppConnected && (
-            <ButtonWrapper>
-              <ButtonPrimary onClick={pushNetwork}>Switch to {currentChain}</ButtonPrimary>
-            </ButtonWrapper>
-          )}
         </StartWrapper>
         <EndWrapper>
           {isWalletConnected ? (
-            <ExtraInfo>
-              <Info>
-                <div>
-                  <Item>Connected to: {wallet?.name}</Item>
-                  {address && <Item>Address: {truncateStringInTheMiddle(address, 6, 6)}</Item>}
-                </div>
-                <div>
-                  <Item>App chainId: {appChainId}</Item>
-                  <Item>
-                    {balance?.name}: {balance?.balance}
-                  </Item>
-                </div>
-              </Info>
-              <ButtonWrapper>
-                <ButtonPrimary onClick={disconnectWallet}>Disconnect</ButtonPrimary>
-              </ButtonWrapper>
-            </ExtraInfo>
+            <UserInfo>@TomasBari</UserInfo>
           ) : (
             <ButtonPrimary onClick={connectWallet}>Connect</ButtonPrimary>
           )}
         </EndWrapper>
-      </InnerContainer>
+      </WrapperBox>
+      <ButtonIcon>
+        <AlertIcon />
+      </ButtonIcon>
     </Wrapper>
   )
 }
