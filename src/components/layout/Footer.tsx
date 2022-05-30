@@ -13,11 +13,14 @@ const Wrapper = styled.footer`
 
 const InnerContainer = styled(BaseInnerContainer)`
   align-items: center;
+  background-color: transparent;
+  box-shadow: unset;
   display: grid;
   grid-template-columns: 1fr;
 `
 
 const Paragraph = styled(BaseParagraph)`
+  color: ${({ theme }) => theme.colors.white};
   font-size: 1.2rem;
   line-height: 1.5;
   margin: 0;

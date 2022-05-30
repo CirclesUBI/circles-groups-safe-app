@@ -1,17 +1,26 @@
-const error = '#db3a3d'
-const primary = '#320E3B'
-const secondary = '#E56399'
-const tertiary = '#A6CFD5'
-const textColor = '#000'
+const error = '#CC1E66'
+const alert = '#CC1E66'
+const primary = '#502A50'
+const secondary = '#FAAD26'
+const tertiary = '#3CC1CA'
+const fourth = '#70BD9E'
+const textColor = '#4E4E4E'
+const gray = '#D9D9D9'
+const white = '#fff'
+const primaryGradient = 'linear-gradient(54.36deg, #AA5285 16.89%, #502A50 84.07%)'
+const secondaryGradient = 'linear-gradient(59.47deg, #6EBE9F 16.72%, #502A50 79.34%)'
+const borderRadius = '8px'
+const containerWidth = '600px'
+const space = 8
 
 export const theme = {
   buttonPrimary: {
-    backgroundColor: '#fff',
-    backgroundColorHover: '#fafafa',
-    borderColor: '#ccc',
-    borderColorHover: '#cacaca',
-    color: '#000',
-    colorHover: '#000',
+    backgroundColor: primary,
+    backgroundColorHover: secondary,
+    borderColor: primary,
+    borderColorHover: secondary,
+    color: white,
+    colorHover: white,
   },
   card: {
     backgroundColor: '#fff',
@@ -20,11 +29,22 @@ export const theme = {
   },
   colors: {
     error: error,
+    alert: alert,
     mainBodyBackground: '#fff',
     primary: primary,
     secondary: secondary,
     tertiary: tertiary,
+    fourth: fourth,
+    gray: gray,
+    white: white,
     textColor: textColor,
+    primaryGradient: primaryGradient,
+    secondaryGradient: secondaryGradient,
+  },
+  general: {
+    space: space,
+    borderRadius: borderRadius,
+    containerWidth: containerWidth,
   },
   dropdown: {
     background: '#fff',
@@ -44,11 +64,12 @@ export const theme = {
   },
   fonts: {
     defaultSize: '1.4rem',
-    fontFamily: `'Roboto', 'Helvetica Neue', 'Arial', 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'`,
+    fontFamilyHeading: `'ostrich_sansheavy', 'Helvetica Neue', 'Arial', 'sans-serif'`,
+    fontFamily: `'Noto Sans', 'Helvetica Neue', 'Arial', 'sans-serif'`,
     fontFamilyCode: `'source-code-pro', 'Menlo', 'Monaco', 'Consolas', 'Courier New', 'monospace'`,
   },
   footer: {},
-  header: { height: '65px' },
+  header: {},
   layout: {
     horizontalPaddingMobile: '10px',
     horizontalPaddingTabletPortraitStart: '80px',
