@@ -45,10 +45,11 @@ const RPC_URL = 'https://<network>.infura.io/v3/<INFURA_KEY>'
 
 export enum WalletType {
   MetaMask = 'metamask',
-  Ledger = 'ledger',
-  Portis = 'portis',
-  Trezor = 'trezor',
-  Coinbase = 'coinbase',
+  // Ledger = 'ledger',
+  // Portis = 'portis',
+  // Trezor = 'trezor',
+  // Coinbase = 'coinbase',
+  Gnosis = 'gnosis',
   WalletConnect = 'walletConnect',
 }
 
@@ -72,28 +73,32 @@ function initOnboard(appChainId: ChainsValues, subscriptions: Subscriptions) {
           walletName: WalletType.MetaMask,
           preferred: true,
         },
+        // {
+        //   walletName: WalletType.Ledger,
+        //   rpcUrl: RPC_URL,
+        //   preferred: true,
+        // },
+        // {
+        //   walletName: WalletType.Portis,
+        //   apiKey: PORTIS_KEY,
+        //   preferred: true,
+        //   // label: 'Login with Email'
+        // },
+        // {
+        //   walletName: WalletType.Trezor,
+        //   appUrl: APP_URL,
+        //   email: CONTACT_EMAIL,
+        //   rpcUrl: RPC_URL,
+        //   preferred: true,
+        // },
         {
-          walletName: WalletType.Ledger,
-          rpcUrl: RPC_URL,
+          walletName: WalletType.Gnosis,
           preferred: true,
         },
-        {
-          walletName: WalletType.Portis,
-          apiKey: PORTIS_KEY,
-          preferred: true,
-          // label: 'Login with Email'
-        },
-        {
-          walletName: WalletType.Trezor,
-          appUrl: APP_URL,
-          email: CONTACT_EMAIL,
-          rpcUrl: RPC_URL,
-          preferred: true,
-        },
-        {
-          walletName: WalletType.Coinbase,
-          preferred: true,
-        },
+        // {
+        //   walletName: WalletType.Coinbase,
+        //   preferred: true,
+        // },
         {
           walletName: WalletType.WalletConnect,
           preferred: true,
