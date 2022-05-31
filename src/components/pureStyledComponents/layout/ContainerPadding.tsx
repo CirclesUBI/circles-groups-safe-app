@@ -1,6 +1,7 @@
 import { css } from 'styled-components'
 
 export const ContainerPadding = css`
+  padding: ${({ theme }) => theme.general.space * 4}px;
   padding-left: ${({ theme }) => theme.layout.horizontalPaddingMobile};
   padding-right: ${({ theme }) => theme.layout.horizontalPaddingMobile};
 

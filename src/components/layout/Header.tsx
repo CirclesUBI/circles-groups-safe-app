@@ -5,9 +5,11 @@ import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatUnits } from '@ethersproject/units'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { Alert } from '@/src/components/assets/Alert'
 import { MenuIcon } from '@/src/components/assets/MenuIcon'
+import { MainMenu } from '@/src/components/navigation/MainMenu'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { chainsConfig } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
@@ -23,6 +25,7 @@ const Wrapper = styled.div`
   flex-grow: 0;
   gap: ${({ theme }) => theme.general.space * 2}px;
   justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.general.space * 2}px;
   padding: ${({ theme }) => theme.general.space * 2}px ${({ theme }) => theme.general.space * 2}px;
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     padding: ${({ theme }) => theme.general.space * 3}px ${({ theme }) => theme.general.space * 5}px;
@@ -55,6 +58,7 @@ const ButtonIcon = styled.button`
   border: none;
   width: 24px;
   cursor: pointer;
+  position: relative;
 `
 
 const StartWrapper = styled.div`
@@ -72,6 +76,7 @@ const UserInfo = styled.div`
   font-weight: 500;
   font-size: 1.4rem;
   padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
+  position: relative;
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     font-size: 1.6rem;
   }
@@ -95,6 +100,11 @@ export const Header: React.FC = (props) => {
   const chainOptions = Object.values(chainsConfig)
 
   const [balance, setBalance] = useState<{ name: string; balance: string } | undefined>()
+
+  const [isOpen, toggleOpen] = useState(false)
+  if (!isOpen) {
+    window.document.body.style.overflow = 'auto'
+  }
 
   useEffect(() => {
     async function getBalance() {
@@ -124,35 +134,46 @@ export const Header: React.FC = (props) => {
   const [currentChain, setCurrentChain] = useState(chainOptions[0].name)
 
   return (
-    <Wrapper as="header" {...props}>
-      <ButtonIcon>
-        <MenuIcon />
-      </ButtonIcon>
-      <WrapperBox>
-        <StartWrapper>
-          <Link href="/" passHref>
-            <HomeLink>
-              <Image
-                alt="Circles Groups"
-                height={83}
-                layout="responsive"
-                src="/images/circlesLogo.svg"
-                width={184}
-              />
-            </HomeLink>
-          </Link>
-        </StartWrapper>
-        <EndWrapper>
-          {isWalletConnected ? (
-            <UserInfo>@TomasBari</UserInfo>
-          ) : (
-            <ButtonPrimary onClick={connectWallet}>Connect</ButtonPrimary>
-          )}
-        </EndWrapper>
-      </WrapperBox>
-      <ButtonIcon>
-        <Alert alerts={4} />
-      </ButtonIcon>
-    </Wrapper>
+    <>
+      <Wrapper as="header" {...props}>
+        <ButtonIcon
+          onClick={() => {
+            toggleOpen(true)
+          }}
+        >
+          <MenuIcon />
+        </ButtonIcon>
+        <WrapperBox>
+          <StartWrapper>
+            <Link href="/" passHref>
+              <HomeLink>
+                <Image
+                  alt="Circles Groups"
+                  height={83}
+                  layout="responsive"
+                  src="/images/circlesLogo.svg"
+                  width={184}
+                />
+              </HomeLink>
+            </Link>
+          </StartWrapper>
+          <EndWrapper>
+            {isWalletConnected ? (
+              <UserInfo>@TomasBari</UserInfo>
+            ) : (
+              <ButtonPrimary onClick={connectWallet}>Connect</ButtonPrimary>
+            )}
+          </EndWrapper>
+        </WrapperBox>
+        <ButtonIcon>
+          <Alert alerts={4} />
+        </ButtonIcon>
+      </Wrapper>
+      <motion.nav animate={isOpen ? 'open' : 'closed'} initial={false}>
+        <AnimatePresence>
+          {isOpen && <MainMenu onClose={() => toggleOpen(false)} />}
+        </AnimatePresence>
+      </motion.nav>
+    </>
   )
 }

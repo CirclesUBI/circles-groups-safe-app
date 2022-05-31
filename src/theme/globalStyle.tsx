@@ -23,7 +23,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
   body {
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
-    background: ${({ theme }) => theme.colors.primaryGradient};
+    background: ${({ theme }) => theme.colors.primary};
     color: ${({ theme }) => theme.colors.textColor};
     font-family: ${({ theme }) => theme.fonts.fontFamily};
     font-size: ${({ theme }) => theme.fonts.defaultSize};

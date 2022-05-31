@@ -35,6 +35,7 @@ export const ButtonPrimaryCSS = css`
   background-color: ${({ theme }) => theme.buttonPrimary.backgroundColor};
   border-color: ${({ theme }) => theme.buttonPrimary.borderColor};
   color: ${({ theme }) => theme.buttonPrimary.color};
+  position: relative;
 
   &:hover {
     background-color: ${({ theme }) => theme.buttonPrimary.backgroundColorHover};
