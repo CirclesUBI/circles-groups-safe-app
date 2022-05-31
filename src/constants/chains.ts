@@ -3,6 +3,7 @@ import nullthrows from 'nullthrows'
 import {
   DEFAULT_CHAIN_ID,
   // RPC_URL_GOERLI,
+  RPC_URL_GNOSIS,
   RPC_URL_KOVAN,
   RPC_URL_MAINNET,
 } from '@/src/constants/misc'
@@ -12,6 +13,7 @@ export const Chains = {
   mainnet: 1,
   // goerli: 5,
   kovan: 42,
+  gnosis: 100,
 } as const
 
 export type ChainsValues = ObjectValues<typeof Chains>
@@ -60,6 +62,16 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     chainIdHex: '0x2a',
     rpcUrl: RPC_URL_KOVAN,
     blockExplorerUrls: ['https://kovan.etherscan.io/'],
+    iconUrls: [],
+  },
+  [Chains.gnosis]: {
+    id: Chains.gnosis,
+    name: 'Gnosis Chain',
+    shortName: 'Gnosis Chain',
+    chainId: Chains.gnosis,
+    chainIdHex: '0x64',
+    rpcUrl: RPC_URL_GNOSIS,
+    blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
     iconUrls: [],
   },
 }

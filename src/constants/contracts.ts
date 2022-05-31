@@ -25,6 +25,7 @@ export const contracts = constantContracts({
     address: {
       [Chains.mainnet]: '',
       [Chains.kovan]: '',
+      [Chains.gnosis]: '',
     },
     abi: [],
   },

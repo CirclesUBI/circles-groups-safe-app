@@ -20,9 +20,10 @@ export const SUBGRAPH_API = process.env.NEXT_PUBLIC_REACT_APP_SUBGRAPH_API || ''
 export const WAD_DECIMALS = 18
 export const WAIT_BLOCKS = 8
 
-export const DEFAULT_CHAIN_ID = process.env.NEXT_PUBLIC_REACT_APP_DEFAULT_CHAIN_ID || '42'
+export const DEFAULT_CHAIN_ID = process.env.NEXT_PUBLIC_REACT_APP_DEFAULT_CHAIN_ID || '100'
 
 // RPC URL
 export const RPC_URL_GOERLI = process.env.NEXT_PUBLIC_REACT_APP_RPC_URL_GOERLI || ''
 export const RPC_URL_KOVAN = process.env.NEXT_PUBLIC_REACT_APP_RPC_URL_KOVAN || ''
 export const RPC_URL_MAINNET = process.env.NEXT_PUBLIC_REACT_APP_RPC_URL_MAINNET || ''
+export const RPC_URL_GNOSIS = process.env.NEXT_PUBLIC_REACT_APP_RPC_URL_GNOSIS || ''
