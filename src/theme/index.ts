@@ -71,9 +71,9 @@ export const theme = {
   footer: {},
   header: {},
   layout: {
-    horizontalPaddingMobile: '10px',
+    horizontalPaddingMobile: '16px',
     horizontalPaddingTabletPortraitStart: '80px',
-    horizontalPaddingTabletLandscapeStart: '15px',
+    horizontalPaddingTabletLandscapeStart: '16px',
     maxWidth: '1122px',
   },
   themeBreakPoints: {

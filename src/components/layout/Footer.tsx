@@ -5,8 +5,9 @@ import { BaseParagraph } from '@/src/components/pureStyledComponents/text/BasePa
 
 const Wrapper = styled.footer`
   flex-shrink: 0;
+  margin-bottom: 0;
   margin-top: auto;
-  padding-bottom: 20px;
+  padding-bottom: 0;
   padding-top: 40px;
   width: 100%;
 `
