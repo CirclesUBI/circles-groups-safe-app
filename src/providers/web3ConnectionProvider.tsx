@@ -22,7 +22,7 @@ import {
   chainsConfig,
   getNetworkConfig,
 } from '@/src/constants/chains'
-import { RPC_URL_KOVAN } from '@/src/constants/misc'
+import { RPC_URL_GNOSIS } from '@/src/constants/misc'
 import { RequiredNonNull } from '@/types/utils'
 
 const STORAGE_CONNECTED_WALLET = 'onboard_selectedWallet'
@@ -37,18 +37,8 @@ nullthrows(
   'No default chain ID is defined or is not supported',
 )
 
-// @TODO: Default VALUES to connect to multiple wallets
-const PORTIS_KEY = 'Your Portis key here'
-const APP_URL = 'Your app url here'
-const CONTACT_EMAIL = 'Your contact email here'
-const RPC_URL = 'https://<network>.infura.io/v3/<INFURA_KEY>'
-
 export enum WalletType {
   MetaMask = 'metamask',
-  // Ledger = 'ledger',
-  // Portis = 'portis',
-  // Trezor = 'trezor',
-  // Coinbase = 'coinbase',
   Gnosis = 'gnosis',
   WalletConnect = 'walletConnect',
 }
@@ -73,32 +63,10 @@ function initOnboard(appChainId: ChainsValues, subscriptions: Subscriptions) {
           walletName: WalletType.MetaMask,
           preferred: true,
         },
-        // {
-        //   walletName: WalletType.Ledger,
-        //   rpcUrl: RPC_URL,
-        //   preferred: true,
-        // },
-        // {
-        //   walletName: WalletType.Portis,
-        //   apiKey: PORTIS_KEY,
-        //   preferred: true,
-        //   // label: 'Login with Email'
-        // },
-        // {
-        //   walletName: WalletType.Trezor,
-        //   appUrl: APP_URL,
-        //   email: CONTACT_EMAIL,
-        //   rpcUrl: RPC_URL,
-        //   preferred: true,
-        // },
         {
           walletName: WalletType.Gnosis,
           preferred: true,
         },
-        // {
-        //   walletName: WalletType.Coinbase,
-        //   preferred: true,
-        // },
         {
           walletName: WalletType.WalletConnect,
           preferred: true,
@@ -164,7 +132,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
 
   // if no config exists for the given appChainId, fall back to a default RPC
   const readOnlyAppProvider = useMemo(
-    () => new JsonRpcProvider(getNetworkConfig(appChainId)?.rpcUrl ?? RPC_URL_KOVAN, appChainId),
+    () => new JsonRpcProvider(getNetworkConfig(appChainId)?.rpcUrl ?? RPC_URL_GNOSIS, appChainId),
     [appChainId],
   )
 
