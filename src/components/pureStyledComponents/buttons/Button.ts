@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import styled, { css } from 'styled-components'
 
 export const DisabledButtonCSS = css`
@@ -13,13 +14,12 @@ export const ButtonCSS = css`
   cursor: pointer;
   display: flex;
   font-family: ${({ theme }) => theme.fonts.fontFamily};
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 500;
-  height: 34px;
   justify-content: center;
-  line-height: 1;
+  line-height: 2.2rem;
   outline: none;
-  padding: 0 12px;
+  padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 3}px;
   text-align: center;
   text-decoration: none;
   transition: all 0.15s ease-out;
@@ -51,6 +51,26 @@ export const ButtonPrimaryCSS = css`
     ${DisabledButtonCSS}
   }
 `
+export const ButtonPrimaryLineCSS = css`
+  background-color: transparent;
+  border-color: ${({ theme }) => theme.buttonPrimary.borderColor};
+  color: ${({ theme }) => theme.colors.primary};
+  position: relative;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.buttonPrimary.borderColor};
+    border-color: ${({ theme }) => theme.buttonPrimary.borderColor};
+    color: ${({ theme }) => theme.buttonPrimary.colorHover};
+  }
+
+  &[disabled],
+  &[disabled]:hover {
+    background-color: ${({ theme }) => theme.buttonPrimary.borderColor};
+    border-color: ${({ theme }) => theme.buttonPrimary.borderColor};
+    color: ${({ theme }) => theme.buttonPrimary.color};
+    ${DisabledButtonCSS}
+  }
+`
 
 const BaseButton = styled.button`
   ${ButtonCSS}
@@ -64,5 +84,13 @@ export const Button = styled(BaseButton)`
 `
 
 export const ButtonPrimary = styled(BaseButton)`
+  ${ButtonPrimaryCSS}
+`
+
+export const ButtonPrimaryLine = styled(BaseButton)`
+  ${ButtonPrimaryLineCSS}
+`
+
+export const LinkButton = styled(Link)`
   ${ButtonPrimaryCSS}
 `

@@ -42,7 +42,10 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     transition: all 0.3s ease-in-out;
   }
   h1, h2{
+    color: ${({ theme }) => theme.colors.primary} !important;
     font-family: ${({ theme }) => theme.fonts.fontFamilyHeading};
+    padding: 0;
+    margin: 0;
   }
   h1{
     font-size: 3.6rem;
@@ -54,6 +57,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
   #__next {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
+    height: 100%;
   }
 `
