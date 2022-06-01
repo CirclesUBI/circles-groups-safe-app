@@ -14,6 +14,8 @@ const Wrapper = styled.div<{ isAdminLayout: boolean }>`
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 100vh;
+  position: relative;
   transition: all 0.3s ease-in-out;
   width: 100%;
   &:before {
@@ -38,8 +40,6 @@ export const Layout: React.FC<Props> = ({ children }) => {
   const router = useRouter()
 
   const isAdminLayout = useMemo(() => router.pathname.includes('admin'), [router])
-
-  console.log(isAdminLayout)
 
   const easing = [0.175, 0.85, 0.42, 0.96]
   const variants = {
