@@ -4,6 +4,9 @@ import styled from 'styled-components'
 
 import { AnimatePresence, motion } from 'framer-motion'
 
+import { CloseButton } from '@/src/components/assets/CloseButton'
+import { User } from '@/src/components/assets/User'
+import { MainMenuWrapper } from '@/src/components/layout/MainMenuWrapper'
 import { MenuItem } from '@/src/components/navigation/MenuItem'
 import { menuLinks } from '@/src/constants/menuLinks'
 
@@ -44,20 +47,6 @@ const MenuHeader = styled.nav`
   justify-content: space-between;
   width: 100%;
 `
-const CloseMenu = styled.button`
-  align-items: center;
-  justify-content: center;
-  background-color: ${({ theme }) => theme.colors.primary};
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  height: 28px;
-  width: 28px;
-  &:hover {
-    background-color: ${({ theme }) => theme.colors.secondary};
-  }
-`
 const HomeLink = styled.a`
   width: 130px;
   display: block;
@@ -68,18 +57,7 @@ const HomeLink = styled.a`
     width: 184px;
   }
 `
-const User = styled.div`
-  align-items: center;
-  background: rgba(233, 232, 221, 0.5);
-  border-radius: ${({ theme }) => theme.general.space}px;
-  display: flex;
-  gap: ${({ theme }) => theme.general.space}px;
-  padding: ${({ theme }) => theme.general.space * 2}px;
-  width: 100%;
-  img {
-    border-radius: 50%;
-  }
-`
+
 const LinksList = styled.ul`
   color: ${({ theme: { colors } }) => colors.primary};
   display: flex;
@@ -104,60 +82,33 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
 
   return (
     <>
-      <MenuBackground
-        animate={{ opacity: 0.8 }}
-        as={motion.div}
-        exit={{ opacity: 0 }}
-        initial={{ opacity: 0 }}
-        onClick={() => onClose()}
-        transition={{ duration: 0.1, type: 'spring', stiffness: 1000, damping: 100 }}
-      />
-      <MenuWrapper
-        animate={{ opacity: 1, x: '0' }}
-        as={motion.div}
-        exit={{ opacity: 0, x: '-150px' }}
-        initial={{ opacity: 0, x: '-150px' }}
-        transition={{ duration: 0.1, type: 'spring', stiffness: 1000, damping: 100 }}
-      >
-        <Menu>
-          <MenuHeader>
-            <Link href="/" passHref>
-              <HomeLink onClick={() => onClose()}>
-                <Image
-                  alt="Circles Groups"
-                  height={74}
-                  layout="responsive"
-                  src="/images/circlesLogoPositive.svg"
-                  width={164}
-                />
-              </HomeLink>
-            </Link>
-            <CloseMenu onClick={() => onClose()}>
-              <Image alt="Close" height={10} src="/images/icon-close.svg" width={10} />
-            </CloseMenu>
-          </MenuHeader>
-          <User>
-            <Image
-              alt="@TomasBari"
-              height={40}
-              objectFit="cover"
-              src="/images/user.jpg"
-              width={40}
-            />
-            <strong>@TomasBari</strong>
-          </User>
+      <MainMenuWrapper closeMenu={() => onClose()}>
+        <MenuHeader>
+          <Link href="/" passHref>
+            <HomeLink onClick={() => onClose()}>
+              <Image
+                alt="Circles Groups"
+                height={74}
+                layout="responsive"
+                src="/images/circlesLogoPositive.svg"
+                width={164}
+              />
+            </HomeLink>
+          </Link>
+          <CloseButton closeMenu={() => onClose()} />
+        </MenuHeader>
+        <User userPic="/images/user.jpg" username="@TomasBari" />
 
-          <LinksList as={motion.div} variants={variants}>
-            <AnimatePresence>
-              {menuLinks.map(({ href, title }, index) => (
-                <div key={`links_${index}`}>
-                  <MenuItem href={href} onClose={onClose} title={title} />
-                </div>
-              ))}
-            </AnimatePresence>
-          </LinksList>
-        </Menu>
-      </MenuWrapper>
+        <LinksList as={motion.div} variants={variants}>
+          <AnimatePresence>
+            {menuLinks.map(({ href, title }, index) => (
+              <div key={`links_${index}`}>
+                <MenuItem closeMenu={() => onClose()} href={href} title={title} />
+              </div>
+            ))}
+          </AnimatePresence>
+        </LinksList>
+      </MainMenuWrapper>
     </>
   )
 }

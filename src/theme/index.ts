@@ -73,8 +73,8 @@ export const theme = {
   footer: {},
   header: {},
   layout: {
-    horizontalPaddingMobile: '16px',
-    horizontalPaddingTabletPortraitStart: '80px',
+    horizontalPaddingMobile: '4px',
+    horizontalPaddingTabletPortraitStart: '16px',
     horizontalPaddingTabletLandscapeStart: '16px',
     maxWidth: '1122px',
   },

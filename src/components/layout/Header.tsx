@@ -104,6 +104,7 @@ export const Header: React.FC = (props) => {
   const [isOpen, toggleOpen] = useState(false)
   if (!isOpen) {
     window.document.body.style.overflow = 'auto'
+    //Fixme later
   }
 
   useEffect(() => {

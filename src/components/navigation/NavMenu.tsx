@@ -47,7 +47,7 @@ const LinkContent = styled.a`
   }
 `
 
-export const NavMenu: React.FC<Props> = ({ isAdminLayout, ...restProps }) => {
+export const NavMenu: React.FC<Props> = ({ isAdminLayout }) => {
   return (
     <Nav>
       <Link href="/" passHref>

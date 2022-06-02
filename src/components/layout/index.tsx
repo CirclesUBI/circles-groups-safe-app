@@ -32,11 +32,7 @@ const Wrapper = styled.div<{ isAdminLayout: boolean }>`
   }
 `
 
-interface Props {
-  isAdminLayout?: boolean
-}
-
-export const Layout: React.FC<Props> = ({ children }) => {
+export const Layout: React.FC = ({ children }) => {
   const router = useRouter()
 
   const isAdminLayout = useMemo(() => router.pathname.includes('admin'), [router])
@@ -80,12 +76,7 @@ export const Layout: React.FC<Props> = ({ children }) => {
           key={router.pathname}
           variants={variantsBox}
         >
-          <motion.div
-            animate="enter"
-            initial="hidden" // Pass the variant object into Framer Motion
-            key={router.pathname} // Set the initial state to variants.hidden
-            variants={variants} // Animated state to variants.enter
-          >
+          <motion.div animate="enter" initial="hidden" key={router.pathname} variants={variants}>
             {children}
           </motion.div>
         </InnerContainer>

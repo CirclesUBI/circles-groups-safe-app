@@ -32,23 +32,23 @@ const Back = styled.button`
     border: 2px solid ${({ theme }) => theme.colors.secondary};
   }
 `
-const ButtonTxt = styled.a`
+const ButtonText = styled.a`
   display: block;
 `
 
 interface Props {
   text: string
-  back: boolean
-  button: boolean
-  buttonTxt: string
-  buttonHref: string
+  hasBackButton?: boolean
+  hasLinkButton?: boolean
+  buttonText?: string
+  buttonHref?: string
 }
 
 export const Title: React.FC<Props> = ({
-  back = false,
-  button = false,
-  buttonHref,
-  buttonTxt,
+  buttonHref = '',
+  buttonText = '',
+  hasBackButton = false,
+  hasLinkButton = false,
   text,
 }) => {
   const router = useRouter()
@@ -57,12 +57,12 @@ export const Title: React.FC<Props> = ({
     <TitleWrapper>
       {text}
       <Actions>
-        {button && (
+        {hasLinkButton && (
           <LinkButton href={buttonHref} passHref>
-            <ButtonTxt>{buttonTxt}</ButtonTxt>
+            <ButtonText>{buttonText}</ButtonText>
           </LinkButton>
         )}
-        {back && (
+        {hasBackButton && (
           <Back onClick={() => router.back()}>
             <Image alt="Close" height={12} src="/images/icon-back.svg" width={8} />
           </Back>

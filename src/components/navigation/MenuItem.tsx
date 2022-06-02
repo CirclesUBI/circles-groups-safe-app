@@ -20,10 +20,10 @@ const Item = styled.a`
 type Props = {
   href: string
   title: string
-  onClose: () => void
+  closeMenu: () => void
 }
 
-export const MenuItem: React.FC<Props> = ({ href, onClose, title }) => {
+export const MenuItem: React.FC<Props> = ({ closeMenu, href, title }) => {
   const variants = {
     open: {
       y: 0,
@@ -49,7 +49,7 @@ export const MenuItem: React.FC<Props> = ({ href, onClose, title }) => {
         whileTap={{ x: '8px' }}
       >
         <Link href={href} passHref>
-          <Item onClick={() => onClose()}>{title}</Item>
+          <Item onClick={() => closeMenu()}>{title}</Item>
         </Link>
       </motion.div>
     </>

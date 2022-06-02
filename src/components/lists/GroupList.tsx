@@ -1,84 +1,19 @@
-import Image from 'next/image'
-import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
-import { ButtonPrimaryLine } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ActionItem } from '@/src/components/assets/ActionItem'
+import { FirstLetter } from '@/src/components/assets/FirstLetter'
+import { ListContainer } from '@/src/components/assets/ListContainer'
+import { ListItem } from '@/src/components/assets/ListItem'
+import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
+import { SearchInput } from '@/src/components/assets/SearchInput'
 import { groups } from '@/src/constants/groups'
 
-const Search = styled.div`
-  background: rgba(217, 217, 217, 0.5);
-  border-radius: 60px;
-  overflow: hidden;
-  position: relative;
-  margin-bottom: ${({ theme }) => theme.general.space * 2}px;
-  input {
-    background-color: transparent;
-    border: none;
-    border-radius: 60px;
-    color: ${({ theme }) => theme.colors.primary};
-    padding: ${({ theme }) => theme.general.space * 2}px;
-    width: 100%;
-    transition: all 0.2s linear;
-    &:focus,
-    &:focus-visible {
-      background: ${({ theme }) => theme.colors.white};
-      color: ${({ theme }) => theme.colors.primary};
-      outline: ${({ theme }) => theme.colors.primary} auto 1px;
-    }
-  }
-  .icon {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: ${({ theme }) => theme.general.space * 3}px;
-  }
-`
 const List = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.general.space * 4}px;
   padding: ${({ theme }) => theme.general.space * 4}px 0 0;
-`
-
-const Ul = styled.ul`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.general.space * 3}px;
-  margin: 0;
-  padding: 0;
-`
-const FirsLetter = styled.div`
-  align-items: center;
-  background-color: ${({ theme }) => theme.colors.fourth};
-  border-radius: 50%;
-  color: ${({ theme }) => theme.colors.white};
-  display: flex;
-  font-family: ${({ theme }) => theme.fonts.fontFamilyHeading};
-  font-size: 32px;
-  font-weight: 900;
-  height: 40px;
-  justify-content: center;
-  text-align: center;
-  width: 40px;
-`
-const Li = styled.li`
-  list-style: none;
-  margin: 0 ${({ theme }) => theme.general.space * 2}px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: ${({ theme }) => theme.general.space * 3}px;
-  &:not(:last-child) {
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: ${({ theme }) => theme.general.space * 3}px;
-  }
-  &:nth-child(3n + 2) ${FirsLetter} {
-    background-color: ${({ theme }) => theme.colors.fifth};
-  }
-  &:nth-child(3n + 3) ${FirsLetter} {
-    background-color: ${({ theme }) => theme.colors.tertiary};
-  }
 `
 
 const GroupInfo = styled.div`
@@ -102,44 +37,13 @@ const GroupActions = styled.div`
   display: flex;
   align-items: flex-start;
   gap: ${({ theme }) => theme.general.space}px;
+  flex-shrink: 0;
   margin-top: ${({ theme }) => theme.general.space / 2}px;
-`
-
-const ActionItem = styled.a<{ color: string }>`
-  align-items: center;
-  color: ${({ theme }) => theme.colors.primary};
-  display: flex;
-  gap: ${({ theme }) => theme.general.space}px;
-  text-decoration: none;
-  strong {
-    font-size: 1.2rem;
-    font-weight: 500;
+  justify-content: end;
+  width: 100%;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    width: auto;
   }
-  div {
-    align-items: center;
-    background-color: ${(props) =>
-      props.color == 'primary'
-        ? ({ theme }) => theme.colors.primary
-        : ({ theme }) => theme.colors.fourth};
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    height: 28px;
-    transition: all 0.3s ease-in-out;
-    width: 28px;
-  }
-  &:hover {
-    div {
-      background-color: ${({ theme }) => theme.colors.secondary};
-    }
-  }
-`
-
-const LoadMore = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: ${({ theme }) => theme.general.space * 2}px;
 `
 
 interface Props {
@@ -168,21 +72,9 @@ export const GroupList: React.FC<Props> = ({ filter }) => {
 
   return (
     <List>
-      {filteredItemsNum > 4 && (
-        <Search>
-          <input
-            name="search"
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Buscar"
-            type="text"
-          />
-          <div className="icon">
-            <Image alt="search" height={15} src="/images/icon-search.svg" width={15} />
-          </div>
-        </Search>
-      )}
-      <Ul>
-        {groups
+      {filteredItemsNum > 4 && <SearchInput onChange={(e) => setQuery(e)} />}
+      <ListContainer>
+        {filteredItems
           .filter((group) => {
             if (query === '') {
               return group
@@ -190,54 +82,32 @@ export const GroupList: React.FC<Props> = ({ filter }) => {
               return group
             }
           })
-          .filter((group) => {
-            if (filter === '') {
-              return group
-            } else if (group.status.toLowerCase().includes(filter.toLowerCase())) {
-              return group
-            }
-          })
           .slice(0, page * itemsPerPage)
           .map(({ members, title }, index) => (
-            <Li key={`group_${index}`}>
+            <ListItem key={`group_${index}`}>
               <GroupInfo>
-                <FirsLetter>{title.charAt(0)}</FirsLetter>
+                <FirstLetter character={title.charAt(0)} />
                 <div>
                   <h3>{title}</h3>
                   <p>{members} members</p>
                 </div>
               </GroupInfo>
               <GroupActions>
-                <Link href="/" passHref>
-                  <ActionItem color="primary">
-                    <strong>Mint tokens</strong>
-                    <div>
-                      <Image alt="search" height={14} src="/images/icon-send.svg" width={14} />
-                    </div>
-                  </ActionItem>
-                </Link>
-                <Link href="/" passHref>
-                  <ActionItem color="third">
-                    <div>
-                      <Image
-                        alt="search"
-                        height={14}
-                        src="/images/icon-information.svg"
-                        width={14}
-                      />
-                    </div>
-                  </ActionItem>
-                </Link>
+                <ActionItem
+                  color="primary"
+                  href="/"
+                  icon="/images/icon-send.svg"
+                  text="Mint tokens"
+                />
+                <ActionItem color="third" href="/" icon="/images/icon-information.svg" />
               </GroupActions>
-            </Li>
+            </ListItem>
           ))}
-      </Ul>
+      </ListContainer>
       {page < totalPages && (
-        <LoadMore>
-          <ButtonPrimaryLine onClick={() => setPage((prev) => prev + 1)}>
-            Load more
-          </ButtonPrimaryLine>
-        </LoadMore>
+        <>
+          <LoadMoreButton moreResults={() => setPage((prev) => prev + 1)} />
+        </>
       )}
     </List>
   )

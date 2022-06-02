@@ -38,7 +38,6 @@ const Section = styled.section``
 const Home: NextPage = () => {
   const tabs = [{ text: 'My Groups' }, { text: 'All Groups' }]
   const [selectedTab, setSelectedTab] = useState(tabs[0])
-  console.log(selectedTab.text)
   return (
     <>
       <div className="groupsMenu">
@@ -51,10 +50,6 @@ const Home: NextPage = () => {
         </Nav>
       </div>
       <Title
-        back={false}
-        button={false}
-        buttonHref=""
-        buttonTxt=""
         text={selectedTab.text == 'My Groups' ? 'Groups where i belong' : 'All existing Groups'}
       />
 
