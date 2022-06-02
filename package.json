@@ -21,6 +21,7 @@
     "@ethersproject/units": "^5.4.0",
     "bignumber.js": "^9.0.2",
     "bnc-onboard": "^1.38.2",
+    "framer-motion": "^6.3.5",
     "graphql": "^16.3.0",
     "graphql-request": "^4.0.0",
     "graphql-tag": "^2.12.6",

@@ -7,8 +7,7 @@ import { SWRConfig } from 'swr'
 
 import 'sanitize.css'
 
-import { Footer } from '@/src/components/layout/Footer'
-import { Header } from '@/src/components/layout/Header'
+import { Layout } from '@/src/components/layout'
 import { theme } from '@/src/theme'
 import { GlobalStyle } from '@/src/theme/globalStyle'
 
@@ -50,9 +49,9 @@ function App({ Component, pageProps }: AppProps) {
         >
           <Web3ConnectionProvider>
             <GlobalStyle />
-            <Header />
-            <Component {...pageProps} />
-            <Footer />
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
           </Web3ConnectionProvider>
         </SWRConfig>
       </ThemeProvider>

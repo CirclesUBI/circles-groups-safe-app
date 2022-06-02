@@ -4,6 +4,7 @@ const primary = '#502A50'
 const secondary = '#FAAD26'
 const tertiary = '#3CC1CA'
 const fourth = '#70BD9E'
+const fifth = '#F26240'
 const textColor = '#4E4E4E'
 const gray = '#D9D9D9'
 const white = '#fff'
@@ -35,6 +36,7 @@ export const theme = {
     secondary: secondary,
     tertiary: tertiary,
     fourth: fourth,
+    fifth: fifth,
     gray: gray,
     white: white,
     textColor: textColor,
@@ -71,9 +73,9 @@ export const theme = {
   footer: {},
   header: {},
   layout: {
-    horizontalPaddingMobile: '10px',
-    horizontalPaddingTabletPortraitStart: '80px',
-    horizontalPaddingTabletLandscapeStart: '15px',
+    horizontalPaddingMobile: '4px',
+    horizontalPaddingTabletPortraitStart: '16px',
+    horizontalPaddingTabletLandscapeStart: '16px',
     maxWidth: '1122px',
   },
   themeBreakPoints: {
