@@ -8,10 +8,15 @@ import { SWRConfig } from 'swr'
 import 'sanitize.css'
 
 import { Layout } from '@/src/components/layout'
+import SafeSuspense from '@/src/components/safeSuspense'
 import { theme } from '@/src/theme'
 import { GlobalStyle } from '@/src/theme/globalStyle'
 
 const Web3ConnectionProvider = dynamic(() => import('@/src/providers/web3ConnectionProvider'), {
+  ssr: false,
+})
+
+const SafeProvider = dynamic(() => import('@gnosis.pm/safe-apps-react-sdk'), {
   ssr: false,
 })
 
@@ -47,12 +52,16 @@ function App({ Component, pageProps }: AppProps) {
             revalidateOnFocus: false,
           }}
         >
-          <Web3ConnectionProvider>
-            <GlobalStyle />
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </Web3ConnectionProvider>
+          <SafeProvider>
+            <Web3ConnectionProvider>
+              <GlobalStyle />
+              <SafeSuspense>
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+              </SafeSuspense>
+            </Web3ConnectionProvider>
+          </SafeProvider>
         </SWRConfig>
       </ThemeProvider>
     </>

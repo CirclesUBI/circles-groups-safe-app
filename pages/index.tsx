@@ -2,10 +2,12 @@ import type { NextPage } from 'next'
 import { useState } from 'react'
 import styled from 'styled-components'
 
+import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Title } from '@/src/components/assets/Title'
 import { GroupList } from '@/src/components/lists/GroupList'
+import { useSafeBalances } from '@/src/hooks/useSafeBalances'
 
 const Nav = styled.nav`
   align-items: center;
@@ -38,6 +40,15 @@ const Section = styled.section``
 const Home: NextPage = () => {
   const tabs = [{ text: 'My Groups' }, { text: 'All Groups' }]
   const [selectedTab, setSelectedTab] = useState(tabs[0])
+  const { connected, safe, sdk } = useSafeAppsSDK()
+
+  // Just exploring SafeApps SDK information and a hook for obtaining Assets balance
+  // @TODO remove console logs and safe balances
+  const [balances] = useSafeBalances(sdk)
+  console.log({ safe })
+  console.log({ connected })
+  console.log({ balances })
+
   return (
     <>
       <div className="groupsMenu">
