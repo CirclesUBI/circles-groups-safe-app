@@ -37,6 +37,8 @@
     "ts-enum-util": "^4.0.2"
   },
   "devDependencies": {
+    "@gnosis.pm/safe-apps-react-sdk": "^4.3.1",
+    "@gnosis.pm/safe-apps-sdk": "^7.3.0",
     "@typechain/ethers-v5": "^9.0.0",
     "@types/react": "17.0.39",
     "@types/styled-components": "^5.1.24",
