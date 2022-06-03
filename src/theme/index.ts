@@ -23,6 +23,14 @@ export const theme = {
     color: white,
     colorHover: white,
   },
+  buttonSecondary: {
+    backgroundColor: secondary,
+    backgroundColorHover: primary,
+    borderColor: secondary,
+    borderColorHover: primary,
+    color: white,
+    colorHover: white,
+  },
   card: {
     backgroundColor: '#fff',
     backgroundOpacity: '1',

@@ -1,7 +1,7 @@
 export const menuLinks = [
   {
     title: 'Create group',
-    href: '/admin',
+    href: '/admin/create-group',
   },
   {
     title: 'My created group',

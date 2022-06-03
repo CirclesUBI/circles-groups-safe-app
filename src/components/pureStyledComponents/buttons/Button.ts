@@ -8,7 +8,7 @@ export const DisabledButtonCSS = css`
 
 export const ButtonCSS = css`
   align-items: center;
-  border-radius: 20px;
+  border-radius: 30px;
   border-style: solid;
   border-width: 1px;
   cursor: pointer;
@@ -17,7 +17,7 @@ export const ButtonCSS = css`
   font-size: 1.6rem;
   font-weight: 500;
   justify-content: center;
-  line-height: 2.2rem;
+  line-height: 1.8;
   outline: none;
   padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 3}px;
   text-align: center;
@@ -72,6 +72,27 @@ export const ButtonPrimaryLineCSS = css`
   }
 `
 
+export const ButtonSecondaryCSS = css`
+  background-color: ${({ theme }) => theme.buttonSecondary.backgroundColor};
+  border-color: ${({ theme }) => theme.buttonSecondary.borderColor};
+  color: ${({ theme }) => theme.buttonSecondary.color};
+  position: relative;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.buttonSecondary.backgroundColorHover};
+    border-color: ${({ theme }) => theme.buttonSecondary.borderColorHover};
+    color: ${({ theme }) => theme.buttonSecondary.colorHover};
+  }
+
+  &[disabled],
+  &[disabled]:hover {
+    background-color: ${({ theme }) => theme.buttonSecondary.borderColor};
+    border-color: ${({ theme }) => theme.buttonSecondary.borderColor};
+    color: ${({ theme }) => theme.buttonSecondary.color};
+    ${DisabledButtonCSS}
+  }
+`
+
 const BaseButton = styled.button`
   ${ButtonCSS}
 `
@@ -85,6 +106,10 @@ export const Button = styled(BaseButton)`
 
 export const ButtonPrimary = styled(BaseButton)`
   ${ButtonPrimaryCSS}
+`
+
+export const ButtonSecondary = styled(BaseButton)`
+  ${ButtonSecondaryCSS}
 `
 
 export const ButtonPrimaryLine = styled(BaseButton)`
