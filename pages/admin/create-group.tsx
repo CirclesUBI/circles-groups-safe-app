@@ -1,10 +1,13 @@
 import type { NextPage } from 'next'
 import styled from 'styled-components'
 
+import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
+
 import { Input } from '@/src/components/assets/Input'
 import { Title } from '@/src/components/assets/Title'
 import { Columns } from '@/src/components/layout/Columns'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
+import { useCreateGroupTx } from '@/src/hooks/useCreateGroup'
 
 const FormWrapper = styled.div`
   display: flex;
@@ -20,6 +23,20 @@ const ActionWrapper = styled.div`
 `
 
 const CreateGroup: NextPage = () => {
+  const { safe } = useSafeAppsSDK()
+  const { execute } = useCreateGroupTx()
+
+  const executeCreateGroup = () => {
+    execute([
+      '0x29b9a7fBb8995b2423a71cC17cf9810798F6C543',
+      safe.safeAddress,
+      safe.safeAddress,
+      10,
+      'deployedGCTFactory',
+      'CRC',
+    ])
+  }
+
   return (
     <>
       <Title text="Create group" />
@@ -47,7 +64,7 @@ const CreateGroup: NextPage = () => {
           />
         </Columns>
         <ActionWrapper>
-          <ButtonSecondary>Create Group</ButtonSecondary>
+          <ButtonSecondary onClick={executeCreateGroup}>Create Group</ButtonSecondary>
         </ActionWrapper>
       </FormWrapper>
     </>
