@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
@@ -58,9 +59,9 @@ export const Title: React.FC<Props> = ({
       {text}
       <Actions>
         {hasLinkButton && (
-          <LinkButton href={buttonHref} passHref>
-            <ButtonText>{buttonText}</ButtonText>
-          </LinkButton>
+          <Link href={buttonHref} passHref>
+            <LinkButton>{buttonText}</LinkButton>
+          </Link>
         )}
         {hasBackButton && (
           <Back onClick={() => router.back()}>

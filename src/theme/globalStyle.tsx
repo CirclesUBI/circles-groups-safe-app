@@ -46,6 +46,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     font-family: ${({ theme }) => theme.fonts.fontFamilyHeading};
     padding: 0;
     margin: 0;
+    line-height: 1.2;
   }
   h1{
     font-size: 3.6rem;
