@@ -10,6 +10,7 @@ const TitleWrapper = styled.h1`
   justify-content: space-between;
   display: flex;
   gap: ${({ theme }) => theme.general.space * 2}px;
+  line-height: 1;
   padding: 0 ${({ theme }) => theme.general.space * 2}px;
 `
 
