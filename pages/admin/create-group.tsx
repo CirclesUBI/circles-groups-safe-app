@@ -1,6 +1,8 @@
 import type { NextPage } from 'next'
+import { useState } from 'react'
 import styled from 'styled-components'
 
+import { BigNumber } from '@ethersproject/bignumber'
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 
 import { Input } from '@/src/components/assets/Input'
@@ -8,6 +10,7 @@ import { Title } from '@/src/components/assets/Title'
 import { Columns } from '@/src/components/layout/Columns'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { useCreateGroupTx } from '@/src/hooks/useCreateGroup'
+import { addresses } from '@/src/utils/addresses'
 
 const FormWrapper = styled.div`
   display: flex;
@@ -26,14 +29,18 @@ const CreateGroup: NextPage = () => {
   const { safe } = useSafeAppsSDK()
   const { execute } = useCreateGroupTx()
 
+  const [groupName, setGroupName] = useState<string>('')
+  const [groupSymbol, setGroupSymbol] = useState<string>('')
+  const [fee, setFee] = useState<string>('0')
+
   const executeCreateGroup = () => {
     execute([
-      '0x29b9a7fBb8995b2423a71cC17cf9810798F6C543',
+      addresses.gnosis.HUB.address, // @TODO Should work for other networks, not just gnosis
       safe.safeAddress,
       safe.safeAddress,
-      10,
-      'deployedGCTFactory',
-      'CRC',
+      BigNumber.from(fee),
+      groupName,
+      groupSymbol,
     ])
   }
 
@@ -48,19 +55,37 @@ const CreateGroup: NextPage = () => {
             mandatory
             name="fullname"
             placeholder="Test"
+            setValue={setGroupName}
             type="text"
+            value={groupName}
           />
         </Columns>
         <Columns columnsNumber={2}>
-          <Input information="This is a message" label="Symbol" mandatory type="text" />
-          <Input information="This is a message" label="Fee" mandatory type="number" />
+          <Input
+            information="This is a message"
+            label="Symbol"
+            mandatory
+            setValue={setGroupSymbol}
+            type="text"
+            value={groupSymbol}
+          />
+          <Input
+            information="This is a message"
+            label="Fee"
+            mandatory
+            setValue={setFee}
+            type="number"
+            value={fee}
+          />
         </Columns>
         <Columns columnsNumber={1}>
           <Input
+            disabled
             information="This is a message This is a message This is a message"
-            label="Treasury "
+            label="Treasury"
             mandatory
-            type="number"
+            type="text"
+            value={safe.safeAddress}
           />
         </Columns>
         <ActionWrapper>

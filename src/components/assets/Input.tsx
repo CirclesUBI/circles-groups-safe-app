@@ -24,17 +24,22 @@ const InputField = styled.input`
   padding: ${({ theme }) => theme.general.space * 2}px;
   width: 100%;
   transition: all 0.2s linear;
-  &:active,
-  &:focus,
-  &:focus-visible {
-    border: 1px solid rgba(233, 232, 221, 0.7);
-    background: ${({ theme }) => theme.colors.white};
-    color: ${({ theme }) => theme.colors.primary};
-    outline: none;
-    box-shadow: 0px 0px 1px 1px ${({ theme }) => theme.colors.primary};
+  &:not(disabled) {
+    &:active,
+    &:focus,
+    &:focus-visible {
+      border: 1px solid rgba(233, 232, 221, 0.7);
+      background: ${({ theme }) => theme.colors.white};
+      color: ${({ theme }) => theme.colors.primary};
+      outline: ${({ theme }) => theme.colors.primary} auto 1px;
+      box-shadow: 0px 0px 1px 1px ${({ theme }) => theme.colors.primary};
+    }
   }
   &.icon {
     padding-left: ${({ theme }) => theme.general.space * 5}px;
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 `
 const LabelText = styled.div`
@@ -45,6 +50,7 @@ const LabelText = styled.div`
 `
 
 interface Props {
+  disabled?: boolean
   label: string
   mandatory: boolean
   name?: string
@@ -52,18 +58,21 @@ interface Props {
   type?: string
   information?: string
   icon?: ReactNode
-  value?: string
+  setValue?: (value: string) => void
+  value: string
 }
 
 export const Input: React.FC<Props> = ({
+  disabled = false,
   icon = '',
   information = '',
   label = '',
   mandatory,
   name = '',
   placeholder = '',
+  setValue,
   type = 'text',
-  value = '',
+  value,
 }) => {
   console.log(typeof icon)
   return (
@@ -78,7 +87,12 @@ export const Input: React.FC<Props> = ({
         {icon}
         <InputField
           className={icon ? 'icon' : 'noIcon'}
+          disabled={disabled}
+          min={'0'}
           name={name ? name : label}
+          onChange={(e) => {
+            setValue && setValue(String(e.target.value))
+          }}
           placeholder={placeholder}
           type={type}
           value={value}
