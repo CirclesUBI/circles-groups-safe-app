@@ -111,7 +111,11 @@ export const UsersList: React.FC<Props> = ({ action, handleUsers, usersGroup }) 
             )
         ) : (
           <>
-            <NoMembersText>There are no members on this group.</NoMembersText>
+            <NoMembersText>
+              {query
+                ? `No results match your search ${query}.`
+                : 'There are no members on this group.'}
+            </NoMembersText>
           </>
         )}
       </ListContainer>
