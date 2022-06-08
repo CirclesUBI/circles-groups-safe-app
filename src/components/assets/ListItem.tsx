@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 const Li = styled.li`
   align-items: center;
@@ -34,11 +34,10 @@ export const ListItem: React.FC<Props> = ({ children, custom = '' }) => {
     <Li
       animate={{ x: 0, opacity: 1 }}
       as={motion.li}
-      custom={custom}
       exit={{ x: -20, opacity: 0 }}
-      initial={{ x: -10, opacity: 1 }}
+      initial={{ x: 0, opacity: 1 }}
       key={custom}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.5 }}
     >
       {children}
     </Li>

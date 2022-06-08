@@ -8,6 +8,7 @@ import { NoGroupCreated } from '@/src/components/assets/NoGroupCreated'
 import { Title } from '@/src/components/assets/Title'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
 import { UsersList } from '@/src/components/lists/UsersList'
+import { allUsers } from '@/src/constants/allUsers'
 import { users } from '@/src/constants/users'
 
 const Nav = styled.nav`
@@ -47,7 +48,7 @@ const HomeAdmin: NextPage = () => {
   const [selectedTab, setSelectedTab] = useState(tabs[0])
 
   const [usersGroup, setUsers] = useState(users)
-  const [usersAll, setUsersAll] = useState(users)
+  const [usersAll, setUsersAll] = useState(allUsers)
   const usersNumber = usersGroup.length
 
   function handleRemove(userID: number) {
@@ -56,8 +57,13 @@ const HomeAdmin: NextPage = () => {
     setUsers(newList)
   }
   function handleAdd(userID: number) {
-    // add item
-    console.log('Add')
+    // remove user all users list
+    const newAllList = usersAll.filter((user) => user.id !== userID)
+    setUsersAll(newAllList)
+
+    // add user
+    const newUser = usersAll.filter((user) => user.id == userID)
+    setUsers((usersGroup) => [newUser[0], ...usersGroup])
   }
   return (
     <>

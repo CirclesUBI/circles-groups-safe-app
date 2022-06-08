@@ -2,6 +2,8 @@ import Image from 'next/image'
 import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
+import { LayoutGroup } from 'framer-motion'
+
 import { User } from '../assets/User'
 import { AddDeleteButton } from '@/src/components/assets/AddDeleteButton'
 import { ListContainer } from '@/src/components/assets/ListContainer'
@@ -52,6 +54,12 @@ const GroupActions = styled.div`
     width: auto;
   }
 `
+const NoMembersText = styled.p`
+  margin: 0 ${({ theme }) => theme.general.space * 2}px;
+  padding: ${({ theme }) => theme.general.space * 4}px 0 0;
+  border-top: 1px solid #e0e0e0; ;
+`
+
 interface Props {
   action: string
   usersGroup: Array<any>
@@ -80,26 +88,32 @@ export const UsersList: React.FC<Props> = ({ action, handleUsers, usersGroup }) 
     <List>
       {totalItemsNum > 4 && <SearchInput onChange={(e) => setQuery(e)} />}
       <ListContainer>
-        {filteredUsers
-          .slice(0, page * itemsPerPage)
-          .map(
-            (
-              { id, name, photo }: { id: number; name: string; photo: string },
-              index: number | undefined,
-            ) => (
-              <ListItem custom={index} key={`user_${index}`}>
-                <GroupInfo>
-                  <ImageWrapper>
-                    <Image alt={name} layout="fill" objectFit="cover" src={photo} />
-                  </ImageWrapper>
-                  <h3>{name}</h3>
-                </GroupInfo>
-                <GroupActions>
-                  <AddDeleteButton action={action} addRemoveUser={() => handleUsers(id)} />
-                </GroupActions>
-              </ListItem>
-            ),
-          )}
+        {filteredUsers.length > 0 ? (
+          filteredUsers
+            .slice(0, page * itemsPerPage)
+            .map(
+              (
+                { id, name, photo }: { id: number; name: string; photo: string },
+                index: number | undefined,
+              ) => (
+                <ListItem custom={id} key={`user_${id}`}>
+                  <GroupInfo>
+                    <ImageWrapper>
+                      <Image alt={name} layout="fill" objectFit="cover" src={photo} />
+                    </ImageWrapper>
+                    <h3>{name}</h3>
+                  </GroupInfo>
+                  <GroupActions>
+                    <AddDeleteButton action={action} addRemoveUser={() => handleUsers(id)} />
+                  </GroupActions>
+                </ListItem>
+              ),
+            )
+        ) : (
+          <>
+            <NoMembersText>There are no members on this group.</NoMembersText>
+          </>
+        )}
       </ListContainer>
       {page < totalPages && filteredUsers.length > itemsPerPage && (
         <>
