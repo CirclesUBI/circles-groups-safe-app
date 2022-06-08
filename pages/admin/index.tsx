@@ -84,7 +84,7 @@ const HomeAdmin: NextPage = () => {
         </>
       ) : (
         <>
-          <TitleGroup buttonHref="/" text="Bootnode" />
+          <TitleGroup amountNumber={7.268} buttonHref="/" text="Bootnode" />
           <Section>
             <div className="groupsMenu">
               <Nav>

@@ -80,6 +80,7 @@ const Back = styled.button`
 `
 
 interface Props {
+  amountNumber: number
   text: string
   hasBackButton?: boolean
   buttonHref: string
@@ -87,6 +88,7 @@ interface Props {
 }
 
 export const TitleGroup: React.FC<Props> = ({
+  amountNumber = '',
   buttonHref = '',
   hasBackButton = false,
   information = 'Manage group',
@@ -105,20 +107,24 @@ export const TitleGroup: React.FC<Props> = ({
       </TitleInformation>
 
       <Actions>
-        <Amount>
-          <Image alt="Configuration" height={15} src="/images/crc.svg" width={11} />
-          7.268
-        </Amount>
-        <Link href={buttonHref} passHref>
-          <LinkConfiguration>
-            <Image
-              alt="Configuration"
-              height={12}
-              src="/images/icon-configuration.svg"
-              width={12}
-            />
-          </LinkConfiguration>
-        </Link>
+        {amountNumber && (
+          <Amount>
+            <Image alt="Configuration" height={15} src="/images/crc.svg" width={11} />
+            {amountNumber}
+          </Amount>
+        )}
+        {buttonHref && (
+          <Link href={buttonHref} passHref>
+            <LinkConfiguration>
+              <Image
+                alt="Configuration"
+                height={12}
+                src="/images/icon-configuration.svg"
+                width={12}
+              />
+            </LinkConfiguration>
+          </Link>
+        )}
 
         {hasBackButton && (
           <Back onClick={() => router.back()}>
