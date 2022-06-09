@@ -32,12 +32,13 @@ interface Props {
 export const ListItem: React.FC<Props> = ({ children, custom = '' }) => {
   return (
     <Li
-      animate={{ x: 0, opacity: 1 }}
+      animate={{ opacity: 1 }}
       as={motion.li}
-      exit={{ x: -20, opacity: 0 }}
-      initial={{ x: 0, opacity: 1 }}
+      exit={{ opacity: 0 }}
+      initial={{ opacity: 0 }}
       key={custom}
-      transition={{ duration: 0.5 }}
+      layout
+      transition={{ duration: 0.3 }}
     >
       {children}
     </Li>

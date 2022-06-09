@@ -8,6 +8,7 @@ const Ul = styled.ul`
   gap: ${({ theme }) => theme.general.space * 3}px;
   margin: 0;
   padding: 0;
+  overflow: hidden;
 `
 
 export const ListContainer: React.FC = ({ children }) => {

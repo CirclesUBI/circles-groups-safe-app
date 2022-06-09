@@ -7,7 +7,6 @@ import { ListContainer } from '@/src/components/assets/ListContainer'
 import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
 import { SearchInput } from '@/src/components/assets/SearchInput'
-import { User } from '@/src/components/assets/User'
 
 const List = styled.div`
   display: flex;
@@ -77,7 +76,7 @@ export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup })
       if (query === '') {
         return user
       } else if (user.name.toLowerCase().includes(query.toLowerCase())) {
-        return User
+        return user
       }
     })
   }, [usersGroup, query])
@@ -94,7 +93,7 @@ export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup })
                 { id, name, photo }: { id: number; name: string; photo: string },
                 index: number | undefined,
               ) => (
-                <ListItem custom={id} key={`user_${id}`}>
+                <ListItem custom={index} key={`user_${id}`}>
                   <GroupInfo>
                     <ImageWrapper>
                       <Image alt={name} layout="fill" objectFit="cover" src={photo} />
