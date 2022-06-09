@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import { AnimatePresence, motion } from 'framer-motion'
 
+import { AlertMessage } from '@/src/components/assets/AlertMessage'
 import { NoGroupCreated } from '@/src/components/assets/NoGroupCreated'
 import { Title } from '@/src/components/assets/Title'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
@@ -49,24 +50,96 @@ const HomeAdmin: NextPage = () => {
 
   const [usersGroup, setUsers] = useState(users)
   const [usersAll, setUsersAll] = useState(allUsers)
+  const [notification, setNotification] = useState({
+    opened: false,
+    action: '',
+    user: 0,
+  })
   const usersNumber = usersGroup.length
 
+  function notificationInfo(openedValue: boolean, actionValue: string, userValue: number) {
+    setNotification({
+      opened: openedValue,
+      action: actionValue,
+      user: userValue,
+    })
+  }
+
   function handleRemove(userID: number) {
-    // remove item
+    notificationInfo(false, '', 0)
+    // add user to all users list
+    const moveUser = usersGroup.filter((user) => user.id == userID)
+    setUsersAll((usersAll) => [moveUser[0], ...usersAll])
+
+    // remove item from my group list
     const newList = usersGroup.filter((user) => user.id !== userID)
     setUsers(newList)
   }
+
   function handleAdd(userID: number) {
+    notificationInfo(false, '', 0)
     // remove user all users list
     const newAllList = usersAll.filter((user) => user.id !== userID)
     setUsersAll(newAllList)
 
-    // add user
+    // add user to my group list
     const newUser = usersAll.filter((user) => user.id == userID)
     setUsers((usersGroup) => [newUser[0], ...usersGroup])
   }
+
+  function getUserNameAllList(userID: number) {
+    // get user name from all members list
+    const getUser = usersAll.filter((user) => user.id == userID)
+    const getUserName = getUser[0].name
+    return getUserName
+  }
+
+  function getUserNameMyGroupList(userID: number) {
+    // get user name from group list
+    const getUser = usersGroup.filter((user) => user.id == userID)
+    const getUserName = getUser[0].name
+    return getUserName
+  }
+
   return (
     <>
+      {notification.opened && (
+        <AnimatePresence>
+          {notification.action == 'delete' ? (
+            <AlertMessage
+              handleUsers={() => handleRemove(notification.user)}
+              onCloseAlert={() =>
+                setNotification({
+                  opened: false,
+                  action: '',
+                  user: 0,
+                })
+              }
+              text={
+                'Are you sure you want to remove ' +
+                getUserNameMyGroupList(notification.user) +
+                ' from your group?'
+              }
+            />
+          ) : (
+            <AlertMessage
+              handleUsers={() => handleAdd(notification.user)}
+              onCloseAlert={() =>
+                setNotification({
+                  opened: false,
+                  action: '',
+                  user: 0,
+                })
+              }
+              text={
+                'Are you sure you want to add ' +
+                getUserNameAllList(notification.user) +
+                ' to your group?'
+              }
+            />
+          )}
+        </AnimatePresence>
+      )}
       {count == 0 ? (
         <>
           <Title
@@ -109,9 +182,13 @@ const HomeAdmin: NextPage = () => {
                 transition={{ duration: 0.2 }}
               >
                 {selectedTab.text == 'Members' ? (
-                  <UsersList action={'delete'} handleUsers={handleRemove} usersGroup={usersGroup} />
+                  <UsersList
+                    action={'delete'}
+                    onCloseAlert={notificationInfo}
+                    usersGroup={usersGroup}
+                  />
                 ) : (
-                  <UsersList action={'add'} handleUsers={handleAdd} usersGroup={usersAll} />
+                  <UsersList action={'add'} onCloseAlert={notificationInfo} usersGroup={usersAll} />
                 )}
               </motion.div>
             </AnimatePresence>

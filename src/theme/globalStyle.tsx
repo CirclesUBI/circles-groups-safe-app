@@ -45,7 +45,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     font-family: ${({ theme }) => theme.fonts.fontFamilyHeading};
   }
   h1, h2, h3, h4{
-    color: ${({ theme }) => theme.colors.primary} !important;
+    color: ${({ theme }) => theme.colors.primary};
     padding: 0;
     margin: 0;
     line-height: 1.2;

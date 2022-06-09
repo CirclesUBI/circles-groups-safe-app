@@ -2,14 +2,12 @@ import Image from 'next/image'
 import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
-import { LayoutGroup } from 'framer-motion'
-
-import { User } from '../assets/User'
 import { AddDeleteButton } from '@/src/components/assets/AddDeleteButton'
 import { ListContainer } from '@/src/components/assets/ListContainer'
 import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
 import { SearchInput } from '@/src/components/assets/SearchInput'
+import { User } from '@/src/components/assets/User'
 
 const List = styled.div`
   display: flex;
@@ -63,10 +61,10 @@ const NoMembersText = styled.p`
 interface Props {
   action: string
   usersGroup: Array<any>
-  handleUsers: (id: number) => void
+  onCloseAlert: (openedValue: boolean, actionValue: string, userValue: number) => void
 }
 
-export const UsersList: React.FC<Props> = ({ action, handleUsers, usersGroup }) => {
+export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup }) => {
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
@@ -104,7 +102,10 @@ export const UsersList: React.FC<Props> = ({ action, handleUsers, usersGroup }) 
                     <h3>{name}</h3>
                   </GroupInfo>
                   <GroupActions>
-                    <AddDeleteButton action={action} addRemoveUser={() => handleUsers(id)} />
+                    <AddDeleteButton
+                      action={action}
+                      addRemoveUser={() => onCloseAlert(true, action, id)}
+                    />
                   </GroupActions>
                 </ListItem>
               ),
@@ -113,7 +114,7 @@ export const UsersList: React.FC<Props> = ({ action, handleUsers, usersGroup }) 
           <>
             <NoMembersText>
               {query
-                ? `No results match your search ${query}.`
+                ? `We couldn't find a match for ${query}.`
                 : 'There are no members on this group.'}
             </NoMembersText>
           </>
