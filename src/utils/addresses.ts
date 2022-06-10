@@ -1,4 +1,5 @@
 import erc20 from '@/src/abis/ERC20.json'
+import gctFactory from '@/src/abis/GroupCurrencyTokenFactory.json'
 import hub from '@/src/abis/Hub.json'
 import { Chains } from '@/src/constants/chains'
 import { Contracts } from '@/types/Contracts'
@@ -17,6 +18,10 @@ export const addresses: {
       address: '',
       abi: hub,
     },
+    GCTFactory: {
+      address: '0xf9842682376BC7570EA850f333801E79e40C3730',
+      abi: gctFactory,
+    },
   },
   kovan: {
     USDC: {
@@ -27,6 +32,10 @@ export const addresses: {
       address: '',
       abi: hub,
     },
+    GCTFactory: {
+      address: '0xf9842682376BC7570EA850f333801E79e40C3730',
+      abi: gctFactory,
+    },
   },
   gnosis: {
     USDC: {
@@ -36,6 +45,10 @@ export const addresses: {
     HUB: {
       address: '0x29b9a7fBb8995b2423a71cC17cf9810798F6C543',
       abi: hub,
+    },
+    GCTFactory: {
+      address: '0xf9842682376BC7570EA850f333801E79e40C3730',
+      abi: gctFactory,
     },
   },
 }

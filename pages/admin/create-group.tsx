@@ -33,7 +33,7 @@ const CreateGroup: NextPage = () => {
   const [groupSymbol, setGroupSymbol] = useState<string>('')
   const [fee, setFee] = useState<string>('0')
 
-  const executeCreateGroup = () => {
+  const createGroup = () => {
     execute([
       addresses.gnosis.HUB.address, // @TODO Should work for other networks, not just gnosis
       safe.safeAddress,
@@ -89,7 +89,7 @@ const CreateGroup: NextPage = () => {
           />
         </Columns>
         <ActionWrapper>
-          <ButtonSecondary onClick={executeCreateGroup}>Create Group</ButtonSecondary>
+          <ButtonSecondary onClick={createGroup}>Create Group</ButtonSecondary>
         </ActionWrapper>
       </FormWrapper>
     </>
