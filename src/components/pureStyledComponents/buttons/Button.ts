@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import styled, { css } from 'styled-components'
 
 export const DisabledButtonCSS = css`
@@ -51,6 +50,28 @@ export const ButtonPrimaryCSS = css`
     ${DisabledButtonCSS}
   }
 `
+
+export const ButtonAlertCSS = css`
+  background-color: ${({ theme }) => theme.colors.alert};
+  border-color: ${({ theme }) => theme.colors.alert};
+  color: ${({ theme }) => theme.buttonPrimary.color};
+  position: relative;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.buttonPrimary.backgroundColorHover};
+    border-color: ${({ theme }) => theme.buttonPrimary.borderColorHover};
+    color: ${({ theme }) => theme.buttonPrimary.colorHover};
+  }
+
+  &[disabled],
+  &[disabled]:hover {
+    background-color: ${({ theme }) => theme.buttonPrimary.borderColor};
+    border-color: ${({ theme }) => theme.buttonPrimary.borderColor};
+    color: ${({ theme }) => theme.buttonPrimary.color};
+    ${DisabledButtonCSS}
+  }
+`
+
 export const ButtonPrimaryLineCSS = css`
   background-color: transparent;
   border-color: ${({ theme }) => theme.buttonPrimary.borderColor};
@@ -96,6 +117,9 @@ export const ButtonSecondaryCSS = css`
 const BaseButton = styled.button`
   ${ButtonCSS}
 `
+const BaseLink = styled.a`
+  ${ButtonCSS}
+`
 
 export const Button = styled(BaseButton)`
   &[disabled],
@@ -112,10 +136,18 @@ export const ButtonSecondary = styled(BaseButton)`
   ${ButtonSecondaryCSS}
 `
 
+export const ButtonConfirm = styled(BaseButton)`
+  ${ButtonPrimaryCSS}
+`
+
+export const ButtonCancel = styled(BaseButton)`
+  ${ButtonAlertCSS}
+`
+
 export const ButtonPrimaryLine = styled(BaseButton)`
   ${ButtonPrimaryLineCSS}
 `
 
-export const LinkButton = styled(Link)`
+export const LinkButton = styled(BaseLink)`
   ${ButtonPrimaryCSS}
 `

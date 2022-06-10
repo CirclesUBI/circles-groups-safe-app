@@ -1,7 +1,9 @@
 import styled from 'styled-components'
 
+import { motion } from 'framer-motion'
+
 const Li = styled.li`
-  align-items: flex-start;
+  align-items: center;
   list-style: none;
   margin: 0 ${({ theme }) => theme.general.space * 2}px;
   display: flex;
@@ -23,6 +25,22 @@ const Li = styled.li`
   }
 `
 
-export const ListItem: React.FC = ({ children }) => {
-  return <Li>{children}</Li>
+interface Props {
+  custom?: number
+}
+
+export const ListItem: React.FC<Props> = ({ children, custom = '' }) => {
+  return (
+    <Li
+      animate={{ opacity: 1 }}
+      as={motion.li}
+      exit={{ opacity: 0 }}
+      initial={{ opacity: 0 }}
+      key={custom}
+      layout
+      transition={{ duration: 0.3 }}
+    >
+      {children}
+    </Li>
+  )
 }

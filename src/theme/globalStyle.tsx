@@ -42,13 +42,23 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     transition: all 0.3s ease-in-out;
   }
   h1, h2{
-    color: ${({ theme }) => theme.colors.primary} !important;
     font-family: ${({ theme }) => theme.fonts.fontFamilyHeading};
+  }
+  h1, h2, h3, h4{
+    color: ${({ theme }) => theme.colors.primary};
     padding: 0;
     margin: 0;
+    line-height: 1.2;
   }
   h1{
     font-size: 3.6rem;
+  }
+  h3{
+
+  }
+  h4{
+    font-weight: 700;
+    font-size: 16px;
   }
   code {
     font-family: ${({ theme }) => theme.fonts.fontFamilyCode};
