@@ -1,10 +1,13 @@
 import type { NextPage } from 'next'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
+import { AnimatePresence, motion } from 'framer-motion'
+
+import { AlertMessage } from '@/src/components/assets/AlertMessage'
 import { FromToInformation } from '@/src/components/assets/FromToInformation'
 import { Input } from '@/src/components/assets/Input'
 import { Title } from '@/src/components/assets/Title'
-import { Columns } from '@/src/components/layout/Columns'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
 
 const FormWrapper = styled.div`
@@ -21,8 +24,18 @@ const ActionWrapper = styled.div`
 `
 
 const CreateGroup: NextPage = () => {
+  const [notification, setNotification] = useState(false)
   return (
     <>
+      {notification && (
+        <AnimatePresence>
+          <AlertMessage
+            confirmAction={() => setNotification(false)}
+            onCloseAlert={() => setNotification(false)}
+            text={'Are you sure you want to mint 50 CRC to the Bootnode group?'}
+          />
+        </AnimatePresence>
+      )}
       <Title hasBackButton text="Send circles to a group" />
       <FormWrapper>
         <FromToInformation
@@ -55,7 +68,7 @@ const CreateGroup: NextPage = () => {
         />
 
         <ActionWrapper>
-          <ButtonSecondary>Mint tokens</ButtonSecondary>
+          <ButtonSecondary onClick={() => setNotification(true)}>Mint tokens</ButtonSecondary>
         </ActionWrapper>
       </FormWrapper>
     </>

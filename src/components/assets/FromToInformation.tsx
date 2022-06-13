@@ -20,14 +20,7 @@ const InformationBlock = styled.div<{ bgColor: string }>`
   background-color: rgba(233, 232, 221, 0.7);
   padding: ${({ theme }) => theme.general.space * 2}px;
   border-radius: 40px;
-  color: ${(props) => {
-    switch (props.bgColor) {
-      case 'dark':
-        return ({ theme }) => theme.colors.white
-      default:
-        return ({ theme }) => theme.colors.primary
-    }
-  }};
+  color: ${({ theme }) => theme.colors.primary};
 `
 const InfoWrapper = styled.div`
   display: flex;
