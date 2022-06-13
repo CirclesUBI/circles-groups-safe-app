@@ -37,7 +37,6 @@ const ConfigurateGroup: NextPage = () => {
             value="0x9D84152df06880cdABEb30e10c2981F40D98B901"
           />
         </Columns>
-
         <ActionWrapper>
           <ButtonPrimary>Save configuration</ButtonPrimary>
         </ActionWrapper>
