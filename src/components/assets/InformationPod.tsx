@@ -8,12 +8,8 @@ const InformationBlock = styled.div<{ bgColor: string }>`
     switch (props.bgColor) {
       case 'lightest':
         return 'rgba(233, 232, 221, 0.3)'
-      case 'light':
-        return 'rgba(233, 232, 221, 0.5)'
-      case 'dark':
-        return ({ theme }) => theme.colors.primary
       default:
-        return 'rgba(233, 232, 221, 0.3)'
+        return 'rgba(233, 232, 221, 0.5)'
     }
   }};
   font-weight: ${(props) => {
@@ -31,28 +27,14 @@ const InformationBlock = styled.div<{ bgColor: string }>`
   border-radius: ${({ theme }) => theme.general.borderRadius};
   font-size: 1.6rem;
   line-height: 1.6;
-  color: ${(props) => {
-    switch (props.bgColor) {
-      case 'dark':
-        return ({ theme }) => theme.colors.white
-      default:
-        return ({ theme }) => theme.colors.primary
-    }
-  }};
+  color: ${({ theme }) => theme.colors.primary};
   small {
     display: block;
     font-weight: 400;
     font-size: 1.2rem;
     line-height: 1.2;
     opacity: 0.6;
-    color: ${(props) => {
-      switch (props.bgColor) {
-        case 'dark':
-          return ({ theme }) => theme.colors.gray
-        default:
-          return ({ theme }) => theme.colors.textColor
-      }
-    }};
+    color: ${({ theme }) => theme.colors.textColor};
   }
 `
 const TextWrapper = styled.div`
