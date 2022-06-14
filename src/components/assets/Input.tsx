@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import { Tooltip } from '@/src/components/assets/Tooltip'
@@ -10,7 +11,11 @@ const Wrapper = styled.label`
   flex-direction: column;
   gap: ${({ theme }) => theme.general.space}px;
 `
+const InputFieldWrapper = styled.div`
+  position: relative;
+`
 const InputField = styled.input`
+  appearance: none;
   background: rgba(233, 232, 221, 0.7);
   border: 1px solid rgba(233, 232, 221, 0.7);
   border-radius: 60px;
@@ -22,9 +27,14 @@ const InputField = styled.input`
   &:active,
   &:focus,
   &:focus-visible {
+    border: 1px solid rgba(233, 232, 221, 0.7);
     background: ${({ theme }) => theme.colors.white};
     color: ${({ theme }) => theme.colors.primary};
-    outline: ${({ theme }) => theme.colors.primary} auto 1px;
+    outline: none;
+    box-shadow: 0px 0px 1px 1px ${({ theme }) => theme.colors.primary};
+  }
+  &.icon {
+    padding-left: ${({ theme }) => theme.general.space * 5}px;
   }
 `
 const LabelText = styled.div`
@@ -41,10 +51,12 @@ interface Props {
   placeholder?: string
   type?: string
   information?: string
+  icon?: ReactNode
   value?: string
 }
 
 export const Input: React.FC<Props> = ({
+  icon = '',
   information = '',
   label = '',
   mandatory,
@@ -53,6 +65,7 @@ export const Input: React.FC<Props> = ({
   type = 'text',
   value = '',
 }) => {
+  console.log(typeof icon)
   return (
     <Wrapper>
       <LabelText>
@@ -61,7 +74,16 @@ export const Input: React.FC<Props> = ({
         </strong>
         {information && <Tooltip text={information} />}
       </LabelText>
-      <InputField name={name ? name : label} placeholder={placeholder} type={type} value={value} />
+      <InputFieldWrapper>
+        {icon}
+        <InputField
+          className={icon ? 'icon' : 'noIcon'}
+          name={name ? name : label}
+          placeholder={placeholder}
+          type={type}
+          value={value}
+        />
+      </InputFieldWrapper>
     </Wrapper>
   )
 }
