@@ -75,11 +75,11 @@ const Actions = styled.div`
 interface Props {
   text?: string
   onCloseAlert: () => void
-  handleUsers: () => void
+  confirmAction: () => void
 }
 
 export const AlertMessage: React.FC<Props> = ({
-  handleUsers,
+  confirmAction,
   onCloseAlert,
   text = 'Are you sure you want to add USERNAME to your group?',
 }) => {
@@ -97,7 +97,7 @@ export const AlertMessage: React.FC<Props> = ({
         </Close>
         <Text>{text}</Text>
         <Actions>
-          <ButtonConfirm onClick={handleUsers}>Confirm</ButtonConfirm>
+          <ButtonConfirm onClick={confirmAction}>Confirm</ButtonConfirm>
           <ButtonCancel onClick={() => onCloseAlert()}>Cancel</ButtonCancel>
         </Actions>
       </Message>

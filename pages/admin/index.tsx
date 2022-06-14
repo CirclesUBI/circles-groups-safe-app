@@ -107,7 +107,7 @@ const HomeAdmin: NextPage = () => {
         <AnimatePresence>
           {notification.action == 'delete' ? (
             <AlertMessage
-              handleUsers={() => handleRemove(notification.user)}
+              confirmAction={() => handleRemove(notification.user)}
               onCloseAlert={() =>
                 setNotification({
                   opened: false,
@@ -123,7 +123,7 @@ const HomeAdmin: NextPage = () => {
             />
           ) : (
             <AlertMessage
-              handleUsers={() => handleAdd(notification.user)}
+              confirmAction={() => handleAdd(notification.user)}
               onCloseAlert={() =>
                 setNotification({
                   opened: false,

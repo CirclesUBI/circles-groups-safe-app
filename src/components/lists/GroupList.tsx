@@ -95,7 +95,7 @@ export const GroupList: React.FC<Props> = ({ filter }) => {
               <GroupActions>
                 <ActionItem
                   color="primary"
-                  href="/"
+                  href="/mint-tokens"
                   icon="/images/icon-send.svg"
                   text="Mint tokens"
                 />
