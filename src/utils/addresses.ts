@@ -19,7 +19,7 @@ export const addresses: {
       abi: hub,
     },
     GCTFactory: {
-      address: '0xf9842682376BC7570EA850f333801E79e40C3730',
+      address: '',
       abi: gctFactory,
     },
   },
@@ -33,7 +33,7 @@ export const addresses: {
       abi: hub,
     },
     GCTFactory: {
-      address: '0xf9842682376BC7570EA850f333801E79e40C3730',
+      address: '',
       abi: gctFactory,
     },
   },
