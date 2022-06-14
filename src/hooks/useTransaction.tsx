@@ -40,9 +40,6 @@ export default function useTransaction<
       }
 
       const contract = new Contract(address, abi, signer) as MyContract
-      // @TODO Ver como obtener la address de la safe con el SDK
-      // para reemplazar por el signer responsable del nuevo contrato que se esta instanciando
-
       const _params = Array.isArray(params) ? params : []
 
       let tx: ContractTransaction
