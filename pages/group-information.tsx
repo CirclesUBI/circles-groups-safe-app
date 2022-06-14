@@ -6,26 +6,18 @@ import { InformationPod } from '@/src/components/assets/InformationPod'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
 import { Columns } from '@/src/components/layout/Columns'
 
-const FormWrapper = styled.div`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.general.space * 2}px;
   margin-top: ${({ theme }) => theme.general.space * 4}px;
   padding: 0 ${({ theme }) => theme.general.space * 2}px;
 `
-
-const ActionWrapper = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  margin: ${({ theme }) => theme.general.space * 2}px 0;
-`
-
 const ConfigurateGroup: NextPage = () => {
   return (
     <>
       <TitleGroup hasBackButton information="Group information" text="Bootnode" />
-
-      <FormWrapper>
+      <Wrapper>
         <Columns columnsNumber={1}>
           <InformationPod bgColor="lightest" label="Symbol" text="CRC" />
         </Columns>
@@ -60,7 +52,7 @@ const ConfigurateGroup: NextPage = () => {
             text="7.268"
           />
         </Columns>
-      </FormWrapper>
+      </Wrapper>
     </>
   )
 }
