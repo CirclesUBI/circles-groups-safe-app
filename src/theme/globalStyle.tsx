@@ -59,6 +59,7 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
   h4{
     font-weight: 700;
     font-size: 16px;
+    margin-bottom: ${({ theme }) => theme.general.space * 2}px;
   }
   code {
     font-family: ${({ theme }) => theme.fonts.fontFamilyCode};
@@ -69,5 +70,13 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     flex-direction: column;
     min-height: 100vh;
     height: 100%;
+  }
+  hr{
+    margin-top: ${({ theme }) => theme.general.space * 2}px;
+    margin-bottom: ${({ theme }) => theme.general.space * 2}px;
+    display: block; 
+    height: 1px;
+    border: 0; 
+    border-top: 1px solid #e0e0e0;
   }
 `
