@@ -52,6 +52,7 @@ interface Props {
   type?: string
   information?: string
   icon?: ReactNode
+  value?: string
 }
 
 export const Input: React.FC<Props> = ({
@@ -62,6 +63,7 @@ export const Input: React.FC<Props> = ({
   name = '',
   placeholder = '',
   type = 'text',
+  value = '',
 }) => {
   console.log(typeof icon)
   return (
@@ -79,6 +81,7 @@ export const Input: React.FC<Props> = ({
           name={name ? name : label}
           placeholder={placeholder}
           type={type}
+          value={value}
         />
       </InputFieldWrapper>
     </Wrapper>

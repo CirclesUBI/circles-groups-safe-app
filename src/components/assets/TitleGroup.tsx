@@ -80,10 +80,10 @@ const Back = styled.button`
 `
 
 interface Props {
-  amountNumber: number
+  amountNumber?: number
   text: string
   hasBackButton?: boolean
-  buttonHref: string
+  buttonHref?: string
   information?: string
 }
 
