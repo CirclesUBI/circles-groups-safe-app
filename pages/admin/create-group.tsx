@@ -1,4 +1,5 @@
 import type { NextPage } from 'next'
+// import { useRouter } from 'next/router'
 import { useState } from 'react'
 import styled from 'styled-components'
 
@@ -32,16 +33,33 @@ const CreateGroup: NextPage = () => {
   const [groupName, setGroupName] = useState<string>('')
   const [groupSymbol, setGroupSymbol] = useState<string>('')
   const [fee, setFee] = useState<string>('0')
+  const [treasury, setTreasury] = useState<string>('')
+  const [disable, setDisable] = useState<boolean>(false)
 
-  const createGroup = () => {
-    execute([
+  // const router = useRouter()
+  const createGroup = async () => {
+    setDisable(true)
+    const contractReceipt = await execute([
       addresses.gnosis.HUB.address, // @TODO Should work for other networks, not just gnosis
+      treasury,
       safe.safeAddress,
-      safe.safeAddress,
-      BigNumber.from(fee),
+      BigNumber.from(fee || '0'),
       groupName,
       groupSymbol,
     ])
+    console.log({ contractReceipt })
+    // diving into contractReceipt for GroupCurrencyToken's entity id
+    // console.log(contractReceipt.events[2].args[0])
+    // const groupId = contractReceipt.events[2].args[0]
+    // router.push(`/admin/group-list/`)
+    // redirect to:
+    // * Groups List?
+    // * Members List?
+    // * Group Info?
+    // * Group Configuration?
+    // router.push(`/admin/group-members/${groupId}`)
+    // router.push(`/admin/group/${groupId}`)
+    // router.push(`/admin/group-configuration/${groupId}`)
   }
 
   return (
@@ -80,16 +98,18 @@ const CreateGroup: NextPage = () => {
         </Columns>
         <Columns columnsNumber={1}>
           <Input
-            disabled
             information="This is a message This is a message This is a message"
             label="Treasury"
             mandatory
+            setValue={setTreasury}
             type="text"
-            value={safe.safeAddress}
+            value={treasury}
           />
         </Columns>
         <ActionWrapper>
-          <ButtonSecondary onClick={createGroup}>Create Group</ButtonSecondary>
+          <ButtonSecondary disabled={disable} onClick={createGroup}>
+            Create Group
+          </ButtonSecondary>
         </ActionWrapper>
       </FormWrapper>
     </>
