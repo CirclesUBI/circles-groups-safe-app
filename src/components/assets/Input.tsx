@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import styled from 'styled-components'
 
 import { Tooltip } from '@/src/components/assets/Tooltip'
@@ -15,6 +14,7 @@ const InputFieldWrapper = styled.div`
   position: relative;
 `
 const InputField = styled.input`
+  appearance: none;
   background: rgba(233, 232, 221, 0.7);
   border: 1px solid rgba(233, 232, 221, 0.7);
   border-radius: 60px;
@@ -26,9 +26,11 @@ const InputField = styled.input`
   &:active,
   &:focus,
   &:focus-visible {
+    border: 1px solid rgba(233, 232, 221, 0.7);
     background: ${({ theme }) => theme.colors.white};
     color: ${({ theme }) => theme.colors.primary};
-    outline: ${({ theme }) => theme.colors.primary} auto 1px;
+    outline: none;
+    box-shadow: 0px 0px 1px 1px ${({ theme }) => theme.colors.primary};
   }
   &.icon {
     padding-left: ${({ theme }) => theme.general.space * 5}px;
@@ -40,13 +42,6 @@ const LabelText = styled.div`
   align-items: center;
   justify-content: space-between;
 `
-const Icon = styled.div`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: ${({ theme }) => theme.general.space * 2}px;
-  pointer-events: none;
-`
 
 interface Props {
   label: string
@@ -55,18 +50,19 @@ interface Props {
   placeholder?: string
   type?: string
   information?: string
-  tokens?: boolean
+  icon?: object
 }
 
 export const Input: React.FC<Props> = ({
+  icon = '',
   information = '',
   label = '',
   mandatory,
   name = '',
   placeholder = '',
-  tokens = false,
   type = 'text',
 }) => {
+  console.log(typeof icon)
   return (
     <Wrapper>
       <LabelText>
@@ -76,13 +72,9 @@ export const Input: React.FC<Props> = ({
         {information && <Tooltip text={information} />}
       </LabelText>
       <InputFieldWrapper>
-        {tokens && (
-          <Icon>
-            <Image alt="Configuration" height={15} src="/images/crc.svg" width={11} />
-          </Icon>
-        )}
+        {icon}
         <InputField
-          className={tokens ? 'icon' : 'noIcon'}
+          className={icon ? 'icon' : 'noIcon'}
           name={name ? name : label}
           placeholder={placeholder}
           type={type}

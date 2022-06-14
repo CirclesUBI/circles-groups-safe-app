@@ -1,13 +1,14 @@
 import type { NextPage } from 'next'
+import Image from 'next/image'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 
 import { AlertMessage } from '@/src/components/assets/AlertMessage'
-import { FromToInformation } from '@/src/components/assets/FromToInformation'
 import { Input } from '@/src/components/assets/Input'
 import { Title } from '@/src/components/assets/Title'
+import { TransferUserInformation } from '@/src/components/assets/TransferUserInformation'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
 
 const FormWrapper = styled.div`
@@ -21,6 +22,14 @@ const ActionWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-top: ${({ theme }) => theme.general.space * 4}px;
+`
+
+const Icon = styled.div`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: ${({ theme }) => theme.general.space * 2}px;
+  pointer-events: none;
 `
 
 const CreateGroup: NextPage = () => {
@@ -38,26 +47,30 @@ const CreateGroup: NextPage = () => {
       )}
       <Title hasBackButton text="Send circles to a group" />
       <FormWrapper>
-        <FromToInformation
+        <TransferUserInformation
           amountText="Your total balance:"
           amountValue={84.34}
           label="Send from"
           name="@TomasBari"
           userPhoto="/images/user.jpg"
         />
-        <FromToInformation
+        <TransferUserInformation
           amountText="Maximum amount:"
           amountValue={84.34}
-          group
+          isGroup
           label="Send to"
           name="Bootnode Group"
         />
 
         <Input
+          icon={
+            <Icon>
+              <Image alt="Configuration" height={15} src="/images/crc.svg" width={11} />
+            </Icon>
+          }
           information="This is a message This is a message This is a message"
           label="Enter amount"
           mandatory
-          tokens
           type="number"
         />
 

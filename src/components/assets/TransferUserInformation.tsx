@@ -58,16 +58,16 @@ interface Props {
   amountValue?: number
   name: string
   bgColor?: string
-  group?: boolean
+  isGroup?: boolean
   userPhoto?: string
   label?: string
 }
 
-export const FromToInformation: React.FC<Props> = ({
+export const TransferUserInformation: React.FC<Props> = ({
   amountText = '',
   amountValue = 0,
   bgColor = 'light',
-  group = false,
+  isGroup = false,
   label = '',
   name,
   userPhoto = '',
@@ -82,7 +82,7 @@ export const FromToInformation: React.FC<Props> = ({
       <InformationBlock bgColor={bgColor}>
         <InfoWrapper>
           <InformationImage>
-            {group ? (
+            {isGroup ? (
               <FirstLetter character={name.charAt(0)} />
             ) : (
               <Image alt={name} height={40} src={userPhoto} width={40} />
