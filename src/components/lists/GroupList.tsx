@@ -99,7 +99,11 @@ export const GroupList: React.FC<Props> = ({ filter }) => {
                   icon="/images/icon-send.svg"
                   text="Mint tokens"
                 />
-                <ActionItem color="third" href="/" icon="/images/icon-information.svg" />
+                <ActionItem
+                  color="third"
+                  href="/group-information"
+                  icon="/images/icon-information.svg"
+                />
               </GroupActions>
             </ListItem>
           ))}
