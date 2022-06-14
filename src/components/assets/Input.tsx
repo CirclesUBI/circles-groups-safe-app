@@ -1,3 +1,4 @@
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import { Tooltip } from '@/src/components/assets/Tooltip'
@@ -50,7 +51,7 @@ interface Props {
   placeholder?: string
   type?: string
   information?: string
-  icon?: object
+  icon?: ReactNode
 }
 
 export const Input: React.FC<Props> = ({
