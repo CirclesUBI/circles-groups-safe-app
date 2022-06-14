@@ -41,6 +41,7 @@ interface Props {
   placeholder?: string
   type?: string
   information?: string
+  value?: string
 }
 
 export const Input: React.FC<Props> = ({
@@ -50,6 +51,7 @@ export const Input: React.FC<Props> = ({
   name = '',
   placeholder = '',
   type = 'text',
+  value = '',
 }) => {
   return (
     <Wrapper>
@@ -59,7 +61,7 @@ export const Input: React.FC<Props> = ({
         </strong>
         {information && <Tooltip text={information} />}
       </LabelText>
-      <InputField name={name ? name : label} placeholder={placeholder} type={type} />
+      <InputField name={name ? name : label} placeholder={placeholder} type={type} value={value} />
     </Wrapper>
   )
 }
