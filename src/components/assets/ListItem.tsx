@@ -14,11 +14,13 @@ const Li = styled.li`
     border-bottom: 1px solid #e0e0e0;
     padding-bottom: ${({ theme }) => theme.general.space * 3}px;
   }
-  &:nth-child(3n + 2) > div > div:first-child {
-    background-color: ${({ theme }) => theme.colors.fifth};
-  }
-  &:nth-child(3n + 3) > div > div:first-child {
-    background-color: ${({ theme }) => theme.colors.tertiary};
+  &:not(.noColors) {
+    &:nth-child(3n + 2) > div > div:first-child {
+      background-color: ${({ theme }) => theme.colors.fifth};
+    }
+    &:nth-child(3n + 3) > div > div:first-child {
+      background-color: ${({ theme }) => theme.colors.tertiary};
+    }
   }
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     flex-direction: row;
@@ -27,13 +29,15 @@ const Li = styled.li`
 
 interface Props {
   custom?: number
+  unsetColors?: boolean
 }
 
-export const ListItem: React.FC<Props> = ({ children, custom = '' }) => {
+export const ListItem: React.FC<Props> = ({ children, custom = '', unsetColors = false }) => {
   return (
     <Li
       animate={{ opacity: 1 }}
       as={motion.li}
+      className={unsetColors ? 'noColors' : 'withColors'}
       exit={{ opacity: 0 }}
       initial={{ opacity: 0 }}
       key={custom}

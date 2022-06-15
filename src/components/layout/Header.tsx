@@ -61,6 +61,13 @@ const ButtonIcon = styled.button`
   position: relative;
 `
 
+const ButtonLink = styled.a`
+  display: block;
+  width: 24px;
+  position: relative;
+  flex-shrink: 0;
+`
+
 const StartWrapper = styled.div`
   align-items: center;
   display: flex;
@@ -166,9 +173,11 @@ export const Header: React.FC = (props) => {
             )}
           </EndWrapper>
         </WrapperBox>
-        <ButtonIcon>
-          <Alert alerts={4} />
-        </ButtonIcon>
+        <Link href="/activity-log" passHref>
+          <ButtonLink>
+            <Alert alerts={4} />
+          </ButtonLink>
+        </Link>
       </Wrapper>
       <motion.nav animate={isOpen ? 'open' : 'closed'} initial={false}>
         <AnimatePresence>
