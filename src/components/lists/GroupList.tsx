@@ -40,7 +40,6 @@ const GroupActions = styled.div`
   flex-shrink: 0;
   margin-top: ${({ theme }) => theme.general.space / 2}px;
   justify-content: end;
-  width: 100%;
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     width: auto;
   }

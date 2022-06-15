@@ -7,7 +7,10 @@ const Wrapper = styled.section`
   align-items: center;
   justify-content: center;
   display: flex;
-  margin: ${({ theme }) => theme.general.space * 4}px 0;
+  margin: ${({ theme }) => theme.general.space * 4}px
+    ${({ theme }) => (theme.general.space / 2) * -1}px 0;
+  padding-bottom: ${({ theme }) => theme.general.space * 6}px;
+  overflow: hidden;
 `
 
 const Circle = styled.div`
@@ -68,9 +71,7 @@ const CreateButton = styled.a`
   background-color: ${({ theme }) => theme.colors.white};
   bottom: 0;
   border-radius: 50%;
-  box-shadow: 0px 100px 80px rgba(0, 0, 0, 0.07), 0px 64.8148px 46.8519px rgba(0, 0, 0, 0.0531481),
-    0px 38.5185px 25.4815px rgba(0, 0, 0, 0.0425185), 0px 20px 13px rgba(0, 0, 0, 0.035),
-    0px 8.14815px 6.51852px rgba(0, 0, 0, 0.0274815),
+  box-shadow: 0px 20px 13px rgba(0, 0, 0, 0.035), 0px 8.14815px 6.51852px rgba(0, 0, 0, 0.0274815),
     0px 1.85185px 3.14815px rgba(0, 0, 0, 0.0168519);
   justify-content: center;
   left: 0;

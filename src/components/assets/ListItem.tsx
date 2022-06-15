@@ -3,11 +3,11 @@ import styled from 'styled-components'
 import { motion } from 'framer-motion'
 
 const Li = styled.li`
-  align-items: center;
+  align-items: flex-start;
   list-style: none;
   margin: 0 ${({ theme }) => theme.general.space * 2}px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-between;
   gap: ${({ theme }) => theme.general.space * 3}px;
   &:not(:last-child) {
@@ -23,6 +23,7 @@ const Li = styled.li`
     }
   }
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    align-items: center;
     flex-direction: row;
   }
 `
