@@ -11,6 +11,7 @@ import { Alert } from '@/src/components/assets/Alert'
 import { MenuIcon } from '@/src/components/assets/MenuIcon'
 import { MainMenu } from '@/src/components/navigation/MainMenu'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
+import { activity } from '@/src/constants/activity'
 import { chainsConfig } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
@@ -175,7 +176,7 @@ export const Header: React.FC = (props) => {
         </WrapperBox>
         <Link href="/activity-log" passHref>
           <ButtonLink>
-            <Alert alerts={4} />
+            <Alert alerts={activity.length} />
           </ButtonLink>
         </Link>
       </Wrapper>
