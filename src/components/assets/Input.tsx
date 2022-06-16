@@ -59,7 +59,7 @@ interface Props {
   information?: string
   icon?: ReactNode
   setValue?: (value: string) => void
-  value: string
+  value?: string
 }
 
 export const Input: React.FC<Props> = ({
@@ -72,7 +72,7 @@ export const Input: React.FC<Props> = ({
   placeholder = '',
   setValue,
   type = 'text',
-  value,
+  value = '',
 }) => {
   console.log(typeof icon)
   return (
