@@ -1,8 +1,7 @@
-import useTransaction from './useTransaction'
 import groupCurrencyTokenFactory from '@/src/abis/GroupCurrencyTokenFactory.json'
+import useTransaction, { UseTransactionReturn } from '@/src/hooks/useTransaction'
 import { addresses } from '@/src/utils/addresses'
 import { GroupCurrencyTokenFactory } from '@/types/typechain'
-import { UseTransactionReturn } from '@/types/utils'
 
 export function useCreateGroupTx<
   MethodName extends keyof GroupCurrencyTokenFactory['functions'],

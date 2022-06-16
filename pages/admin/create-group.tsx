@@ -34,25 +34,28 @@ const CreateGroup: NextPage = () => {
   const [groupSymbol, setGroupSymbol] = useState<string>('')
   const [fee, setFee] = useState<string>('0')
   const [treasury, setTreasury] = useState<string>('')
-  const [disable, setDisable] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
 
   const router = useRouter()
+
+  const onSuccess = () => {
+    router.push('/')
+  }
   const createGroup = async () => {
-    try {
-      setDisable(true)
-      await execute([
+    setLoading(true)
+    await execute(
+      [
         addresses.gnosis.HUB.address, // @TODO Should work for other networks, not just gnosis
         treasury,
         safe.safeAddress,
         BigNumber.from(fee || '0'),
         groupName,
         groupSymbol,
-      ])
-      router.push(`/`)
-    } catch (e: any) {
-      setDisable(false)
-      console.error(e)
-    }
+      ],
+      undefined,
+      onSuccess,
+    )
+    setLoading(false)
   }
 
   return (
@@ -100,7 +103,7 @@ const CreateGroup: NextPage = () => {
           />
         </Columns>
         <ActionWrapper>
-          <ButtonSecondary disabled={disable} onClick={createGroup}>
+          <ButtonSecondary disabled={loading} onClick={createGroup}>
             Create Group
           </ButtonSecondary>
         </ActionWrapper>
