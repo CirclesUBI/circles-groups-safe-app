@@ -31,7 +31,7 @@ const InputField = styled.input`
       border: 1px solid rgba(233, 232, 221, 0.7);
       background: ${({ theme }) => theme.colors.white};
       color: ${({ theme }) => theme.colors.primary};
-      outline: ${({ theme }) => theme.colors.primary} auto 1px;
+      outline: none;
       box-shadow: 0px 0px 1px 1px ${({ theme }) => theme.colors.primary};
     }
   }
