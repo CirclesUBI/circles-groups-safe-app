@@ -6,6 +6,7 @@ import {
   RPC_URL_GNOSIS,
   RPC_URL_KOVAN,
   RPC_URL_MAINNET,
+  SUBGRAPH_API,
 } from '@/src/constants/misc'
 import { ObjectValues } from '@/types/utils'
 
@@ -28,6 +29,7 @@ export type ChainConfig = {
   rpcUrl: string
   blockExplorerUrls: string[]
   iconUrls: string[]
+  subgraphApi: string
 }
 
 // Default chain id from env var
@@ -43,17 +45,8 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     rpcUrl: RPC_URL_MAINNET,
     blockExplorerUrls: ['https://etherscan.io/'],
     iconUrls: [],
+    subgraphApi: '',
   },
-  // [Chains.goerli]: {
-  //   id: Chains.goerli,
-  //   name: 'Görli Testnet',
-  //   shortName: 'Goerli',
-  //   chainId: Chains.goerli,
-  //   chainIdHex: '0x5',
-  //   rpcUrl: RPC_URL_GOERLI,
-  //   blockExplorerUrls: ['https://goerli.etherscan.io/'],
-  //   iconUrls: [],
-  // },
   [Chains.kovan]: {
     id: Chains.kovan,
     name: 'Kovan',
@@ -63,6 +56,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     rpcUrl: RPC_URL_KOVAN,
     blockExplorerUrls: ['https://kovan.etherscan.io/'],
     iconUrls: [],
+    subgraphApi: '',
   },
   [Chains.gnosis]: {
     id: Chains.gnosis,
@@ -73,6 +67,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     rpcUrl: RPC_URL_GNOSIS,
     blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
     iconUrls: [],
+    subgraphApi: SUBGRAPH_API,
   },
 }
 
