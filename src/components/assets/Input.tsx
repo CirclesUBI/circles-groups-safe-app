@@ -65,7 +65,6 @@ export const Input: React.FC<Props> = ({
   type = 'text',
   value = '',
 }) => {
-  console.log(typeof icon)
   return (
     <Wrapper>
       <LabelText>

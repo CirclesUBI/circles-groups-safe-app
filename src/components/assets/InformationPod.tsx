@@ -96,7 +96,7 @@ export const InformationPod: React.FC<Props> = ({
           <Value>{text}</Value>
         </Information>
         {owner && (
-          <Link href="/admin/group-configurationn" passHref>
+          <Link href="/admin/group-configuration" passHref>
             <LinkCanEdit>
               <Image alt="Configuration" height={12} src="/images/icon-edit.svg" width={12} />
             </LinkCanEdit>
