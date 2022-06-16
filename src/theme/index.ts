@@ -37,6 +37,7 @@ export const theme = {
     borderRadius: '12px',
   },
   colors: {
+    success: fourth,
     error: error,
     alert: alert,
     mainBodyBackground: '#fff',
