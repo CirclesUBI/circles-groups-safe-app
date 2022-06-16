@@ -13,6 +13,10 @@ const ActionItemLink = styled.a<{ color: string }>`
   strong {
     font-size: 1.2rem;
     font-weight: 500;
+    display: none;
+    @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+      display: inline-block;
+    }
   }
   img {
     transition: all 0.3s ease-in-out;

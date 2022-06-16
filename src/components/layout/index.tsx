@@ -34,7 +34,7 @@ const Wrapper = styled.div<{ isAdminLayout: boolean }>`
 
 export const Layout: React.FC = ({ children }) => {
   const router = useRouter()
-
+  const showMenu = router.pathname === '/activity-log' ? false : true
   const isAdminLayout = useMemo(() => router.pathname.includes('admin'), [router])
 
   const easing = [0.175, 0.85, 0.42, 0.96]
@@ -67,7 +67,7 @@ export const Layout: React.FC = ({ children }) => {
   return (
     <Wrapper isAdminLayout={isAdminLayout}>
       <Header />
-      <NavMenu isAdminLayout={isAdminLayout} />
+      {showMenu && <NavMenu isAdminLayout={isAdminLayout} />}
       <AnimatePresence>
         <InnerContainer
           animate="enter"

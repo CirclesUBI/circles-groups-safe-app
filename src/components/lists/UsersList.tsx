@@ -20,6 +20,7 @@ const GroupInfo = styled.div`
   align-items: center;
   gap: ${({ theme }) => theme.general.space * 2}px;
   h3 {
+    word-break: break-word;
     color: ${({ theme }) => theme.colors.primary};
     font-size: 1.6rem;
     font-weight: 700;
@@ -34,6 +35,7 @@ const GroupInfo = styled.div`
 const ImageWrapper = styled.div`
   border-radius: 50%;
   height: 40px;
+  flex-shrink: 0;
   overflow: hidden;
   position: relative;
   width: 40px;
@@ -46,7 +48,6 @@ const GroupActions = styled.div`
   flex-shrink: 0;
   margin-top: ${({ theme }) => theme.general.space / 2}px;
   justify-content: end;
-  width: 100%;
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     width: auto;
   }
