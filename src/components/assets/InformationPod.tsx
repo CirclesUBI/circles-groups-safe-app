@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
+import React, { ReactNode } from 'react'
 import styled from 'styled-components'
 
 const InformationBlock = styled.div<{ bgColor: string }>`
@@ -77,12 +77,12 @@ interface Props {
   bgColor?: string
   owner?: boolean
   circles?: boolean
-  icon?: object
+  icon?: ReactNode
 }
 
 export const InformationPod: React.FC<Props> = ({
   bgColor = 'lightest',
-  icon = '',
+  icon,
   label,
   owner = false,
   text,
