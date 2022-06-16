@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-// import { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 import styled from 'styled-components'
 
@@ -36,30 +36,23 @@ const CreateGroup: NextPage = () => {
   const [treasury, setTreasury] = useState<string>('')
   const [disable, setDisable] = useState<boolean>(false)
 
-  // const router = useRouter()
+  const router = useRouter()
   const createGroup = async () => {
-    setDisable(true)
-    const contractReceipt = await execute([
-      addresses.gnosis.HUB.address, // @TODO Should work for other networks, not just gnosis
-      treasury,
-      safe.safeAddress,
-      BigNumber.from(fee || '0'),
-      groupName,
-      groupSymbol,
-    ])
-    console.log({ contractReceipt })
-    // diving into contractReceipt for GroupCurrencyToken's entity id
-    // console.log(contractReceipt.events[2].args[0])
-    // const groupId = contractReceipt.events[2].args[0]
-    // router.push(`/admin/group-list/`)
-    // redirect to:
-    // * Groups List?
-    // * Members List?
-    // * Group Info?
-    // * Group Configuration?
-    // router.push(`/admin/group-members/${groupId}`)
-    // router.push(`/admin/group/${groupId}`)
-    // router.push(`/admin/group-configuration/${groupId}`)
+    try {
+      setDisable(true)
+      await execute([
+        addresses.gnosis.HUB.address, // @TODO Should work for other networks, not just gnosis
+        treasury,
+        safe.safeAddress,
+        BigNumber.from(fee || '0'),
+        groupName,
+        groupSymbol,
+      ])
+      router.push(`/`)
+    } catch (e: any) {
+      setDisable(false)
+      console.error(e)
+    }
   }
 
   return (
