@@ -9,6 +9,7 @@ import 'sanitize.css'
 
 import { Layout } from '@/src/components/layout'
 import SafeSuspense from '@/src/components/safeSuspense'
+import Toast from '@/src/components/toast/Toast'
 import { theme } from '@/src/theme'
 import { GlobalStyle } from '@/src/theme/globalStyle'
 
@@ -57,6 +58,7 @@ function App({ Component, pageProps }: AppProps) {
               <GlobalStyle />
               <SafeSuspense>
                 <Layout>
+                  <Toast />
                   <Component {...pageProps} />
                 </Layout>
               </SafeSuspense>
