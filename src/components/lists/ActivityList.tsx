@@ -45,8 +45,6 @@ export const ActivityList: React.FC = () => {
   const filteredItemsNum = activity.length
   const totalPages = Math.ceil(filteredItemsNum / itemsPerPage)
 
-  console.log(activity.length)
-
   return (
     <List>
       <ListContainer>

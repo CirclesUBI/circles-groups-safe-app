@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import styled from 'styled-components'
 
 import { AnimatePresence, motion } from 'framer-motion'
@@ -35,7 +35,6 @@ const Wrapper = styled.div<{ isAdminLayout: boolean }>`
 export const Layout: React.FC = ({ children }) => {
   const router = useRouter()
   const showMenu = router.pathname === '/activity-log' ? false : true
-  const [showMainMenu, setMainMenu] = useState(true)
   const isAdminLayout = useMemo(() => router.pathname.includes('admin'), [router])
 
   const easing = [0.175, 0.85, 0.42, 0.96]
