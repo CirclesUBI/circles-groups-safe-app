@@ -44,7 +44,7 @@ const Section = styled.section`
 `
 
 const HomeAdmin: NextPage = () => {
-  // @TODO: use a default group to fetch the members
+  // @TODO: use a default group to fetch the members instead of this hardcoded group
   const groupId = '0x8c767b35123496469b21af9df28b1927b77441a7'
   const { data } = useGroupMembers(groupId)
   const count = data?.length ?? 0
@@ -59,7 +59,6 @@ const HomeAdmin: NextPage = () => {
     action: '',
     user: 0,
   })
-  const usersNumber = usersGroup.length
 
   function notificationInfo(openedValue: boolean, actionValue: string, userValue: number) {
     setNotification({
@@ -171,7 +170,7 @@ const HomeAdmin: NextPage = () => {
                   <Tab key={`tab_${index}`} onClick={() => setSelectedTab({ text })}>
                     <span className={selectedTab.text == text ? 'active' : 'inactive'}>
                       <>
-                        {text} {text == 'Members' && '(' + usersNumber + ')'}
+                        {text} {text == 'Members' && '(' + count + ')'}
                       </>
                     </span>
                   </Tab>
