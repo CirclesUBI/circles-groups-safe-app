@@ -12,9 +12,10 @@
     "start": "next start",
     "typechain": "typechain --target=ethers-v5 ./src/abis/**/*.json --out-dir ./types/typechain/",
     "schema": "bash scripts/apollo-schema.sh",
-    "postinstall": "yarn typechain"
+    "postinstall": "yarn typechain && yarn schema"
   },
   "dependencies": {
+    "@ethersproject/address": "^5.6.1",
     "@ethersproject/bignumber": "^5.4.1",
     "@ethersproject/contracts": "^5.5.0",
     "@ethersproject/providers": "^5.4.5",
