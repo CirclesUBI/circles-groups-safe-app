@@ -7,10 +7,24 @@ import {
   GroupCurrencyTokensVariables,
 } from '@/types/subgraph/__generated__/GroupCurrencyTokens'
 
-export const fetchGroupCurrencyTokens = () =>
-  graphqlFetcher<GroupCurrencyTokens, GroupCurrencyTokensVariables>(GROUP_CURRENCY_TOKEN_QUERY)
+export type GroupCurrencyToken = {
+  name: string
+  members: Array<any>
+}
+
+export const fetchGroupCurrencyTokens = async () => {
+  const { groupCurrencyTokens } = await graphqlFetcher<
+    GroupCurrencyTokens,
+    GroupCurrencyTokensVariables
+  >(GROUP_CURRENCY_TOKEN_QUERY)
+  const groups = groupCurrencyTokens.map((group) => ({
+    name: group.name,
+    members: [],
+  }))
+  return groups as GroupCurrencyToken[]
+}
 
 export const useGroupCurrencyTokens = () => {
   const { data, error, mutate } = useSWR(['groupCurrencyTokens'], () => fetchGroupCurrencyTokens())
-  return { groupCurrencyTokens: data, error, refetch: mutate, loading: !error && !data }
+  return { groups: data ?? [], error, refetch: mutate, loading: !error && !data }
 }

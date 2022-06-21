@@ -7,7 +7,7 @@ import { ListContainer } from '@/src/components/assets/ListContainer'
 import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
 import { SearchInput } from '@/src/components/assets/SearchInput'
-import { groups } from '@/src/constants/groups'
+import { GroupCurrencyToken } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 
 const List = styled.div`
   display: flex;
@@ -48,24 +48,15 @@ const GroupActions = styled.div`
 
 interface Props {
   filter: string
+  groups: Array<GroupCurrencyToken>
 }
 
-export const GroupList: React.FC<Props> = ({ filter }) => {
+export const GroupList: React.FC<Props> = ({ filter, groups }) => {
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
 
-  const filteredItems = useMemo(
-    () =>
-      groups.filter((group) => {
-        if (filter === '') {
-          return group
-        } else if (group.status.toLowerCase().includes(filter.toLowerCase())) {
-          return group
-        }
-      }),
-    [filter],
-  )
+  const filteredItems = groups
 
   const filteredItemsNum = filteredItems.length
   const totalPages = Math.ceil(filteredItemsNum / itemsPerPage)
@@ -78,18 +69,18 @@ export const GroupList: React.FC<Props> = ({ filter }) => {
           .filter((group) => {
             if (query === '') {
               return group
-            } else if (group.title.toLowerCase().includes(query.toLowerCase())) {
+            } else if (group.name.toLowerCase().includes(query.toLowerCase())) {
               return group
             }
           })
           .slice(0, page * itemsPerPage)
-          .map(({ members, title }, index) => (
+          .map(({ members, name }, index) => (
             <ListItem key={`group_${index}`}>
               <GroupInfo>
-                <FirstLetter character={title.charAt(0)} />
+                <FirstLetter character={name.charAt(0)} />
                 <div>
-                  <h3>{title}</h3>
-                  <p>{members} members</p>
+                  <h3>{name}</h3>
+                  <p>{members.length} members</p>
                 </div>
               </GroupInfo>
               <GroupActions>
