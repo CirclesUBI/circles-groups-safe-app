@@ -46,8 +46,8 @@ const Section = styled.section`
 const HomeAdmin: NextPage = () => {
   // @TODO: use a default group to fetch the members instead of this hardcoded group
   const groupId = '0x8c767b35123496469b21af9df28b1927b77441a7'
-  const { data } = useGroupMembers(groupId)
-  const count = data?.length ?? 0
+  const { groupMembers } = useGroupMembers(groupId)
+  const groupMembersCount = groupMembers?.length ?? 0
 
   const tabs = [{ text: 'Members' }, { text: 'Add members' }]
   const [selectedTab, setSelectedTab] = useState(tabs[0])
@@ -99,7 +99,7 @@ const HomeAdmin: NextPage = () => {
 
   function getUserNameMyGroupList(userID: number) {
     // get user name from group list
-    const user = data?.find((user) => user.id === userID)
+    const user = groupMembers.find((user) => user.id === userID)
     return user?.username ?? ''
   }
 
@@ -142,7 +142,7 @@ const HomeAdmin: NextPage = () => {
           )}
         </AnimatePresence>
       )}
-      {count == 0 ? (
+      {groupMembersCount == 0 ? (
         <>
           <Title
             buttonHref="/admin/create-group"
@@ -170,7 +170,7 @@ const HomeAdmin: NextPage = () => {
                   <Tab key={`tab_${index}`} onClick={() => setSelectedTab({ text })}>
                     <span className={selectedTab.text == text ? 'active' : 'inactive'}>
                       <>
-                        {text} {text == 'Members' && '(' + count + ')'}
+                        {text} {text == 'Members' && '(' + groupMembersCount + ')'}
                       </>
                     </span>
                   </Tab>
@@ -190,13 +190,13 @@ const HomeAdmin: NextPage = () => {
                   <UsersList
                     action={'delete'}
                     onCloseAlert={notificationInfo}
-                    usersGroup={data ?? []}
+                    usersGroup={groupMembers}
                   />
                 ) : (
                   <UsersList
                     action={'add'}
                     onCloseAlert={notificationInfo}
-                    usersGroup={data ?? []}
+                    usersGroup={groupMembers}
                   />
                 )}
               </motion.div>

@@ -40,5 +40,5 @@ export const useGroupMembers = (groupId?: string) => {
     return fetchGroupMembers(groupId)
   })
 
-  return { data, error, refetch: mutate }
+  return { groupMembers: data ?? [], error, refetch: mutate }
 }
