@@ -9,7 +9,7 @@ import {
 
 export type GroupCurrencyToken = {
   name: string
-  members: Array<any>
+  members: Array<any> // TODO define Member's Group type
 }
 
 export const fetchGroupCurrencyTokens = async () => {
@@ -19,7 +19,7 @@ export const fetchGroupCurrencyTokens = async () => {
   >(GROUP_CURRENCY_TOKEN_QUERY)
   const groups = groupCurrencyTokens.map((group) => ({
     name: group.name,
-    members: [],
+    members: group.members,
   }))
   return groups as GroupCurrencyToken[]
 }

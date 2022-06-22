@@ -15,6 +15,12 @@ export const GROUP_CURRENCY_TOKEN_QUERY = gql`
       suspended
       onlyOwnerCanMint
       onlyTrustedCanMint
+      members {
+        id
+        safe {
+          id
+        }
+      }
     }
   }
 `
