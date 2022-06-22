@@ -11,6 +11,7 @@ import { TitleGroup } from '@/src/components/assets/TitleGroup'
 import { UsersList } from '@/src/components/lists/UsersList'
 import { allUsers } from '@/src/constants/allUsers'
 import { users } from '@/src/constants/users'
+import { useGroupMembers } from '@/src/hooks/subgraph/useGroupMembers'
 
 const Nav = styled.nav`
   align-items: center;
@@ -43,7 +44,10 @@ const Section = styled.section`
 `
 
 const HomeAdmin: NextPage = () => {
-  const [count, setCount] = useState(0)
+  // @TODO: use a default group to fetch the members instead of this hardcoded group
+  const groupId = '0x8c767b35123496469b21af9df28b1927b77441a7'
+  const { groupMembers } = useGroupMembers(groupId)
+  const groupMembersCount = groupMembers?.length ?? 0
 
   const tabs = [{ text: 'Members' }, { text: 'Add members' }]
   const [selectedTab, setSelectedTab] = useState(tabs[0])
@@ -55,7 +59,6 @@ const HomeAdmin: NextPage = () => {
     action: '',
     user: 0,
   })
-  const usersNumber = usersGroup.length
 
   function notificationInfo(openedValue: boolean, actionValue: string, userValue: number) {
     setNotification({
@@ -96,9 +99,8 @@ const HomeAdmin: NextPage = () => {
 
   function getUserNameMyGroupList(userID: number) {
     // get user name from group list
-    const getUser = usersGroup.filter((user) => user.id == userID)
-    const getUserName = getUser[0].name
-    return getUserName
+    const user = groupMembers.find((user) => user.id === userID)
+    return user?.username ?? ''
   }
 
   return (
@@ -140,7 +142,7 @@ const HomeAdmin: NextPage = () => {
           )}
         </AnimatePresence>
       )}
-      {count == 0 ? (
+      {groupMembersCount == 0 ? (
         <>
           <Title
             buttonHref="/admin/create-group"
@@ -153,7 +155,6 @@ const HomeAdmin: NextPage = () => {
             href="/admin/create-group"
             text="You don't have any group created yet."
           />
-          <button onClick={() => setCount(count + 1)}>Add a group</button>
         </>
       ) : (
         <>
@@ -169,7 +170,7 @@ const HomeAdmin: NextPage = () => {
                   <Tab key={`tab_${index}`} onClick={() => setSelectedTab({ text })}>
                     <span className={selectedTab.text == text ? 'active' : 'inactive'}>
                       <>
-                        {text} {text == 'Members' && '(' + usersNumber + ')'}
+                        {text} {text == 'Members' && '(' + groupMembersCount + ')'}
                       </>
                     </span>
                   </Tab>
@@ -189,10 +190,14 @@ const HomeAdmin: NextPage = () => {
                   <UsersList
                     action={'delete'}
                     onCloseAlert={notificationInfo}
-                    usersGroup={usersGroup}
+                    usersGroup={groupMembers}
                   />
                 ) : (
-                  <UsersList action={'add'} onCloseAlert={notificationInfo} usersGroup={usersAll} />
+                  <UsersList
+                    action={'add'}
+                    onCloseAlert={notificationInfo}
+                    usersGroup={groupMembers}
+                  />
                 )}
               </motion.div>
             </AnimatePresence>
