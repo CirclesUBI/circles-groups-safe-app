@@ -77,9 +77,9 @@ const Home: NextPage = () => {
             transition={{ duration: 0.2 }}
           >
             {selectedTab.text == 'My Groups' ? (
-              <GroupList filter="member" groups={groups} />
+              <GroupList groups={groups} />
             ) : (
-              <GroupList filter="" groups={groups} />
+              <GroupList groups={groups} />
             )}
           </motion.div>
         </AnimatePresence>

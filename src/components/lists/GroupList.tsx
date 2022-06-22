@@ -47,11 +47,10 @@ const GroupActions = styled.div`
 `
 
 interface Props {
-  filter: string
   groups: Array<GroupCurrencyToken>
 }
 
-export const GroupList: React.FC<Props> = ({ filter, groups }) => {
+export const GroupList: React.FC<Props> = ({ groups }) => {
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
