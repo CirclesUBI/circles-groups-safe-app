@@ -15,7 +15,7 @@ const Badge = styled.span`
   height: 15px;
   justify-content: center;
   position: absolute;
-  right: -8px;
+  right: -4px;
   top: -4px;
   width: 15px;
 `

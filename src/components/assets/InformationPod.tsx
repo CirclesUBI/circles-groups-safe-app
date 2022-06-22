@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
+import React, { ReactNode } from 'react'
 import styled from 'styled-components'
 
 const InformationBlock = styled.div<{ bgColor: string }>`
@@ -41,11 +41,17 @@ const TextWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: ${({ theme }) => theme.general.space * 2}px;
 `
-const Information = styled.span`
+const Information = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.general.space / 2}px;
+`
+const Value = styled.p`
+  flex-shrink: 1;
+  margin: 0;
+  word-break: break-word;
 `
 const LinkCanEdit = styled.a`
   align-items: center;
@@ -57,6 +63,7 @@ const LinkCanEdit = styled.a`
   height: 22px;
   justify-content: center;
   width: 22px;
+  flex-shrink: 0;
   &:hover {
     background-color: ${({ theme }) => theme.colors.secondary};
     border: 2px solid ${({ theme }) => theme.colors.secondary};
@@ -69,11 +76,12 @@ interface Props {
   bgColor?: string
   owner?: boolean
   circles?: boolean
+  icon?: ReactNode
 }
 
 export const InformationPod: React.FC<Props> = ({
   bgColor = 'lightest',
-  circles = false,
+  icon,
   label,
   owner = false,
   text,
@@ -83,11 +91,11 @@ export const InformationPod: React.FC<Props> = ({
       {label && <small>{label}</small>}
       <TextWrapper>
         <Information>
-          {circles && <Image alt="Configuration" height={12} src="/images/crc.svg" width={12} />}
-          {text}
+          {icon}
+          <Value>{text}</Value>
         </Information>
         {owner && (
-          <Link href="/admin/admin-configuration" passHref>
+          <Link href="/admin/group-configuration" passHref>
             <LinkCanEdit>
               <Image alt="Configuration" height={12} src="/images/icon-edit.svg" width={12} />
             </LinkCanEdit>

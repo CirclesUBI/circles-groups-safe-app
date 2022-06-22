@@ -40,7 +40,6 @@ const GroupActions = styled.div`
   flex-shrink: 0;
   margin-top: ${({ theme }) => theme.general.space / 2}px;
   justify-content: end;
-  width: 100%;
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     width: auto;
   }
@@ -89,7 +88,11 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
                   icon="/images/icon-send.svg"
                   text="Mint tokens"
                 />
-                <ActionItem color="third" href="/" icon="/images/icon-information.svg" />
+                <ActionItem
+                  color="third"
+                  href="/group-information"
+                  icon="/images/icon-information.svg"
+                />
               </GroupActions>
             </ListItem>
           ))}

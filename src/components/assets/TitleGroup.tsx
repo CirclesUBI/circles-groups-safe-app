@@ -7,11 +7,16 @@ import { FirstLetter } from '@/src/components/assets/FirstLetter'
 
 const TitleWrapper = styled.div`
   align-items: flex-start;
-  justify-content: space-between;
   display: flex;
+  flex-direction: column;
   gap: ${({ theme }) => theme.general.space * 2}px;
+  justify-content: end;
   padding: 0 ${({ theme }) => theme.general.space * 2}px ${({ theme }) => theme.general.space * 4}px;
-  border-bottom: 1px solid #e0e0e0; ;
+  border-bottom: 1px solid #e0e0e0;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    justify-content: space-between;
+    flex-direction: row;
+  }
 `
 
 const TitleInformation = styled.div`
@@ -35,7 +40,12 @@ const GroupInformation = styled.h4`
 const Actions = styled.div`
   align-items: center;
   display: flex;
+  justify-content: end;
   gap: ${({ theme }) => theme.general.space}px;
+  width: 100%;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    width: auto;
+  }
 `
 
 const LinkConfiguration = styled.a`

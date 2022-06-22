@@ -51,7 +51,10 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     line-height: 1.2;
   }
   h1{
-    font-size: 3.6rem;
+    font-size: 3.2rem;
+    @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+      font-size: 3.6rem;
+    }
   }
   h3{
 

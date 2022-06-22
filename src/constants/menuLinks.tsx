@@ -13,6 +13,6 @@ export const menuLinks = [
   },
   {
     title: 'Wallet connect',
-    href: '/',
+    href: '/admin/wallet-connect',
   },
 ]

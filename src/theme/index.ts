@@ -37,6 +37,7 @@ export const theme = {
     borderRadius: '12px',
   },
   colors: {
+    success: fourth,
     error: error,
     alert: alert,
     mainBodyBackground: '#fff',
@@ -91,5 +92,12 @@ export const theme = {
     tabletPortraitStart: '481px',
     desktopStart: '1025px',
     tabletLandscapeStart: '769px',
+  },
+  toast: {
+    borderRadius: borderRadius,
+    borderStyle: 'solid',
+    borderWidth: '0.5px',
+    backgroundColor: gray,
+    boxShadow: '0px 0px 10px rgba(255, 255, 255, 0.25)',
   },
 }
