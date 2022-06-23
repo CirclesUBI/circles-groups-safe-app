@@ -8,6 +8,8 @@ import { CloseButton } from '@/src/components/assets/CloseButton'
 import { User } from '@/src/components/assets/User'
 import { MainMenuWrapper } from '@/src/components/layout/MainMenuWrapper'
 import { MenuItem } from '@/src/components/navigation/MenuItem'
+import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { createdGroups } from '@/src/constants/createdGroups'
 import { menuLinks } from '@/src/constants/menuLinks'
 
 const MenuHeader = styled.nav`
@@ -27,7 +29,7 @@ const HomeLink = styled.a`
   }
 `
 
-const LinksList = styled.ul`
+const LinksList = styled.div`
   color: ${({ theme: { colors } }) => colors.primary};
   display: flex;
   flex-direction: column;
@@ -35,6 +37,21 @@ const LinksList = styled.ul`
   padding: 0 ${({ theme }) => theme.general.space * 2}px;
   width: 100%;
 `
+
+const MyGroups = styled.div`
+  align-items: center;
+  background: rgba(233, 232, 221, 0.5);
+  border-radius: ${({ theme }) => theme.general.space}px;
+  padding: ${({ theme }) => theme.general.space * 6}px 0 ${({ theme }) => theme.general.space * 6}px;
+  width: 100%;
+  h4 {
+    font-weight: 400;
+  }
+`
+const NoGroupMessage = styled.h3`
+  max-width: 24rem;
+`
+
 type Props = {
   onClose: () => void
 }
@@ -77,6 +94,34 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
             ))}
           </AnimatePresence>
         </LinksList>
+
+        <MyGroups>
+          {createdGroups.length > 0 ? (
+            <LinksList as={motion.div} variants={variants}>
+              <AnimatePresence>
+                <h4>{createdGroups.length == 1 ? 'My created group' : 'My created groups'}</h4>
+                {createdGroups.map(({ title }, index) => (
+                  <MenuItem
+                    closeMenu={() => onClose()}
+                    href="/admin"
+                    key={`links_${index}`}
+                    title={title}
+                  />
+                ))}
+              </AnimatePresence>
+              <Link href="/admin/create-group" passHref>
+                <LinkButton onClick={() => onClose()}>Create new group</LinkButton>
+              </Link>
+            </LinksList>
+          ) : (
+            <LinksList>
+              <NoGroupMessage>You don't have any group created yet.</NoGroupMessage>
+              <Link href="/admin/create-group" passHref>
+                <LinkButton onClick={() => onClose()}>Create new group</LinkButton>
+              </Link>
+            </LinksList>
+          )}
+        </MyGroups>
       </MainMenuWrapper>
     </>
   )

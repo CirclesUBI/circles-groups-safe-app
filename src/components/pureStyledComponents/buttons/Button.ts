@@ -12,6 +12,7 @@ export const ButtonCSS = css`
   border-width: 1px;
   cursor: pointer;
   display: flex;
+  width: min-content;
   font-family: ${({ theme }) => theme.fonts.fontFamily};
   font-size: 1.6rem;
   font-weight: 500;

@@ -54,7 +54,7 @@ export const NavMenu: React.FC<Props> = ({ isAdminLayout }) => {
         <LinkContent className={isAdminLayout ? '' : 'active'}>Groups</LinkContent>
       </Link>
       <Link href="/admin/" passHref>
-        <LinkContent className={isAdminLayout ? 'active' : ''}>Manage groups</LinkContent>
+        <LinkContent className={isAdminLayout ? 'active' : ''}>Manage group</LinkContent>
       </Link>
     </Nav>
   )

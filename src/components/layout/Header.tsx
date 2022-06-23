@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -9,10 +10,12 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 import { Alert } from '@/src/components/assets/Alert'
 import { MenuIcon } from '@/src/components/assets/MenuIcon'
+import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/dropdown/Dropdown'
 import { MainMenu } from '@/src/components/navigation/MainMenu'
-import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonPrimary, LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { activity } from '@/src/constants/activity'
 import { chainsConfig } from '@/src/constants/chains'
+import { createdGroups } from '@/src/constants/createdGroups'
 import { ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { truncateStringInTheMiddle } from '@/src/utils/tools'
@@ -48,8 +51,15 @@ const HomeLink = styled.span`
 
 const WrapperBox = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   width: ${({ theme }) => theme.general.containerWidth};
+  gap: ${({ theme }) => theme.general.space}px;
+  justify-content: center;
+  align-items: center;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 `
 
 const ButtonIcon = styled.button`
@@ -85,8 +95,58 @@ const UserInfo = styled.div`
   font-size: 1.4rem;
   padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
   position: relative;
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-    font-size: 1.6rem;
+  max-width: 150px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  flex-shrink: 0;
+`
+
+const LinkGroup = styled(LinkButton)`
+  line-height: normal;
+  background-color: ${({ theme }) => theme.colors.fourth};
+  border-color: ${({ theme }) => theme.colors.fourth};
+  padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
+`
+
+const SelectGroup = styled(LinkGroup)`
+  gap: ${({ theme }) => theme.general.space}px;
+  border-radius: ${({ theme }) => theme.general.borderRadius};
+  font-size: 1.4rem;
+  line-height: 1.2;
+  display: flex;
+`
+
+const SelectedGroup = styled.div`
+  max-width: 100px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  flex-shrink: 0;
+`
+
+const Icon = styled.div`
+  flex-shrink: 0;
+`
+
+const UserGroups = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.general.space}px;
+`
+const ItemsList = styled.div`
+  max-height: 50vh;
+  overflow-y: auto;
+`
+
+const CreateLink = styled.a`
+  text-decoration: none;
+  opacity: 0.6;
+  color: ${({ theme }) => theme.colors.primary};
+  display: block;
+  text-align: right;
+  &:hover {
+    opacity: 1;
   }
 `
 
@@ -110,10 +170,14 @@ export const Header: React.FC = (props) => {
   const [balance, setBalance] = useState<{ name: string; balance: string } | undefined>()
 
   const [isOpen, toggleOpen] = useState(false)
-  if (!isOpen) {
-    window.document.body.style.overflow = 'auto'
+  const [isDropDownOpen, setDropDownIsOpen] = useState<boolean>(false)
+  useEffect(() => {
     //Fixme later
-  }
+    if (isOpen) window.document.body.style.overflow = 'hidden'
+    if (!isOpen) {
+      window.document.body.style.overflow = 'auto'
+    }
+  }, [isOpen])
 
   useEffect(() => {
     async function getBalance() {
@@ -168,7 +232,49 @@ export const Header: React.FC = (props) => {
           </StartWrapper>
           <EndWrapper>
             {isWalletConnected ? (
-              <UserInfo>@TomasBari</UserInfo>
+              <UserGroups>
+                <UserInfo>@TomasBari</UserInfo>
+                {createdGroups.length > 1 && (
+                  <Dropdown
+                    dropdownButtonContent={
+                      <SelectGroup>
+                        <SelectedGroup>Bootnode</SelectedGroup>
+                        <Icon>
+                          <Image alt="down" height={5} src="/images/chevron-down.svg" width={9} />
+                        </Icon>
+                      </SelectGroup>
+                    }
+                    dropdownPosition={DropdownPosition.right}
+                    isOpen={isDropDownOpen}
+                    items={[
+                      <React.Fragment key="0">
+                        <h3>My created groups</h3>
+                        <ItemsList>
+                          {createdGroups.map(({ title }, index) => (
+                            <DropdownItem key={index} onClick={() => setDropDownIsOpen(false)}>
+                              {title}
+                            </DropdownItem>
+                          ))}
+                        </ItemsList>
+                        <Link href="/admin/create-group" passHref>
+                          <CreateLink onClick={() => setDropDownIsOpen(false)}>
+                            Create a group
+                          </CreateLink>
+                        </Link>
+                      </React.Fragment>,
+                    ]}
+                    onDropDownClose={() => setDropDownIsOpen(false)}
+                    onDropDownToggle={() =>
+                      setDropDownIsOpen((prevIsDropDownOpen) => !prevIsDropDownOpen)
+                    }
+                  />
+                )}
+                {createdGroups.length == 1 && (
+                  <Link href="/admin" passHref>
+                    <LinkGroup>{createdGroups[0].title}</LinkGroup>
+                  </Link>
+                )}
+              </UserGroups>
             ) : (
               <ButtonPrimary onClick={connectWallet}>Connect</ButtonPrimary>
             )}
