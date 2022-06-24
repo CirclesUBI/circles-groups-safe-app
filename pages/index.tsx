@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Title } from '@/src/components/assets/Title'
 import { GroupList } from '@/src/components/lists/GroupList'
 import { useGroupCurrencyTokens } from '@/src/hooks/subgraph/useGroupCurrencyToken'
+import { useGroupsByMember } from '@/src/hooks/subgraph/useGroupsByMember'
 import { useSafeBalances } from '@/src/hooks/useSafeBalances'
 
 const Nav = styled.nav`
@@ -48,9 +49,15 @@ const Home: NextPage = () => {
   const [balances] = useSafeBalances(sdk)
   console.log({ safe })
   console.log({ connected })
-  console.log({ balances })
+  console.log({ sdk })
 
   const { groups } = useGroupCurrencyTokens()
+  // Will hardcode a profile user until we have member creation flow defined
+  // Group member's ids are composed by subgraph Group id address and the Circles Profile address
+  // Known memberId already created on the subgraph: "0x8c767b35123496469b21af9df28b1927b77441a7-0xdbfe7f6e681cd20254743ce5f9beb01ad1949231"
+  const memberId =
+    '0x8c767b35123496469b21af9df28b1927b77441a7-0xdbfe7f6e681cd20254743ce5f9beb01ad1949231'
+  const { memberGroups } = useGroupsByMember(memberId)
 
   return (
     <>
@@ -77,7 +84,7 @@ const Home: NextPage = () => {
             transition={{ duration: 0.2 }}
           >
             {selectedTab.text == 'My Groups' ? (
-              <GroupList groups={groups} />
+              <GroupList groups={memberGroups} />
             ) : (
               <GroupList groups={groups} />
             )}
