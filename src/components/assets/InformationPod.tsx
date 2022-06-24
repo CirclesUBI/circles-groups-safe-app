@@ -53,7 +53,6 @@ const Value = styled.p`
   margin: 0;
   word-break: break-word;
 `
-
 const LinkCanEdit = styled.a`
   align-items: center;
   background-color: ${({ theme }) => theme.colors.primary};

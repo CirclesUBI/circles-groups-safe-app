@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 import { Title } from '@/src/components/assets/Title'
 import { GroupList } from '@/src/components/lists/GroupList'
+import { useGroupCurrencyTokens } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useSafeBalances } from '@/src/hooks/useSafeBalances'
 
 const Nav = styled.nav`
@@ -49,6 +50,8 @@ const Home: NextPage = () => {
   console.log({ connected })
   console.log({ balances })
 
+  const { groups } = useGroupCurrencyTokens()
+
   return (
     <>
       <div className="groupsMenu">
@@ -74,9 +77,9 @@ const Home: NextPage = () => {
             transition={{ duration: 0.2 }}
           >
             {selectedTab.text == 'My Groups' ? (
-              <GroupList filter="member" />
+              <GroupList groups={groups} />
             ) : (
-              <GroupList filter="" />
+              <GroupList groups={groups} />
             )}
           </motion.div>
         </AnimatePresence>
