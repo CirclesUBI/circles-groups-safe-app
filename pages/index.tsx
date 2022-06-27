@@ -9,7 +9,6 @@ import { Title } from '@/src/components/assets/Title'
 import { GroupList } from '@/src/components/lists/GroupList'
 import { useGroupCurrencyTokens } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useGroupsByMember } from '@/src/hooks/subgraph/useGroupsByMember'
-import { useSafeBalances } from '@/src/hooks/useSafeBalances'
 
 const Nav = styled.nav`
   align-items: center;
@@ -42,22 +41,9 @@ const Section = styled.section``
 const Home: NextPage = () => {
   const tabs = [{ text: 'My Groups' }, { text: 'All Groups' }]
   const [selectedTab, setSelectedTab] = useState(tabs[0])
-  const { connected, safe, sdk } = useSafeAppsSDK()
-
-  // Just exploring SafeApps SDK information and a hook for obtaining Assets balance
-  // @TODO remove console logs and safe balances
-  const [balances] = useSafeBalances(sdk)
-  console.log({ safe })
-  console.log({ connected })
-  console.log({ sdk })
-
+  const { safe } = useSafeAppsSDK()
   const { groups } = useGroupCurrencyTokens()
-  // Will hardcode a profile user until we have member creation flow defined
-  // Group member's ids are composed by subgraph Group id address and the Circles Profile address
-  // Known memberId already created on the subgraph: "0x8c767b35123496469b21af9df28b1927b77441a7-0xdbfe7f6e681cd20254743ce5f9beb01ad1949231"
-  const memberId =
-    '0x8c767b35123496469b21af9df28b1927b77441a7-0xdbfe7f6e681cd20254743ce5f9beb01ad1949231'
-  const { memberGroups } = useGroupsByMember(memberId)
+  const { groupsByMember } = useGroupsByMember(safe.safeAddress)
 
   return (
     <>
@@ -84,7 +70,7 @@ const Home: NextPage = () => {
             transition={{ duration: 0.2 }}
           >
             {selectedTab.text == 'My Groups' ? (
-              <GroupList groups={memberGroups} />
+              <GroupList groups={groupsByMember} />
             ) : (
               <GroupList groups={groups} />
             )}
