@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
@@ -8,11 +9,13 @@ import { formatUnits } from '@ethersproject/units'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Alert } from '@/src/components/assets/Alert'
+import { GroupSelector } from '@/src/components/assets/GroupSelector'
 import { MenuIcon } from '@/src/components/assets/MenuIcon'
 import { MainMenu } from '@/src/components/navigation/MainMenu'
-import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
+import { ButtonPrimary, LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { activity } from '@/src/constants/activity'
 import { chainsConfig } from '@/src/constants/chains'
+import { createdGroups } from '@/src/constants/createdGroups'
 import { ZERO_BN } from '@/src/constants/misc'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { truncateStringInTheMiddle } from '@/src/utils/tools'
@@ -48,8 +51,15 @@ const HomeLink = styled.span`
 
 const WrapperBox = styled.div`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   width: ${({ theme }) => theme.general.containerWidth};
+  gap: ${({ theme }) => theme.general.space}px;
+  justify-content: center;
+  align-items: center;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 `
 
 const ButtonIcon = styled.button`
@@ -85,9 +95,24 @@ const UserInfo = styled.div`
   font-size: 1.4rem;
   padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
   position: relative;
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
-    font-size: 1.6rem;
-  }
+  max-width: 150px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  flex-shrink: 0;
+`
+
+const LinkGroup = styled(LinkButton)`
+  line-height: normal;
+  background-color: ${({ theme }) => theme.colors.fourth};
+  border-color: ${({ theme }) => theme.colors.fourth};
+  padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
+`
+
+const UserGroups = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.general.space}px;
 `
 
 export const Header: React.FC = (props) => {
@@ -110,10 +135,14 @@ export const Header: React.FC = (props) => {
   const [balance, setBalance] = useState<{ name: string; balance: string } | undefined>()
 
   const [isOpen, toggleOpen] = useState(false)
-  if (!isOpen) {
-    window.document.body.style.overflow = 'auto'
+
+  useEffect(() => {
     //Fixme later
-  }
+    if (isOpen) window.document.body.style.overflow = 'hidden'
+    if (!isOpen) {
+      window.document.body.style.overflow = 'auto'
+    }
+  }, [isOpen])
 
   useEffect(() => {
     async function getBalance() {
@@ -168,7 +197,15 @@ export const Header: React.FC = (props) => {
           </StartWrapper>
           <EndWrapper>
             {isWalletConnected ? (
-              <UserInfo>@TomasBari</UserInfo>
+              <UserGroups>
+                <UserInfo>@TomasBari</UserInfo>
+                {createdGroups.length > 1 && <GroupSelector />}
+                {createdGroups.length == 1 && (
+                  <Link href="/admin" passHref>
+                    <LinkGroup>{createdGroups[0].title}</LinkGroup>
+                  </Link>
+                )}
+              </UserGroups>
             ) : (
               <ButtonPrimary onClick={connectWallet}>Connect</ButtonPrimary>
             )}

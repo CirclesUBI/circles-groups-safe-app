@@ -16,7 +16,7 @@ const Wrapper = styled.div<{ fullWidth?: boolean; isOpen: boolean; disabled: boo
   outline: none;
   pointer-events: ${(props) => (props.disabled ? 'none' : 'initial')};
   position: relative;
-  z-index: ${(props) => (props.isOpen ? '100' : '50')};
+  z-index: ${(props) => (props.isOpen ? '100' : '0')};
   ${(props) => props.fullWidth && 'width: 100%;'}
 
   &[disabled] {
@@ -53,7 +53,7 @@ const PositionCenterCSS = css`
 `
 
 const DirectionDownwardsCSS = css`
-  top: calc(100%);
+  top: calc(110%);
 `
 
 const DirectionUpwardsCSS = css`
@@ -66,11 +66,12 @@ const Items = styled.div<{
   isOpen: boolean
 }>`
   background: ${({ theme }) => theme.dropdown.background};
-  border: 1px solid ${({ theme }) => theme.dropdown.borderColor};
+  border: none;
   border-radius: ${({ theme }) => theme.dropdown.borderRadius};
   box-shadow: ${({ theme }) => theme.dropdown.boxShadow};
   display: ${(props) => (props.isOpen ? 'block' : 'none')};
-  min-width: 150px;
+  min-width: 240px;
+  padding: ${({ theme }) => theme.general.space * 4}px ${({ theme }) => theme.general.space * 2}px;
   position: absolute;
   white-space: nowrap;
   width: 100%;
@@ -98,39 +99,45 @@ export const DropdownItemCSS = css<DropdownItemProps>`
   align-items: center;
   background-color: ${({ theme }) => theme.dropdown.item.backgroundColor};
   border-bottom: 1px solid ${({ theme }) => theme.dropdown.item.borderColor};
-  color: ${({ theme }) => theme.dropdown.item.color};
+  color: ${({ theme }) => theme.colors.primary};
   cursor: pointer;
   display: flex;
-  font-size: 1.4rem;
-  font-weight: 300;
+  font-size: 1.6rem;
+  font-weight: 400;
   justify-content: ${(props) => props.justifyContent};
   line-height: 1.2;
   min-height: ${({ theme }) => theme.dropdown.item.height};
   overflow: hidden;
-  padding: 10px 15px;
+  padding: ${({ theme }) => theme.general.space + theme.general.space / 2}px 0;
   text-decoration: none;
-  transition: background-color 0.2s linear;
+  transition: all 0.3s ease-in-out;
   user-select: none;
-
+  &:first-of-type {
+    margin-top: ${({ theme }) => theme.general.space * 2}px;
+  }
+  &:last-of-type {
+    margin-bottom: ${({ theme }) => theme.general.space * 3}px;
+  }
+  &:after {
+    content: '';
+    width: 6px;
+    height: 10px;
+    background-image: url(/images/chevron-right.svg);
+    background-repeat: no-repeat;
+    margin-right: 8px;
+    transition: all 0.3s ease-in-out;
+  }
   &.isActive {
     background-color: ${({ theme }) => theme.dropdown.item.backgroundColorActive};
     color: ${({ theme }) => theme.dropdown.item.colorActive};
     font-weight: 300;
   }
 
-  &:first-child {
-    border-top-left-radius: ${({ theme }) => theme.dropdown.borderRadius};
-    border-top-right-radius: ${({ theme }) => theme.dropdown.borderRadius};
-  }
-
-  &:last-child {
-    border-bottom-left-radius: ${({ theme }) => theme.dropdown.borderRadius};
-    border-bottom-right-radius: ${({ theme }) => theme.dropdown.borderRadius};
-    border-bottom: none;
-  }
-
   &:hover {
-    background-color: ${({ theme }) => theme.dropdown.item.backgroundColorHover};
+    color: ${({ theme }) => theme.colors.fourth};
+    &:after {
+      margin-right: 0;
+    }
   }
 
   &:disabled,
@@ -152,7 +159,7 @@ export const DropdownItem = styled.div<DropdownItemProps>`
 
 DropdownItem.defaultProps = {
   disabled: false,
-  justifyContent: 'flex-start',
+  justifyContent: 'space-between',
 }
 
 interface Props extends DOMAttributes<HTMLDivElement> {
@@ -167,6 +174,9 @@ interface Props extends DOMAttributes<HTMLDivElement> {
   fullWidth?: boolean
   items: Array<unknown>
   triggerClose?: boolean
+  isOpen: boolean
+  onDropDownClose: () => void
+  onDropDownToggle: () => void
 }
 
 export const Dropdown: React.FC<Props> = (props) => {
@@ -180,26 +190,29 @@ export const Dropdown: React.FC<Props> = (props) => {
     dropdownDirection,
     dropdownPosition,
     fullWidth,
+    isOpen = false,
     items,
+    onDropDownClose,
+    onDropDownToggle,
     triggerClose,
     ...restProps
   } = props
-  const [isOpen, setIsOpen] = useState<boolean>(false)
+
   const node = createRef<HTMLDivElement>()
 
   const onButtonClick = useCallback(
     (e) => {
       e.stopPropagation()
       if (disabled) return
-      setIsOpen(!isOpen)
+      onDropDownToggle()
     },
-    [disabled, isOpen],
+    [disabled, onDropDownToggle],
   )
 
   useEffect(() => {
     // Note: you can use triggerClose to close the dropdown when clicking on a specific element
     if (triggerClose) {
-      setIsOpen(false)
+      onDropDownClose()
     }
 
     // Note: This code handles closing when clickin outside of the dropdown
@@ -208,7 +221,7 @@ export const Dropdown: React.FC<Props> = (props) => {
       if (node && node.current && node.current.contains(e.target)) {
         return
       }
-      setIsOpen(false)
+      onDropDownClose()
     }
 
     document.addEventListener('mousedown', handleClick)
@@ -216,7 +229,7 @@ export const Dropdown: React.FC<Props> = (props) => {
     return () => {
       document.removeEventListener('mousedown', handleClick)
     }
-  }, [node, triggerClose])
+  }, [node, triggerClose, onDropDownClose])
 
   return (
     <Wrapper
@@ -247,7 +260,7 @@ export const Dropdown: React.FC<Props> = (props) => {
                 e.stopPropagation()
 
                 if (closeOnClick) {
-                  setIsOpen(false)
+                  onDropDownClose()
                 }
 
                 if (!item.props.onClick) {

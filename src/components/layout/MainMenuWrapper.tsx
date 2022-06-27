@@ -23,7 +23,8 @@ const MenuWrapper = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  height: 100%;
+  height: 100vh;
+  overflow-y: auto;
   width: 400px;
   max-width: 90%;
   z-index: 20;
