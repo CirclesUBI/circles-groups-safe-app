@@ -67,6 +67,8 @@ const CreateGroup: NextPage = () => {
             information="This is a message"
             label="Name"
             mandatory
+            maxLength={30}
+            minLength={4}
             name="fullname"
             placeholder="Test"
             setValue={setGroupName}
