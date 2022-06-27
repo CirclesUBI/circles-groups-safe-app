@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Title } from '@/src/components/assets/Title'
 import { GroupList } from '@/src/components/lists/GroupList'
 import { useGroupCurrencyTokens } from '@/src/hooks/subgraph/useGroupCurrencyToken'
-import { useSafeBalances } from '@/src/hooks/useSafeBalances'
+import { useGroupsByMember } from '@/src/hooks/subgraph/useGroupsByMember'
 
 const Nav = styled.nav`
   align-items: center;
@@ -41,16 +41,9 @@ const Section = styled.section``
 const Home: NextPage = () => {
   const tabs = [{ text: 'My Groups' }, { text: 'All Groups' }]
   const [selectedTab, setSelectedTab] = useState(tabs[0])
-  const { connected, safe, sdk } = useSafeAppsSDK()
-
-  // Just exploring SafeApps SDK information and a hook for obtaining Assets balance
-  // @TODO remove console logs and safe balances
-  const [balances] = useSafeBalances(sdk)
-  console.log({ safe })
-  console.log({ connected })
-  console.log({ balances })
-
+  const { safe } = useSafeAppsSDK()
   const { groups } = useGroupCurrencyTokens()
+  const { groupsByMember } = useGroupsByMember(safe.safeAddress)
 
   return (
     <>
@@ -77,7 +70,7 @@ const Home: NextPage = () => {
             transition={{ duration: 0.2 }}
           >
             {selectedTab.text == 'My Groups' ? (
-              <GroupList groups={groups} />
+              <GroupList groups={groupsByMember} />
             ) : (
               <GroupList groups={groups} />
             )}
