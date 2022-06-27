@@ -6,6 +6,7 @@ import {
   GroupCurrencyTokens,
   GroupCurrencyTokensVariables,
 } from '@/types/subgraph/__generated__/GroupCurrencyTokens'
+import { GroupCurrencyToken_filter } from '@/types/subgraph/__generated__/globalTypes'
 
 export type GroupCurrencyToken = {
   id: string
@@ -13,20 +14,16 @@ export type GroupCurrencyToken = {
   members: Array<any> // TODO define Member's Group type
 }
 
-export type GroupRef = { id: string }
-
-const getGroupQuery = (group?: GroupRef) => {
-  return group
-    ? {
-        where: {
-          id: group.id,
-        },
-      }
-    : {}
+const getGroupQuery = (groupId?: string) => {
+  const where = {} as GroupCurrencyToken_filter
+  if (groupId) {
+    where['id_in'] = [groupId]
+  }
+  return { where }
 }
 
-export const fetchGroupCurrencyTokens = async (group?: GroupRef) => {
-  const query = getGroupQuery(group)
+export const fetchGroupCurrencyTokens = async (groupId?: string) => {
+  const query = getGroupQuery(groupId)
   const { groupCurrencyTokens } = await graphqlFetcher<
     GroupCurrencyTokens,
     GroupCurrencyTokensVariables

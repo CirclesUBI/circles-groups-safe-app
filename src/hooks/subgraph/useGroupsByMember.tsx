@@ -2,15 +2,21 @@ import useSWR from 'swr'
 
 import {
   GroupCurrencyToken,
-  GroupRef,
   fetchGroupCurrencyTokens,
 } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { GROUP_MEMBERS } from '@/src/queries/groupMembers'
 import { graphqlFetcher } from '@/src/utils/graphqlFetcher'
-import { GroupMembers, GroupMembersVariables } from '@/types/subgraph/__generated__/GroupMembers'
+import {
+  GroupMembers,
+  GroupMembersVariables,
+  GroupMembers_safeGroupMembers,
+} from '@/types/subgraph/__generated__/GroupMembers'
+
+const getGroupId = (safeGroupMembers: GroupMembers_safeGroupMembers[]) => {
+  return safeGroupMembers[0].group.id
+}
 
 export const fetchGroups = async (safeAddress: string) => {
-  console.log({ safeAddress })
   const { safeGroupMembers } = await graphqlFetcher<GroupMembers, GroupMembersVariables>(
     GROUP_MEMBERS,
     {
@@ -21,11 +27,9 @@ export const fetchGroups = async (safeAddress: string) => {
   )
 
   if (safeGroupMembers.length == 0) return [] as GroupCurrencyToken[]
-  const groups = safeGroupMembers.map((member) => ({
-    id: member.group.id,
-  }))
+  const groupId = getGroupId(safeGroupMembers)
 
-  return (await fetchGroupCurrencyTokens(groups[0] as GroupRef)) as GroupCurrencyToken[]
+  return (await fetchGroupCurrencyTokens(groupId)) as GroupCurrencyToken[]
 }
 
 export const useGroupsByMember = (safeAddress: string) => {
