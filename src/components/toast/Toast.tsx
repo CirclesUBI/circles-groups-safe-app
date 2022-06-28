@@ -1,10 +1,8 @@
-import Image from 'next/image'
-
 import ms from 'ms'
 import { Toast, Toaster, toast } from 'react-hot-toast'
 
-import LoaderIcon from '@/public/resources/gif/toast-loader.gif'
 import { Failed as FailedIcon } from '@/src/components/assets/Failed'
+import { Loading as LoadingIcon } from '@/src/components/assets/Loading'
 import { Success as SuccessIcon } from '@/src/components/assets/Success'
 import { ToastComponent } from '@/src/components/toast/ToastComponent'
 import { FAILED_TYPE, SUCCESS_TYPE, WAITING_TYPE } from '@/src/components/toast/types'
@@ -20,11 +18,12 @@ type ToastComponentProps = {
 const ToastTypes = {
   [WAITING_TYPE]: ({ explorerUrl, message, t }: ToastComponentProps) => (
     <ToastComponent
-      icon={<Image alt="Loading..." src={LoaderIcon} />}
+      icon={<LoadingIcon />}
       link={explorerUrl ? { url: explorerUrl, text: 'Click to verify on Etherscan' } : undefined}
       message={message ? message : undefined}
       t={t}
       title="Transaction Sent"
+      toastStyle="waiting"
     />
   ),
   [FAILED_TYPE]: ({ explorerUrl, message, t }: ToastComponentProps) => (
@@ -34,6 +33,7 @@ const ToastTypes = {
       message={message ? message : undefined}
       t={t}
       title="Transaction Failed"
+      toastStyle="failed"
     />
   ),
   [SUCCESS_TYPE]: ({ explorerUrl, message, t }: ToastComponentProps) => (
@@ -43,6 +43,7 @@ const ToastTypes = {
       message={message ? message : undefined}
       t={t}
       title="Transaction confirmed"
+      toastStyle="success"
     />
   ),
 }

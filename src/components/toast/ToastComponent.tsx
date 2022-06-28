@@ -5,16 +5,23 @@ import { Toast, toast } from 'react-hot-toast'
 
 import { Close } from '@/src/components/assets/Close'
 
-const Wapper = styled.div`
+const Wrapper = styled.div`
   display: grid;
   grid-template-columns: 50px 200px;
-  padding: 10px;
-  height: 70px;
+  padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
+  min-height: 70px;
   border-radius: ${({ theme: { toast } }) => toast.borderRadius};
-  border-style: ${({ theme: { toast } }) => toast.borderStyle};
-  border-width: ${({ theme: { toast } }) => toast.borderWidth};
+  border: none;
   background-color: ${({ theme: { toast } }) => toast.backgroundColor};
   box-shadow: ${({ theme: { toast } }) => toast.boxShadow};
+  position: relative;
+  z-index: 1000;
+  &.failed {
+    background-color: ${({ theme }) => theme.colors.error};
+  }
+  &.success {
+    background-color: ${({ theme }) => theme.colors.success};
+  }
 `
 
 const IconContainer = styled.div`
@@ -44,10 +51,12 @@ const ButtonClose = styled.button`
   background: transparent;
 `
 
-const Title = styled.p`
+const Title = styled.h4`
   font-size: 1.4rem;
-  font-weight: 500;
-  margin 2px;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+  color: ${({ theme }) => theme.colors.white};
 `
 
 const Link = styled.a`
@@ -56,8 +65,11 @@ const Link = styled.a`
 `
 
 const Text = styled.p`
-  font-size: 1.2rem;
-  color: ${({ theme: { colors } }) => colors.textColorLight};
+  font-size: 1.4rem;
+  font-weight: 400;
+  margin: ${({ theme }) => theme.general.space / 4}px 0 0;
+  padding: 0;
+  color: ${({ theme }) => theme.colors.white};
 `
 
 export const ToastComponent = ({
@@ -66,6 +78,7 @@ export const ToastComponent = ({
   message,
   t,
   title,
+  toastStyle,
 }: {
   icon: ReactNode
   link?: {
@@ -75,8 +88,9 @@ export const ToastComponent = ({
   message?: string
   t: Toast
   title: string
+  toastStyle: string
 }) => (
-  <Wapper>
+  <Wrapper className={toastStyle}>
     <IconContainer>{icon}</IconContainer>
     <InnerWrapper>
       <TextContainer>
@@ -92,5 +106,5 @@ export const ToastComponent = ({
         <Close />
       </ButtonClose>
     </InnerWrapper>
-  </Wapper>
+  </Wrapper>
 )
