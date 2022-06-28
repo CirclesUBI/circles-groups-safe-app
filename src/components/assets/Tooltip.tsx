@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 const Wrapper = styled.div`
   cursor: pointer;
   position: relative;
+  z-index: 10;
 `
 const Info = styled.span`
   align-items: center;
