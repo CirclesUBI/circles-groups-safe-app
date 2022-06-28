@@ -36,3 +36,25 @@ export const getPath = async (fromAddress: string, toAddress: string) => {
     return undefined
   }
 }
+
+export type TransferThroughParam = {
+  tokenOwners: string[]
+  srcs: string[]
+  dests: string[]
+  wads: string[]
+}
+
+export const transformPathToTransferThroughParams = (
+  path: PathfinderTransfer[],
+): TransferThroughParam => {
+  const tokenOwners = path.map((p) => p.tokenOwner)
+  const srcs = path.map((p) => p.from)
+  const dests = path.map((p) => p.to)
+  const wads = path.map((p) => p.value)
+  return {
+    tokenOwners,
+    srcs,
+    dests,
+    wads,
+  }
+}
