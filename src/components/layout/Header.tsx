@@ -11,6 +11,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Alert } from '@/src/components/assets/Alert'
 import { GroupSelector } from '@/src/components/assets/GroupSelector'
 import { MenuIcon } from '@/src/components/assets/MenuIcon'
+import { User } from '@/src/components/assets/User'
 import { MainMenu } from '@/src/components/navigation/MainMenu'
 import { ButtonPrimary, LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { activity } from '@/src/constants/activity'
@@ -51,12 +52,12 @@ const HomeLink = styled.span`
 
 const WrapperBox = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   width: ${({ theme }) => theme.general.containerWidth};
-  gap: ${({ theme }) => theme.general.space}px;
+  gap: ${({ theme }) => theme.general.space * 2}px;
   justify-content: center;
   align-items: center;
-  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     flex-direction: row;
     justify-content: space-between;
   }
@@ -88,31 +89,23 @@ const EndWrapper = styled.div`
   align-items: center;
   display: flex;
 `
-const UserInfo = styled.div`
-  background-color: ${({ theme }) => theme.colors.primary};
-  border-radius: ${({ theme }) => theme.general.borderRadius};
-  font-weight: 500;
-  font-size: 1.4rem;
-  padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
-  position: relative;
-  max-width: 150px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  flex-shrink: 0;
-`
-
 const LinkGroup = styled(LinkButton)`
   line-height: normal;
   background-color: ${({ theme }) => theme.colors.fourth};
   border-color: ${({ theme }) => theme.colors.fourth};
   padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
 `
-
+const UserWrapper = styled.div`
+  display: none;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    display: block;
+  }
+`
 const UserGroups = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.general.space}px;
+  flex-direction: row;
 `
 
 export const Header: React.FC = (props) => {
@@ -198,7 +191,9 @@ export const Header: React.FC = (props) => {
           <EndWrapper>
             {isWalletConnected ? (
               <UserGroups>
-                <UserInfo>@TomasBari</UserInfo>
+                <UserWrapper>
+                  <User headerStyle userTokens={1119.25} username="@TomasBari" />
+                </UserWrapper>
                 {createdGroups.length > 1 && <GroupSelector />}
                 {createdGroups.length == 1 && (
                   <Link href="/admin" passHref>

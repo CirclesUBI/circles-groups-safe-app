@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
+import { Crc } from '@/src/components/assets/Crc'
 import { FirstLetter } from '@/src/components/assets/FirstLetter'
 
 const TitleWrapper = styled.div`
@@ -119,7 +120,7 @@ export const TitleGroup: React.FC<Props> = ({
       <Actions>
         {amountNumber && (
           <Amount>
-            <Image alt="Configuration" height={15} src="/images/crc.svg" width={11} />
+            <Crc />
             {amountNumber}
           </Amount>
         )}

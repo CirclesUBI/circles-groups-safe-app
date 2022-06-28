@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Image from 'next/image'
 import styled from 'styled-components'
 
+import { Crc } from '@/src/components/assets/Crc'
 import { InformationPod } from '@/src/components/assets/InformationPod'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
 import { Columns } from '@/src/components/layout/Columns'
@@ -45,12 +46,7 @@ const ConfigurateGroup: NextPage = () => {
         </Columns>
         <Columns columnsNumber={2}>
           <InformationPod bgColor="light" label="Fee" text="3%" />
-          <InformationPod
-            bgColor="light"
-            icon={<Image alt="Configuration" height={12} src="/images/crc.svg" width={12} />}
-            label="Treasure"
-            text="7.268"
-          />
+          <InformationPod bgColor="light" icon={<Crc />} label="Treasure" text="7.268" />
         </Columns>
       </Wrapper>
     </>
