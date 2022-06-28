@@ -72,7 +72,7 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
             }
           })
           .slice(0, page * itemsPerPage)
-          .map(({ members, name }, index) => (
+          .map(({ id, members, name }, index) => (
             <ListItem key={`group_${index}`}>
               <GroupInfo>
                 <FirstLetter character={name.charAt(0)} />
@@ -84,7 +84,7 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
               <GroupActions>
                 <ActionItem
                   color="primary"
-                  href="/mint-tokens"
+                  href={`${id}/mint-tokens`}
                   icon="/images/icon-send.svg"
                   text="Mint tokens"
                 />

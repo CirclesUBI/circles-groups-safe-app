@@ -6,6 +6,10 @@ export const GROUP_MEMBERS = gql`
       id
       safe {
         id
+        balances {
+          id
+          amount
+        }
       }
       group {
         id

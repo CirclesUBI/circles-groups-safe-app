@@ -55,7 +55,7 @@ const InformationText = styled.span`
 `
 interface Props {
   amountText?: string
-  amountValue?: number
+  amountValue?: string | number
   name: string
   bgColor?: string
   isGroup?: boolean
@@ -82,7 +82,7 @@ export const TransferUserInformation: React.FC<Props> = ({
       <InformationBlock bgColor={bgColor}>
         <InfoWrapper>
           <InformationImage>
-            {isGroup ? (
+            {isGroup || !userPhoto ? (
               <FirstLetter character={name.charAt(0)} />
             ) : (
               <Image alt={name} height={40} src={userPhoto} width={40} />

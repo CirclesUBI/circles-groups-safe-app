@@ -5,6 +5,7 @@ import { graphqlFetcher } from '@/src/utils/graphqlFetcher'
 import {
   GroupCurrencyTokens,
   GroupCurrencyTokensVariables,
+  GroupCurrencyTokens_groupCurrencyTokens,
 } from '@/types/subgraph/__generated__/GroupCurrencyTokens'
 import { GroupCurrencyToken_filter } from '@/types/subgraph/__generated__/globalTypes'
 
@@ -14,27 +15,32 @@ export type GroupCurrencyToken = {
   members: Array<any> // TODO define Member's Group type
 }
 
-const getGroupQuery = (groupId?: string) => {
-  const where = {} as GroupCurrencyToken_filter
-  if (groupId) {
-    where['id_in'] = [groupId]
+const transformToGroupCurrencyToken = (
+  group: GroupCurrencyTokens_groupCurrencyTokens,
+): GroupCurrencyToken => {
+  return {
+    id: group.id,
+    name: group.name ?? '',
+    members: group.members,
   }
-  return { where }
 }
 
-export const fetchGroupCurrencyTokens = async (groupId?: string) => {
-  const query = getGroupQuery(groupId)
+export const fetchGroupCurrencyTokens = async (where?: GroupCurrencyTokensVariables) => {
   const { groupCurrencyTokens } = await graphqlFetcher<
     GroupCurrencyTokens,
     GroupCurrencyTokensVariables
-  >(GROUP_CURRENCY_TOKEN_QUERY, query)
-  const groups = groupCurrencyTokens.map((group) => ({
-    ...group,
-  }))
-  return groups as GroupCurrencyToken[]
+  >(GROUP_CURRENCY_TOKEN_QUERY, where)
+  return groupCurrencyTokens.map(transformToGroupCurrencyToken)
 }
 
 export const useGroupCurrencyTokens = () => {
   const { data, error, mutate } = useSWR(['groupCurrencyTokens'], () => fetchGroupCurrencyTokens())
   return { groups: data ?? [], error, refetch: mutate, loading: !error && !data }
+}
+
+export const useGroupCurrencyTokensByIds = (groupIds: string[]) => {
+  const { data, error, mutate } = useSWR(['groupCurrencyTokensByIds', groupIds.join()], () =>
+    fetchGroupCurrencyTokens({ where: { id_in: groupIds } }),
+  )
+  return { groups: data ?? [], error, refetch: mutate }
 }
