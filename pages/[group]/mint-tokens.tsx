@@ -14,10 +14,14 @@ import { Title } from '@/src/components/assets/Title'
 import { TransferUserInformation } from '@/src/components/assets/TransferUserInformation'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { useGroupCurrencyTokensByIds } from '@/src/hooks/subgraph/useGroupCurrencyToken'
-import { useCreateGroupTx } from '@/src/hooks/useCreateGroup'
 import { useGroupMintToken } from '@/src/hooks/useGroupMintToken'
 import { useSafeBalances } from '@/src/hooks/useSafeBalances'
+import useSafeTransaction from '@/src/hooks/useSafeTransaction'
 import { useUserSafe } from '@/src/hooks/useUserSafe'
+import { useWeb3Connected } from '@/src/providers/web3ConnectionProvider'
+import { addresses } from '@/src/utils/addresses'
+import encodeTransaction from '@/src/utils/encodeTransaction'
+import { transformPathToTransferThroughParams } from '@/src/utils/pathfinderAPI'
 
 const FormWrapper = styled.div`
   display: flex;
@@ -46,13 +50,15 @@ const getCirclesFromBalances = (tokenBalances: TokenBalance[]) => {
   const crcTokens = tokenBalances.filter((tokenBalance) => tokenBalance.tokenInfo.symbol === CRC)
   const circlesAmounts = crcTokens.map((crcToken) => crcToken.balance)
   const circles = circlesAmounts.reduce((prev, curr) => prev + parseInt(curr) ?? 0, 0)
-  return circles
+  return String(circles)
 }
 
 const CreateGroup: NextPage = () => {
   const [notification, setNotification] = useState(false)
   const router = useRouter()
   const groupAddress = String(router.query?.group ?? '')
+  // @TODO we dont need this provider most of the time, we can get rid of it
+  const { web3Provider } = useWeb3Connected()
   const { connected, safe, sdk } = useSafeAppsSDK()
   // @TODO we shouldn't use this hook here
   const [tokenBalances] = useSafeBalances(sdk)
@@ -61,7 +67,7 @@ const CreateGroup: NextPage = () => {
   const { groups } = useGroupCurrencyTokensByIds([groupAddress])
   const group = groups[0]
   const { user } = useUserSafe(safe.safeAddress)
-  const { execute } = useCreateGroupTx()
+  const { execute } = useSafeTransaction()
 
   const [mintAmount, setMintAmount] = useState<string>('')
   const [note, setNote] = useState<string>('')
@@ -69,12 +75,36 @@ const CreateGroup: NextPage = () => {
 
   const mintGroupToken = async () => {
     setLoading(true)
-    setTimeout(() => {
-      console.log({ path })
-      console.log({ mintAmount })
-      console.log({ mintMaxAmount })
+    // @TODO delete comments
+    console.log({ path })
+    console.log({ mintAmount })
+    console.log({ mintMaxAmount })
+    try {
+      const { dests, srcs, tokenOwners, wads } = transformPathToTransferThroughParams(path ?? [])
+      // @TODO fetch abi should be easier to do, also it is not inferring their types Hub neither GCT
+      const { abi: hubAbi, address: hubAddress } = addresses['gnosis']['HUB']
+      const transferThroughTx = await encodeTransaction(
+        hubAddress,
+        hubAbi,
+        web3Provider.getSigner(),
+        'transferThrough',
+        [tokenOwners, srcs, dests, wads],
+      )
+      const { abi: GCTAbi } = addresses['gnosis']['GROUP_CURRENCY_TOKEN']
+      const mintTx = await encodeTransaction(
+        groupAddress,
+        GCTAbi,
+        web3Provider.getSigner(),
+        'mint',
+        [[safe.safeAddress], [mintAmount]],
+      )
+      const txs = [transferThroughTx, mintTx]
+      await execute(sdk, txs)
+    } catch (err) {
+      console.log({ err })
+    } finally {
       setLoading(false)
-    }, 1000)
+    }
   }
 
   return (
@@ -97,13 +127,12 @@ const CreateGroup: NextPage = () => {
           amountText="Your total balance:"
           amountValue={circles}
           label="Send from"
-          name={`@${user?.username}`}
-          userPhoto={user?.avatarUrl}
+          name={`${user?.username}`}
+          photo={user?.avatarUrl}
         />
         <TransferUserInformation
           amountText="Maximum amount:"
           amountValue={mintMaxAmount}
-          isGroup
           label="Send to"
           name={group.name}
         />
