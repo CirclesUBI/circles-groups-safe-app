@@ -96,7 +96,7 @@ export const Input: React.FC<Props> = ({
   const [errors, setErrors] = useState(false)
   function handleChange() {
     // Just for testing. Final validation code missing
-    if (!value) {
+    if (!value && mandatory) {
       setErrors(true)
     } else {
       setErrors(false)
