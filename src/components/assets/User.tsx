@@ -14,8 +14,8 @@ const UserWrapper = styled.div<{ headerStyle: boolean }>`
   gap: ${({ theme }) => theme.general.space * 2}px;
   padding: ${(props) =>
     props.headerStyle
-      ? ({ theme }) => theme.general.space + 'px'
-      : ({ theme }) => theme.general.space * 2 + 'px'};
+      ? ({ theme }) => `${theme.general.space}px ${theme.general.space * 2}px`
+      : ({ theme }) => `${theme.general.space * 2}px`};
   position: relative;
   width: 100%;
   img {
