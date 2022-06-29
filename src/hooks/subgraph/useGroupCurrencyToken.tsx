@@ -44,3 +44,10 @@ export const useGroupCurrencyTokensByIds = (groupIds: string[]) => {
   )
   return { groups: data ?? [], error, refetch: mutate }
 }
+
+export const useGroupCurrencyTokensById = (groupId: string) => {
+  const { data, error, mutate } = useSWR(['groupCurrencyTokensByIds', groupId], () =>
+    fetchGroupCurrencyTokens({ where: { id: groupId } }),
+  )
+  return { group: data?.[0], error, refetch: mutate }
+}
