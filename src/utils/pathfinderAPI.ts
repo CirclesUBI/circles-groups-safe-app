@@ -1,8 +1,12 @@
 // @Reference https://github.com/chriseth/pathfinder
 
-import { PATHFINDER_API } from '../constants/misc'
+import { JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers'
 
-const MAX_VALUE_FROM_PATH = '500000000000000000000000'
+import { PATHFINDER_API } from '../constants/misc'
+import hubCall from './contracts/hubCall'
+
+// @TODO Pathfinder API does not allow '0' to fetch the maximum amount, so we need to pass the greater possible amount
+const MAX_VALUE_FROM_PATH = '1000000000000000000000000000000'
 
 export type PathfinderFlowResponse = {
   flow: string // a number represented in a string
@@ -57,4 +61,37 @@ export const transformPathToTransferThroughParams = (
     dests,
     wads,
   }
+}
+
+/**
+ * mint params are:
+ * - collateral[] is an array of circle tokens addresses which must be trusted by the sender
+ * - amount[] is an array of string amounts to send to each of the USERS (not token) from the collateral array
+ * - as the user who mint the token must be a trusted user, we will use the latest user from the path
+ * - which is the second last from the dests array
+ * - if there is a direct path to the group, we have to use the first user from the path
+ * - which is the first element from the srcs array
+ * - otherwise there are no way to create this collaterals string array
+ */
+export const transformPathToMintParams = async (
+  dests: string[],
+  srcs: string[],
+  provider: JsonRpcProvider | JsonRpcSigner,
+) => {
+  let collaterals: string[] = []
+  let user = undefined
+  if (dests.length > 1) {
+    user = dests[dests.length - 2]
+  } else if (dests.length == 1) {
+    user = srcs[0]
+  } else {
+    console.log('ERROR: no dests!!!')
+  }
+  if (!user) return collaterals
+
+  const token = await hubCall(provider, 'userToToken', [user])
+  if (token) {
+    collaterals = [token]
+  }
+  return collaterals
 }
