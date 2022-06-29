@@ -10,7 +10,7 @@ export default async function encodeTransaction<
   abi: ContractInterface,
   provider: JsonRpcProvider | JsonRpcSigner,
   method: Method,
-  params: Parameters<MyContract[Method]>,
+  params?: Parameters<MyContract[Method]>,
 ): Promise<BaseTransaction> {
   let data = ''
   try {
