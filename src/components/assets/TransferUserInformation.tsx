@@ -2,6 +2,7 @@ import Image from 'next/image'
 import React from 'react'
 import styled from 'styled-components'
 
+import { Crc } from '@/src/components/assets/Crc'
 import { FirstLetter } from '@/src/components/assets/FirstLetter'
 
 const Wrapper = styled.div`
@@ -52,6 +53,11 @@ const InformationText = styled.span`
       gap: ${({ theme }) => theme.general.space}px;
     }
   }
+  strong {
+    display: flex;
+    align-items: center;
+    gap: ${({ theme }) => theme.general.space}px;
+  }
 `
 interface Props {
   amountText?: string
@@ -93,8 +99,7 @@ export const TransferUserInformation: React.FC<Props> = ({
             <p>
               {amountText}{' '}
               <strong>
-                <Image alt="Configuration" height={12} src="/images/crc.svg" width={12} />{' '}
-                {amountValue}
+                <Crc /> {amountValue}
               </strong>
             </p>
           </InformationText>

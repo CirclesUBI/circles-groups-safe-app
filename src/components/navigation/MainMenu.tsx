@@ -83,8 +83,19 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
           </Link>
           <CloseButton closeMenu={() => onClose()} />
         </MenuHeader>
-        <User userPic="/images/user.jpg" username="@TomasBari" />
-
+        <User
+          userImage={
+            <Image
+              alt="@TomasBari"
+              height={40}
+              objectFit="cover"
+              src="/images/user.jpg"
+              width={40}
+            />
+          }
+          userTokens={1119.25}
+          username="@TomasBari"
+        />
         <LinksList as={motion.div} variants={variants}>
           <AnimatePresence>
             {menuLinks.map(({ href, title }, index) => (

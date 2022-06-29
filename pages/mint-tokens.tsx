@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { AnimatePresence } from 'framer-motion'
 
 import { AlertMessage } from '@/src/components/assets/AlertMessage'
+import { Crc } from '@/src/components/assets/Crc'
 import { Input } from '@/src/components/assets/Input'
 import { Title } from '@/src/components/assets/Title'
 import { TransferUserInformation } from '@/src/components/assets/TransferUserInformation'
@@ -25,9 +26,11 @@ const ActionWrapper = styled.div`
 `
 
 const Icon = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0;
   left: ${({ theme }) => theme.general.space * 2}px;
   pointer-events: none;
 `
@@ -65,7 +68,7 @@ const CreateGroup: NextPage = () => {
         <Input
           icon={
             <Icon>
-              <Image alt="Configuration" height={15} src="/images/crc.svg" width={11} />
+              <Crc />
             </Icon>
           }
           information="This is a message This is a message This is a message"
