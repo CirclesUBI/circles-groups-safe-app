@@ -5,7 +5,6 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
-import { TokenBalance } from '@gnosis.pm/safe-apps-sdk'
 import { AnimatePresence } from 'framer-motion'
 
 import { AlertMessage } from '@/src/components/assets/AlertMessage'
@@ -13,15 +12,9 @@ import { Input } from '@/src/components/assets/Input'
 import { Title } from '@/src/components/assets/Title'
 import { TransferUserInformation } from '@/src/components/assets/TransferUserInformation'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
-import { useGroupCurrencyTokensByIds } from '@/src/hooks/subgraph/useGroupCurrencyToken'
+import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
 import { useGroupMintToken } from '@/src/hooks/useGroupMintToken'
-import { useSafeBalances } from '@/src/hooks/useSafeBalances'
-import useSafeTransaction from '@/src/hooks/useSafeTransaction'
 import { useUserSafe } from '@/src/hooks/useUserSafe'
-import { useWeb3Connected } from '@/src/providers/web3ConnectionProvider'
-import { addresses } from '@/src/utils/addresses'
-import encodeTransaction from '@/src/utils/encodeTransaction'
-import { transformPathToTransferThroughParams } from '@/src/utils/pathfinderAPI'
 
 const FormWrapper = styled.div`
   display: flex;
@@ -44,68 +37,21 @@ const Icon = styled.div`
   pointer-events: none;
 `
 
-const CRC = 'CRC'
-
-const getCirclesFromBalances = (tokenBalances: TokenBalance[]) => {
-  const crcTokens = tokenBalances.filter((tokenBalance) => tokenBalance.tokenInfo.symbol === CRC)
-  const circlesAmounts = crcTokens.map((crcToken) => crcToken.balance)
-  const circles = circlesAmounts.reduce((prev, curr) => prev + parseInt(curr) ?? 0, 0)
-  return String(circles)
-}
-
 const CreateGroup: NextPage = () => {
-  const [notification, setNotification] = useState(false)
   const router = useRouter()
   const groupAddress = String(router.query?.group ?? '')
-  // @TODO we dont need this provider most of the time, we can get rid of it
-  const { web3Provider } = useWeb3Connected()
   const { connected, safe, sdk } = useSafeAppsSDK()
-  // @TODO we shouldn't use this hook here
-  const [tokenBalances] = useSafeBalances(sdk)
-  const circles = getCirclesFromBalances(tokenBalances)
-  const { mintMaxAmount, path } = useGroupMintToken(safe.safeAddress, groupAddress)
-  const { groups } = useGroupCurrencyTokensByIds([groupAddress])
-  const group = groups[0]
+  const { circles } = useCirclesBalance(sdk)
+  const { group, loading, mintMaxAmount, mintToken } = useGroupMintToken(
+    safe.safeAddress,
+    groupAddress,
+    sdk,
+  )
   const { user } = useUserSafe(safe.safeAddress)
-  const { execute } = useSafeTransaction()
 
+  const [notification, setNotification] = useState(false)
   const [mintAmount, setMintAmount] = useState<string>('')
   const [note, setNote] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(false)
-
-  const mintGroupToken = async () => {
-    setLoading(true)
-    // @TODO delete comments
-    console.log({ path })
-    console.log({ mintAmount })
-    console.log({ mintMaxAmount })
-    try {
-      const { dests, srcs, tokenOwners, wads } = transformPathToTransferThroughParams(path ?? [])
-      // @TODO fetch abi should be easier to do, also it is not inferring their types Hub neither GCT
-      const { abi: hubAbi, address: hubAddress } = addresses['gnosis']['HUB']
-      const transferThroughTx = await encodeTransaction(
-        hubAddress,
-        hubAbi,
-        web3Provider.getSigner(),
-        'transferThrough',
-        [tokenOwners, srcs, dests, wads],
-      )
-      const { abi: GCTAbi } = addresses['gnosis']['GROUP_CURRENCY_TOKEN']
-      const mintTx = await encodeTransaction(
-        groupAddress,
-        GCTAbi,
-        web3Provider.getSigner(),
-        'mint',
-        [[safe.safeAddress], [mintAmount]],
-      )
-      const txs = [transferThroughTx, mintTx]
-      await execute(sdk, txs)
-    } catch (err) {
-      console.log({ err })
-    } finally {
-      setLoading(false)
-    }
-  }
 
   return (
     <>
@@ -114,10 +60,10 @@ const CreateGroup: NextPage = () => {
           <AlertMessage
             confirmAction={() => {
               setNotification(false)
-              mintGroupToken()
+              mintToken(mintAmount)
             }}
             onCloseAlert={() => setNotification(false)}
-            text={`Are you sure you want to mint ${mintAmount} CRC to the ${group.name} group?`}
+            text={`Are you sure you want to mint ${mintAmount} CRC to the ${group?.name} group?`}
           />
         </AnimatePresence>
       )}
@@ -127,14 +73,14 @@ const CreateGroup: NextPage = () => {
           amountText="Your total balance:"
           amountValue={circles}
           label="Send from"
-          name={`${user?.username}`}
+          name={user?.username}
           photo={user?.avatarUrl}
         />
         <TransferUserInformation
           amountText="Maximum amount:"
           amountValue={mintMaxAmount}
           label="Send to"
-          name={group.name}
+          name={group?.name ?? groupAddress}
         />
         <Input
           icon={
