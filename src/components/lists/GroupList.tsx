@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { ActionItem } from '@/src/components/assets/ActionItem'
@@ -6,6 +6,7 @@ import { FirstLetter } from '@/src/components/assets/FirstLetter'
 import { ListContainer } from '@/src/components/assets/ListContainer'
 import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
+import { NoResultsText } from '@/src/components/assets/NoResultsText'
 import { SearchInput } from '@/src/components/assets/SearchInput'
 import { GroupCurrencyToken } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 
@@ -54,25 +55,26 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
 
-  const filteredItems = groups
+  const totalItemsNum = groups.length
 
-  const filteredItemsNum = filteredItems.length
-  const totalPages = Math.ceil(filteredItemsNum / itemsPerPage)
+  const filteredGroups = useMemo(() => {
+    return groups.filter((group) => {
+      if (query === '') {
+        return group
+      } else if (group.name.toLowerCase().includes(query.toLowerCase())) {
+        return group
+      }
+    })
+  }, [groups, query])
+
+  const totalPages = Math.ceil(filteredGroups.length / itemsPerPage)
 
   return (
     <List>
-      {filteredItemsNum > 4 && <SearchInput onChange={(e) => setQuery(e)} />}
+      {totalItemsNum > 4 && <SearchInput onChange={(e) => setQuery(e)} />}
       <ListContainer>
-        {filteredItems
-          .filter((group) => {
-            if (query === '') {
-              return group
-            } else if (group.name.toLowerCase().includes(query.toLowerCase())) {
-              return group
-            }
-          })
-          .slice(0, page * itemsPerPage)
-          .map(({ members, name }, index) => (
+        {filteredGroups.length > 0 ? (
+          filteredGroups.slice(0, page * itemsPerPage).map(({ members, name }, index) => (
             <ListItem key={`group_${index}`}>
               <GroupInfo>
                 <FirstLetter character={name.charAt(0)} />
@@ -95,9 +97,20 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
                 />
               </GroupActions>
             </ListItem>
-          ))}
+          ))
+        ) : (
+          <>
+            <NoResultsText
+              text={
+                query
+                  ? `We couldn't find a match for ${query}.`
+                  : "You don't belong to any group yet."
+              }
+            />
+          </>
+        )}
       </ListContainer>
-      {page < totalPages && (
+      {page < totalPages && filteredGroups.length > itemsPerPage && (
         <>
           <LoadMoreButton moreResults={() => setPage((prev) => prev + 1)} />
         </>

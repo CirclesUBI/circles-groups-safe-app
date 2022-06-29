@@ -7,6 +7,7 @@ import { AddDeleteButton } from '@/src/components/assets/AddDeleteButton'
 import { ListContainer } from '@/src/components/assets/ListContainer'
 import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
+import { NoResultsText } from '@/src/components/assets/NoResultsText'
 import { SearchInput } from '@/src/components/assets/SearchInput'
 import { GroupMember } from '@/src/hooks/subgraph/useGroupMembers'
 
@@ -54,11 +55,6 @@ const GroupActions = styled.div`
     width: auto;
   }
 `
-const NoMembersText = styled.p`
-  margin: 0 ${({ theme }) => theme.general.space * 2}px;
-  padding: ${({ theme }) => theme.general.space * 4}px 0 0;
-  border-top: 1px solid #e0e0e0; ;
-`
 
 interface Props {
   action: string
@@ -72,7 +68,6 @@ export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup })
   const itemsPerPage = 5
 
   const totalItemsNum = usersGroup.length
-  const totalPages = Math.ceil(totalItemsNum / itemsPerPage)
 
   const filteredUsers = useMemo(() => {
     return usersGroup.filter((user: { username: string }) => {
@@ -83,6 +78,8 @@ export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup })
       }
     })
   }, [usersGroup, query])
+
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
 
   return (
     <List>
@@ -113,11 +110,13 @@ export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup })
             ))
         ) : (
           <>
-            <NoMembersText>
-              {query
-                ? `We couldn't find a match for ${query}.`
-                : 'There are no members on this group.'}
-            </NoMembersText>
+            <NoResultsText
+              text={
+                query
+                  ? `We couldn't find a match for ${query}.`
+                  : 'There are no members on this group.'
+              }
+            />
           </>
         )}
       </ListContainer>
