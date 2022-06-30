@@ -37,21 +37,18 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
     async (mintAmount: string) => {
       try {
         setLoading(true)
-        if (group) {
-          console.log('ERROR: group does not exists')
-          return
-        }
         if (!isAppConnected) {
-          console.log('ERROR: app is not connected')
-          return
+          throw new Error('App is not connected')
+        }
+        if (!group) {
+          throw new Error('Group does not exists')
         }
         // @TODO we can use a default provider instead of relaying on the web3 provider
         const provider = web3Provider.getSigner()
 
         const path = data?.path
         if (!path) {
-          console.log('ERROR: path does not exists yet')
-          return
+          throw new Error('Path does not exists yet')
         }
         const { dests, srcs, tokenOwners, wads } = transformPathToTransferThroughParams(path)
         const transferThroughTx = await encodeHubTransaction(provider, 'transferThrough', [
@@ -63,8 +60,7 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
         const collaterals = await transformPathToMintParams(dests, srcs, provider)
         const amounts = [mintAmount]
         if (collaterals.length === 0) {
-          console.log('ERROR: collaterals must be filled with some elements')
-          return
+          throw new Error('Collaterals must have some elements')
         }
         const mintTx = await encodeGCTTransaction(groupAddress, provider, 'mint', [
           collaterals,
