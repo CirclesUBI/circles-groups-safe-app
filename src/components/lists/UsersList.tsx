@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { FirstLetter } from '../assets/FirstLetter'
+import { AddRemoveUsers } from '@/src/components/actions/AddRemoveUsers'
 import { AddDeleteButton } from '@/src/components/assets/AddDeleteButton'
 import { ListContainer } from '@/src/components/assets/ListContainer'
 import { ListItem } from '@/src/components/assets/ListItem'
@@ -68,10 +69,9 @@ interface groupMember {
 interface Props {
   action: string
   usersGroup: groupMember[]
-  onCloseAlert: (openedValue: boolean, actionValue: string, userValue: number) => void
 }
 
-export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup }) => {
+export const UsersList: React.FC<Props> = ({ action, usersGroup }) => {
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
@@ -89,48 +89,63 @@ export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup })
     })
   }, [usersGroup, query])
 
+  const [notification, setNotification] = useState({
+    opened: false,
+    action: '',
+    user: 0,
+  })
+
   return (
-    <List>
-      {totalItemsNum > 4 && <SearchInput onChange={(e) => setQuery(e)} />}
-      <ListContainer>
-        {filteredUsers.length > 0 ? (
-          filteredUsers
-            .slice(0, page * itemsPerPage)
-            .map(({ avatarUrl, id, username }, index: number | undefined) => (
-              <ListItem custom={index} key={`user_${id}`}>
-                <GroupInfo>
-                  <ImageWrapper>
-                    {!avatarUrl ? (
-                      <FirstLetter character={username.charAt(0)} />
-                    ) : (
-                      <Image alt={username} layout="fill" objectFit="cover" src={avatarUrl} />
-                    )}
-                  </ImageWrapper>
-                  <h3>{username}</h3>
-                </GroupInfo>
-                <GroupActions>
-                  <AddDeleteButton
-                    action={action}
-                    addRemoveUser={() => onCloseAlert(true, action, id)}
-                  />
-                </GroupActions>
-              </ListItem>
-            ))
-        ) : (
+    <>
+      <AddRemoveUsers
+        cancelAction={() => setNotification({ opened: false, action: '', user: 0 })}
+        groupMembers={usersGroup}
+        notification={notification}
+      />
+      <List>
+        {totalItemsNum > 4 && <SearchInput onChange={(e) => setQuery(e)} />}
+        <ListContainer>
+          {filteredUsers.length > 0 ? (
+            filteredUsers
+              .slice(0, page * itemsPerPage)
+              .map(({ avatarUrl, id, username }, index: number | undefined) => (
+                <ListItem custom={index} key={`user_${id}`}>
+                  <GroupInfo>
+                    <ImageWrapper>
+                      {!avatarUrl ? (
+                        <FirstLetter character={username.charAt(0)} />
+                      ) : (
+                        <Image alt={username} layout="fill" objectFit="cover" src={avatarUrl} />
+                      )}
+                    </ImageWrapper>
+                    <h3>{username}</h3>
+                  </GroupInfo>
+                  <GroupActions>
+                    <AddDeleteButton
+                      action={action}
+                      addRemoveUser={() =>
+                        setNotification({ opened: true, action: action, user: id })
+                      }
+                    />
+                  </GroupActions>
+                </ListItem>
+              ))
+          ) : (
+            <>
+              <NoMembersText>
+                {query
+                  ? `We couldn't find a match for ${query}.`
+                  : 'There are no members on this group.'}
+              </NoMembersText>
+            </>
+          )}
+        </ListContainer>
+        {page < totalPages && filteredUsers.length > itemsPerPage && (
           <>
-            <NoMembersText>
-              {query
-                ? `We couldn't find a match for ${query}.`
-                : 'There are no members on this group.'}
-            </NoMembersText>
+            <LoadMoreButton moreResults={() => setPage((prev) => prev + 1)} />
           </>
         )}
-      </ListContainer>
-      {page < totalPages && filteredUsers.length > itemsPerPage && (
-        <>
-          <LoadMoreButton moreResults={() => setPage((prev) => prev + 1)} />
-        </>
-      )}
-    </List>
+      </List>
+    </>
   )
 }

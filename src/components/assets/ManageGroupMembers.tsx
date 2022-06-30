@@ -3,10 +3,7 @@ import styled from 'styled-components'
 
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { AlertMessage } from '@/src/components/assets/AlertMessage'
 import { UsersList } from '@/src/components/lists/UsersList'
-import { allUsers } from '@/src/constants/allUsers'
-import { users } from '@/src/constants/users'
 
 const Nav = styled.nav`
   align-items: center;
@@ -51,104 +48,11 @@ interface Props {
 }
 
 export const ManageGroupMembers: React.FC<Props> = ({ groupMembers, groupMembersCount }) => {
-  // @TODO: use a default group to fetch the members instead of this hardcoded group
-  const groupId = '0x8c767b35123496469b21af9df28b1927b77441a7'
-
-  console.log(groupMembers)
-
   const tabs = [{ text: 'Members' }, { text: 'Add members' }]
   const [selectedTab, setSelectedTab] = useState(tabs[0])
 
-  const [usersGroup, setUsers] = useState(users)
-  const [usersAll, setUsersAll] = useState(allUsers)
-  const [notification, setNotification] = useState({
-    opened: false,
-    action: '',
-    user: 0,
-  })
-
-  function notificationInfo(openedValue: boolean, actionValue: string, userValue: number) {
-    setNotification({
-      opened: openedValue,
-      action: actionValue,
-      user: userValue,
-    })
-  }
-
-  function handleRemove(userID: number) {
-    notificationInfo(false, '', 0)
-    // add user to all users list
-    const moveUser = usersGroup.filter((user) => user.id == userID)
-    setUsersAll((usersAll) => [moveUser[0], ...usersAll])
-
-    // remove item from my group list
-    const newList = usersGroup.filter((user) => user.id !== userID)
-    setUsers(newList)
-  }
-
-  function handleAdd(userID: number) {
-    notificationInfo(false, '', 0)
-    // remove user all users list
-    const newAllList = usersAll.filter((user) => user.id !== userID)
-    setUsersAll(newAllList)
-
-    // add user to my group list
-    const newUser = usersAll.filter((user) => user.id == userID)
-    setUsers((usersGroup) => [newUser[0], ...usersGroup])
-  }
-
-  function getUserNameAllList(userID: number) {
-    // get user name from all members list
-    const getUser = usersAll.filter((user) => user.id == userID)
-    const getUserName = getUser[0].name
-    return getUserName
-  }
-
-  function getUserNameMyGroupList(userID: number) {
-    // get user name from group list
-    const user = groupMembers.find((user) => user.id === userID)
-    return user?.username ?? ''
-  }
-
   return (
     <>
-      {notification.opened && (
-        <AnimatePresence>
-          {notification.action == 'delete' ? (
-            <AlertMessage
-              confirmAction={() => handleRemove(notification.user)}
-              onCloseAlert={() =>
-                setNotification({
-                  opened: false,
-                  action: '',
-                  user: 0,
-                })
-              }
-              text={
-                'Are you sure you want to remove ' +
-                getUserNameMyGroupList(notification.user) +
-                ' from your group?'
-              }
-            />
-          ) : (
-            <AlertMessage
-              confirmAction={() => handleAdd(notification.user)}
-              onCloseAlert={() =>
-                setNotification({
-                  opened: false,
-                  action: '',
-                  user: 0,
-                })
-              }
-              text={
-                'Are you sure you want to add ' +
-                getUserNameAllList(notification.user) +
-                ' to your group?'
-              }
-            />
-          )}
-        </AnimatePresence>
-      )}
       <Section>
         <div className="groupsMenu">
           <Nav>
@@ -163,7 +67,6 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupMembers, groupMembers
             ))}
           </Nav>
         </div>
-
         <AnimatePresence exitBeforeEnter>
           <motion.div
             animate={{ x: 0, opacity: 1 }}
@@ -173,13 +76,9 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupMembers, groupMembers
             transition={{ duration: 0.2 }}
           >
             {selectedTab.text == 'Members' ? (
-              <UsersList
-                action={'delete'}
-                onCloseAlert={notificationInfo}
-                usersGroup={groupMembers}
-              />
+              <UsersList action={'delete'} usersGroup={groupMembers} />
             ) : (
-              <UsersList action={'add'} onCloseAlert={notificationInfo} usersGroup={groupMembers} />
+              <UsersList action={'add'} usersGroup={groupMembers} />
             )}
           </motion.div>
         </AnimatePresence>
