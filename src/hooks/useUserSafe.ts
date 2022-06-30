@@ -9,14 +9,16 @@ export const useUserSafe = (safeAddress: string) => {
     getUsers([safeAddress]),
   )
   const result = { error, refetch: mutate }
-  let user: CirclesGardenUser = useMemo(() => {
+  const user: CirclesGardenUser = useMemo(() => {
+    let dataUser
     if (data && data.length > 0) {
-      user = data[0]
+      dataUser = data[0]
     }
     return {
       id: 0,
       username: safeAddress,
       safeAddress,
+      ...dataUser,
     }
   }, [safeAddress, data])
   return { ...result, user }
