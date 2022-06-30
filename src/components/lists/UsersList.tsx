@@ -8,7 +8,6 @@ import { ListContainer } from '@/src/components/assets/ListContainer'
 import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
 import { SearchInput } from '@/src/components/assets/SearchInput'
-import { GroupMember } from '@/src/hooks/subgraph/useGroupMembers'
 
 const List = styled.div`
   display: flex;
@@ -59,10 +58,16 @@ const NoMembersText = styled.p`
   padding: ${({ theme }) => theme.general.space * 4}px 0 0;
   border-top: 1px solid #e0e0e0; ;
 `
+interface groupMember {
+  id: number
+  username: string
+  safeAddress: string
+  avatarUrl?: string
+}
 
 interface Props {
   action: string
-  usersGroup: Array<GroupMember>
+  usersGroup: groupMember[]
   onCloseAlert: (openedValue: boolean, actionValue: string, userValue: number) => void
 }
 
