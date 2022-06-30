@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import { isAddress } from '@ethersproject/address'
 
+import { Crc } from '@/src/components/assets/Crc'
 import { FirstLetter } from '@/src/components/assets/FirstLetter'
 import { circlesToTC } from '@/src/utils/circleConversor'
 import { formatToken } from '@/src/web3/bigNumber'
@@ -56,6 +57,11 @@ const InformationText = styled.span`
       gap: ${({ theme }) => theme.general.space}px;
     }
   }
+  strong {
+    display: flex;
+    align-items: center;
+    gap: ${({ theme }) => theme.general.space}px;
+  }
 `
 interface Props {
   amountText?: string
@@ -104,8 +110,7 @@ export const TransferUserInformation: React.FC<Props> = ({
             <p>
               {amountText}{' '}
               <strong>
-                <Image alt="Configuration" height={12} src="/images/crc.svg" width={12} />{' '}
-                {formatAmountValue(amountValue)}
+                <Crc /> {formatAmountValue(amountValue)}
               </strong>
             </p>
           </InformationText>

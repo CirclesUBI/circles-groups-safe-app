@@ -58,7 +58,19 @@ const WalletConnect: NextPage = () => {
     <>
       <Title text="Wallet connect" />
       <Wrapper>
-        <User userPic="/images/user.jpg" username="@TomasBari" />
+        <User
+          userImage={
+            <Image
+              alt="@TomasBari"
+              height={40}
+              objectFit="cover"
+              src="/images/user.jpg"
+              width={40}
+            />
+          }
+          userTokens={1119.25}
+          username="@TomasBari"
+        />
         <QrWrapper>
           <Image alt="Configuration" height={244} src="/images/qr.png" width={244} />
         </QrWrapper>
