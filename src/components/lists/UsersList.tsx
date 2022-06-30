@@ -83,7 +83,7 @@ export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup })
 
   return (
     <List>
-      {totalItemsNum > 4 && <SearchInput onChange={(e) => setQuery(e)} />}
+      {totalItemsNum > itemsPerPage && <SearchInput onChange={(e) => setQuery(e)} />}
       <ListContainer>
         {filteredUsers.length > 0 ? (
           filteredUsers
@@ -109,15 +109,7 @@ export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup })
               </ListItem>
             ))
         ) : (
-          <>
-            <NoResultsText
-              text={
-                query
-                  ? `We couldn't find a match for ${query}.`
-                  : 'There are no members on this group.'
-              }
-            />
-          </>
+          <NoResultsText query={query} text={'There are no members on this group.'} />
         )}
       </ListContainer>
       {page < totalPages && filteredUsers.length > itemsPerPage && (

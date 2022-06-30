@@ -71,7 +71,7 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
 
   return (
     <List>
-      {totalItemsNum > 4 && <SearchInput onChange={(e) => setQuery(e)} />}
+      {totalItemsNum > itemsPerPage && <SearchInput onChange={(e) => setQuery(e)} />}
       <ListContainer>
         {filteredGroups.length > 0 ? (
           filteredGroups.slice(0, page * itemsPerPage).map(({ members, name }, index) => (
@@ -99,15 +99,7 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
             </ListItem>
           ))
         ) : (
-          <>
-            <NoResultsText
-              text={
-                query
-                  ? `We couldn't find a match for ${query}.`
-                  : "You don't belong to any group yet."
-              }
-            />
-          </>
+          <NoResultsText query={query} text={"You don't belong to any group yet."} />
         )}
       </ListContainer>
       {page < totalPages && filteredGroups.length > itemsPerPage && (
