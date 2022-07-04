@@ -64,7 +64,6 @@ const CreateGroup: NextPage = () => {
       <FormWrapper>
         <Columns columnsNumber={1}>
           <Input
-            information="This is a message"
             label="Name"
             mandatory
             maxLength={30}
@@ -78,7 +77,7 @@ const CreateGroup: NextPage = () => {
         </Columns>
         <Columns columnsNumber={2}>
           <Input
-            information="This is a message"
+            information="Group token Symbol"
             label="Symbol"
             mandatory
             setValue={setGroupSymbol}
@@ -86,7 +85,7 @@ const CreateGroup: NextPage = () => {
             value={groupSymbol}
           />
           <Input
-            information="This is a message"
+            information="Cost of minting tokens to the group currency."
             label="Fee"
             mandatory
             setValue={setFee}
@@ -96,7 +95,7 @@ const CreateGroup: NextPage = () => {
         </Columns>
         <Columns columnsNumber={1}>
           <Input
-            information="This is a message This is a message This is a message"
+            information="Account (safe address) where individual circles are stored and saved."
             label="Treasury"
             mandatory
             setValue={setTreasury}
