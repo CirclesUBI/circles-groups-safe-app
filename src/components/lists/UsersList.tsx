@@ -59,7 +59,7 @@ const GroupActions = styled.div`
 interface Props {
   action: string
   usersGroup: Array<GroupMember>
-  onCloseAlert: (openedValue: boolean, actionValue: string, userValue: number) => void
+  onCloseAlert?: (openedValue: boolean, actionValue: string, userValue: number) => void
 }
 
 export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup }) => {
@@ -100,12 +100,14 @@ export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup })
                   </ImageWrapper>
                   <h3>{username}</h3>
                 </GroupInfo>
-                <GroupActions>
-                  <AddDeleteButton
-                    action={action}
-                    addRemoveUser={() => onCloseAlert(true, action, id)}
-                  />
-                </GroupActions>
+                {action != 'show' && (
+                  <GroupActions>
+                    <AddDeleteButton
+                      action={action}
+                      addRemoveUser={() => onCloseAlert?.(true, action, id)}
+                    />
+                  </GroupActions>
+                )}
               </ListItem>
             ))
         ) : (
