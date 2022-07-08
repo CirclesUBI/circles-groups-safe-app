@@ -75,7 +75,7 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
       {totalItemsNum > itemsPerPage && <SearchInput onChange={(e) => setQuery(e)} />}
       <ListContainer>
         {filteredGroups.length > 0 ? (
-          filteredGroups.slice(0, page * itemsPerPage).map(({ members, name }, index) => (
+          filteredGroups.slice(0, page * itemsPerPage).map(({ id, members, name }, index) => (
             <ListItem key={`group_${index}`}>
               <GroupInfo>
                 <FirstLetter character={name.charAt(0)} />
@@ -94,7 +94,7 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
                 <Tooltip text="Group information and members list">
                   <ActionItem
                     color="third"
-                    href="/group-information"
+                    href={`${id}/group-information`}
                     icon="/images/icon-information.svg"
                   />
                 </Tooltip>
