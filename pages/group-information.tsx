@@ -1,5 +1,4 @@
 import type { NextPage } from 'next'
-
 import Link from 'next/link'
 import styled from 'styled-components'
 
@@ -7,10 +6,8 @@ import { Crc } from '@/src/components/assets/Crc'
 import { InformationPod } from '@/src/components/assets/InformationPod'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
 import { Columns } from '@/src/components/layout/Columns'
-
-import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
-
 import { UsersList } from '@/src/components/lists/UsersList'
+import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { useGroupMembers } from '@/src/hooks/subgraph/useGroupMembers'
 
 const Wrapper = styled.div`
@@ -22,7 +19,9 @@ const Wrapper = styled.div`
 `
 
 const ActionWrapper = styled.div`
-  margin-top: ${({ theme }) => theme.general.space * 4}px;
+  margin-top: ${({ theme }) => theme.general.space * 6}px;
+  padding-top: ${({ theme }) => theme.general.space * 4}px;
+  border-top: 1px solid #e0e0e0; ;
 `
 
 const ListWrapper = styled.div`
