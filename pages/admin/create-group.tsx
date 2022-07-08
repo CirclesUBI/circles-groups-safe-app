@@ -95,7 +95,7 @@ const CreateGroup: NextPage = () => {
         </Columns>
         <Columns columnsNumber={1}>
           <Input
-            information="Account (safe address) where individual circles are stored and saved."
+            information="Account (Safe address) where individual circles are stored and saved."
             label="Treasury"
             mandatory
             setValue={setTreasury}
