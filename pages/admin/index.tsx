@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
+import { getAddress } from '@ethersproject/address'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { AlertMessage } from '@/src/components/assets/AlertMessage'
@@ -9,9 +10,9 @@ import { NoGroupCreated } from '@/src/components/assets/NoGroupCreated'
 import { Title } from '@/src/components/assets/Title'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
 import { UsersList } from '@/src/components/lists/UsersList'
-import { allUsers } from '@/src/constants/allUsers'
-import { users } from '@/src/constants/users'
 import { useGroupMembers } from '@/src/hooks/subgraph/useGroupMembers'
+import { useAllUsers } from '@/src/hooks/subgraph/useUsers'
+import { useAddMemberTx } from '@/src/hooks/useAddMember'
 
 const Nav = styled.nav`
   align-items: center;
@@ -44,32 +45,46 @@ const Section = styled.section`
 `
 
 const HomeAdmin: NextPage = () => {
+  const { execute } = useAddMemberTx()
   // @TODO: use a default group to fetch the members instead of this hardcoded group
   const groupId = '0x8c767b35123496469b21af9df28b1927b77441a7'
   const { groupMembers } = useGroupMembers(groupId)
   const groupMembersCount = groupMembers?.length ?? 0
+  const { allUsers } = useAllUsers()
 
   const tabs = [{ text: 'Members' }, { text: 'Add members' }]
   const [selectedTab, setSelectedTab] = useState(tabs[0])
 
-  const [usersGroup, setUsers] = useState(users)
+  const [usersGroup, setUsers] = useState(groupMembers)
   const [usersAll, setUsersAll] = useState(allUsers)
   const [notification, setNotification] = useState({
     opened: false,
     action: '',
     user: 0,
+    userAddress: '',
   })
 
-  function notificationInfo(openedValue: boolean, actionValue: string, userValue: number) {
+  const addMemberToken = async (userAddress: string) => {
+    const user = getAddress(userAddress)
+    await execute([user], undefined)
+  }
+
+  function notificationInfo(
+    openedValue: boolean,
+    actionValue: string,
+    userValue: number,
+    safeAddress: string,
+  ) {
     setNotification({
       opened: openedValue,
       action: actionValue,
       user: userValue,
+      userAddress: safeAddress,
     })
   }
 
   function handleRemove(userID: number) {
-    notificationInfo(false, '', 0)
+    notificationInfo(false, '', 0, '')
     // add user to all users list
     const moveUser = usersGroup.filter((user) => user.id == userID)
     setUsersAll((usersAll) => [moveUser[0], ...usersAll])
@@ -79,8 +94,9 @@ const HomeAdmin: NextPage = () => {
     setUsers(newList)
   }
 
-  function handleAdd(userID: number) {
-    notificationInfo(false, '', 0)
+  async function handleAdd(userID: number, userAddress: string) {
+    await addMemberToken(userAddress)
+    notificationInfo(false, '', 0, '')
     // remove user all users list
     const newAllList = usersAll.filter((user) => user.id !== userID)
     setUsersAll(newAllList)
@@ -93,7 +109,7 @@ const HomeAdmin: NextPage = () => {
   function getUserNameAllList(userID: number) {
     // get user name from all members list
     const getUser = usersAll.filter((user) => user.id == userID)
-    const getUserName = getUser[0].name
+    const getUserName = getUser[0]?.username ?? ''
     return getUserName
   }
 
@@ -115,6 +131,7 @@ const HomeAdmin: NextPage = () => {
                   opened: false,
                   action: '',
                   user: 0,
+                  userAddress: '',
                 })
               }
               text={
@@ -125,12 +142,13 @@ const HomeAdmin: NextPage = () => {
             />
           ) : (
             <AlertMessage
-              confirmAction={() => handleAdd(notification.user)}
+              confirmAction={() => handleAdd(notification.user, notification.userAddress)}
               onCloseAlert={() =>
                 setNotification({
                   opened: false,
                   action: '',
                   user: 0,
+                  userAddress: '',
                 })
               }
               text={
@@ -193,11 +211,7 @@ const HomeAdmin: NextPage = () => {
                     usersGroup={groupMembers}
                   />
                 ) : (
-                  <UsersList
-                    action={'add'}
-                    onCloseAlert={notificationInfo}
-                    usersGroup={groupMembers}
-                  />
+                  <UsersList action={'add'} onCloseAlert={notificationInfo} usersGroup={allUsers} />
                 )}
               </motion.div>
             </AnimatePresence>

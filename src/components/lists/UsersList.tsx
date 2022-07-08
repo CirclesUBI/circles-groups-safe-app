@@ -58,8 +58,13 @@ const GroupActions = styled.div`
 
 interface Props {
   action: string
-  usersGroup: Array<GroupMember>
-  onCloseAlert: (openedValue: boolean, actionValue: string, userValue: number) => void
+  usersGroup: GroupMember[]
+  onCloseAlert: (
+    openedValue: boolean,
+    actionValue: string,
+    userValue: number,
+    userAddress: string,
+  ) => void
 }
 
 export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup }) => {
@@ -88,7 +93,7 @@ export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup })
         {filteredUsers.length > 0 ? (
           filteredUsers
             .slice(0, page * itemsPerPage)
-            .map(({ avatarUrl, id, username }, index: number | undefined) => (
+            .map(({ avatarUrl, id, safeAddress, username }, index: number | undefined) => (
               <ListItem custom={index} key={`user_${id}`}>
                 <GroupInfo>
                   <ImageWrapper>
@@ -103,7 +108,7 @@ export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup })
                 <GroupActions>
                   <AddDeleteButton
                     action={action}
-                    addRemoveUser={() => onCloseAlert(true, action, id)}
+                    addRemoveUser={() => onCloseAlert(true, action, id, safeAddress)}
                   />
                 </GroupActions>
               </ListItem>
