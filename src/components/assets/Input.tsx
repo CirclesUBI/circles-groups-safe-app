@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import { AnimatePresence, motion } from 'framer-motion'
 
+import { Info } from '@/src/components/assets/Info'
 import { Tooltip } from '@/src/components/assets/Tooltip'
 
 const Wrapper = styled.label`
@@ -108,7 +109,11 @@ export const Input: React.FC<Props> = ({
         <strong>
           {label} {mandatory && '*'}
         </strong>
-        {information && <Tooltip text={information} />}
+        {information && (
+          <Tooltip text={information}>
+            <Info />
+          </Tooltip>
+        )}
       </LabelText>
       <InputFieldWrapper className={errors ? 'whithErrors' : 'noErrors'}>
         {icon}
