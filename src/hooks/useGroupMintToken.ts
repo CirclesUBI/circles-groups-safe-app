@@ -4,20 +4,20 @@ import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk/dist/src/sdk'
 import useSWR from 'swr'
 
 import { useWeb3Connected } from '../providers/web3ConnectionProvider'
-import encodeGCTTransaction from '../utils/contracts/encodeGCTTransaction'
-import encodeHubTransaction from '../utils/contracts/encodeHubTransaction'
 import {
   getPath,
   transformPathToMintParams,
   transformPathToTransferThroughParams,
-} from '../utils/pathfinderAPI'
+} from '../utils/circlesGardenPathAPI'
+import encodeGCTTransaction from '../utils/contracts/encodeGCTTransaction'
+import encodeHubTransaction from '../utils/contracts/encodeHubTransaction'
 import { useGroupCurrencyTokensById } from './subgraph/useGroupCurrencyToken'
 import useSafeTransaction from './useSafeTransaction'
 
 const fetchGroupMintTokenData = async (from: string, to: string) => {
   const data = await getPath(from, to)
-  const path = data?.transfers ?? []
-  const mintMaxAmount = data?.flow ?? '0'
+  const path = data?.data.transferSteps ?? []
+  const mintMaxAmount = data?.data.maxFlowValue ?? '0'
   return { path, mintMaxAmount }
 }
 
@@ -29,7 +29,11 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
 
   const [loading, setLoading] = useState<boolean>(false)
 
-  const { data, error, mutate } = useSWR(['useGroupMintToken', userAddress, groupAddress], () =>
+  const {
+    data: mintTokenData,
+    error,
+    mutate,
+  } = useSWR(['useGroupMintToken', userAddress, groupAddress], () =>
     fetchGroupMintTokenData(userAddress, groupAddress),
   )
 
@@ -46,7 +50,7 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
         // @TODO we can use a default provider instead of relaying on the web3 provider
         const provider = web3Provider.getSigner()
 
-        const path = data?.path
+        const path = mintTokenData?.path
         if (!path) {
           throw new Error('Path does not exists yet')
         }
@@ -74,11 +78,11 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
         setLoading(false)
       }
     },
-    [group, isAppConnected, web3Provider, data, execute, groupAddress],
+    [group, isAppConnected, web3Provider, mintTokenData, execute, groupAddress],
   )
   return {
-    path: data?.path,
-    mintMaxAmount: data?.mintMaxAmount,
+    path: mintTokenData?.path,
+    mintMaxAmount: mintTokenData?.mintMaxAmount,
     error,
     refetch: mutate,
     mintToken,
