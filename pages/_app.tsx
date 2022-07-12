@@ -1,7 +1,6 @@
 import type { AppProps } from 'next/app'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
-import { useState } from 'react'
 import { ThemeProvider } from 'styled-components'
 
 import { SWRConfig } from 'swr'
@@ -33,13 +32,6 @@ function App({ Component, pageProps }: AppProps) {
   const description = 'Circles'
   const twitterHandle = '@'
 
-  const tabs = [{ text: 'My Groups' }, { text: 'All Groups' }]
-  const [selectedTab, setSelectedTab] = useState(tabs[0].text)
-
-  function changeTab(param: string) {
-    setSelectedTab(param)
-  }
-
   return (
     <>
       <Head>
@@ -67,12 +59,7 @@ function App({ Component, pageProps }: AppProps) {
               <SafeSuspense>
                 <Layout>
                   <Toast />
-                  <Component
-                    {...pageProps}
-                    onChange={changeTab}
-                    selectedTab={selectedTab}
-                    tabs={tabs}
-                  />
+                  <Component {...pageProps} />
                 </Layout>
               </SafeSuspense>
             </Web3ConnectionProvider>

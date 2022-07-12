@@ -2,12 +2,14 @@ import type { NextPage } from 'next'
 import styled from 'styled-components'
 
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 
-import { Title } from '@/src/components/assets/Title'
 import { GroupList } from '@/src/components/lists/GroupList'
+import { TabContent } from '@/src/components/tabs/TabContent'
+import { TabHeader } from '@/src/components/tabs/TabHeader'
 import { useGroupCurrencyTokens } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useGroupsByMember } from '@/src/hooks/subgraph/useGroupsByMember'
+import TabContainer from '@/src/providers/groupsTabsProvider'
 
 const Nav = styled.nav`
   align-items: center;
@@ -21,64 +23,39 @@ const Nav = styled.nav`
     font-weight: 400;
   }
 `
-const Tab = styled.button`
-  background-color: transparent;
-  border: none;
-  color: ${({ theme }) => theme.colors.primary};
-  cursor: pointer;
-  font-size: 18px;
-  font-weight: 400;
-  padding: 0;
-  span {
-    &:not(.active) {
-      opacity: 0.5;
-    }
-  }
-`
-interface tab {
-  text: string
-}
 
-interface Props {
-  tabs: tab[]
-  onChange: (text: string) => void
-  selectedTab: string
-}
-
-const Home: NextPage<Props> = ({ onChange, selectedTab, tabs }) => {
+const Home: NextPage = () => {
   const { safe } = useSafeAppsSDK()
   const { groups } = useGroupCurrencyTokens()
   const { groupsByMember } = useGroupsByMember(safe.safeAddress)
+
+  const tabsGroups = [
+    {
+      title: 'My groups',
+      header: 'Groups where i belong',
+      content: <GroupList groups={groupsByMember} />,
+    },
+    {
+      title: 'All groups',
+      header: 'All existing Groups',
+      content: <GroupList groups={groups} />,
+    },
+  ]
+
   return (
     <>
-      <div className="groupsMenu">
+      <TabContainer tab={tabsGroups[0].title}>
         <Nav>
-          {tabs.map(({ text }, index) => (
-            <Tab key={`tab_${index}`} onClick={() => onChange(text)}>
-              <span className={selectedTab == text ? 'active' : 'inactive'}>{text}</span>
-            </Tab>
+          {tabsGroups.map(({ title }, index) => (
+            <TabHeader key={index} title={title} />
           ))}
         </Nav>
-      </div>
-      <Title text={selectedTab == 'My Groups' ? 'Groups where i belong' : 'All existing Groups'} />
-
-      <section>
         <AnimatePresence exitBeforeEnter>
-          <motion.div
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 10, opacity: 0 }}
-            initial={{ x: -20, opacity: 0 }}
-            key={selectedTab ? selectedTab : 'empty'}
-            transition={{ duration: 0.2 }}
-          >
-            {selectedTab == 'My Groups' ? (
-              <GroupList groups={groupsByMember} />
-            ) : (
-              <GroupList groups={groups} />
-            )}
-          </motion.div>
+          {tabsGroups.map(({ content, header, title }, index) => (
+            <TabContent content={content} header={header} key={index} whenActive={title} />
+          ))}
         </AnimatePresence>
-      </section>
+      </TabContainer>
     </>
   )
 }
