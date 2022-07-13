@@ -51,7 +51,6 @@ const MyGroups = styled.div`
 const NoGroupMessage = styled.h3`
   max-width: 24rem;
 `
-
 type Props = {
   onClose: () => void
 }
@@ -98,9 +97,9 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
         />
         <LinksList as={motion.div} variants={variants}>
           <AnimatePresence>
-            {menuLinks.map(({ href, title }, index) => (
+            {menuLinks.map(({ gotoTab, href, title }, index) => (
               <div key={`links_${index}`}>
-                <MenuItem closeMenu={() => onClose()} href={href} title={title} />
+                <MenuItem closeMenu={() => onClose()} gotoTab={gotoTab} href={href} title={title} />
               </div>
             ))}
           </AnimatePresence>

@@ -1,15 +1,9 @@
 import type { NextPage } from 'next'
 import styled from 'styled-components'
 
-import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
-import { AnimatePresence } from 'framer-motion'
-
-import { GroupList } from '@/src/components/lists/GroupList'
 import { TabContent } from '@/src/components/tabs/TabContent'
 import { TabHeader } from '@/src/components/tabs/TabHeader'
-import { useGroupCurrencyTokens } from '@/src/hooks/subgraph/useGroupCurrencyToken'
-import { useGroupsByMember } from '@/src/hooks/subgraph/useGroupsByMember'
-import TabContainer from '@/src/providers/groupsTabsProvider'
+import GroupsTabs from '@/src/constants/GroupsTabs'
 
 const Nav = styled.nav`
   align-items: center;
@@ -25,37 +19,19 @@ const Nav = styled.nav`
 `
 
 const Home: NextPage = () => {
-  const { safe } = useSafeAppsSDK()
-  const { groups } = useGroupCurrencyTokens()
-  const { groupsByMember } = useGroupsByMember(safe.safeAddress)
-
-  const tabsGroups = [
-    {
-      title: 'My groups',
-      header: 'Groups where i belong',
-      content: <GroupList groups={groupsByMember} />,
-    },
-    {
-      title: 'All groups',
-      header: 'All existing Groups',
-      content: <GroupList groups={groups} />,
-    },
-  ]
+  const { Tabs } = GroupsTabs()
 
   return (
     <>
-      <TabContainer tab={tabsGroups[0].title}>
-        <Nav>
-          {tabsGroups.map(({ title }, index) => (
-            <TabHeader key={index} title={title} />
-          ))}
-        </Nav>
-        <AnimatePresence exitBeforeEnter>
-          {tabsGroups.map(({ content, header, title }, index) => (
-            <TabContent content={content} header={header} key={index} whenActive={title} />
-          ))}
-        </AnimatePresence>
-      </TabContainer>
+      <Nav>
+        {Tabs.map(({ title }, index) => (
+          <TabHeader key={index} title={title} />
+        ))}
+      </Nav>
+
+      {Tabs.map(({ content, header, title }, index) => (
+        <TabContent content={content} header={header} key={index} whenActive={title} />
+      ))}
     </>
   )
 }

@@ -25,6 +25,7 @@ interface Props {
 
 export const TabHeader: React.FC<Props> = ({ title }) => {
   const context = useContext(TabContext)
+  //{context?.activeTab == "" && context?.setTab(title)}
   const isActive = title === context?.activeTab
   const handleActive = () => context?.setTab(title)
   return (
