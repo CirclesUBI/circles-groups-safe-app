@@ -5,6 +5,7 @@ import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk/dist/src/sdk'
 import useSWR from 'swr'
 
 import { useWeb3Connected } from '../providers/web3ConnectionProvider'
+import { circlesToTC } from '../utils/circleConversor'
 import encodeGCTTransaction from '../utils/contracts/encodeGCTTransaction'
 import encodeHubTransaction from '../utils/contracts/encodeHubTransaction'
 import {
@@ -12,6 +13,7 @@ import {
   transformPathToMintParams,
   transformPathToTransferThroughParams,
 } from '../utils/pathfinderAPI'
+import { toFreckles } from '../web3/bigNumber'
 import { useGroupCurrencyTokensById } from './subgraph/useGroupCurrencyToken'
 import useSafeTransaction from './useSafeTransaction'
 
@@ -65,7 +67,8 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
           wads,
         ])
         const collaterals = await transformPathToMintParams(dests, srcs, provider)
-        const amounts = [mintAmount]
+        const formattedAmount = toFreckles(mintAmount)
+        const amounts = [formattedAmount]
         if (collaterals.length === 0) {
           throw new Error('Collaterals must have some elements')
         }
@@ -85,7 +88,7 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
   )
   return {
     path: mintTokenData?.path,
-    mintMaxAmount: mintTokenData?.mintMaxAmount,
+    mintMaxAmount: circlesToTC(mintTokenData?.mintMaxAmount),
     error,
     refetch: mutate,
     mintToken,
