@@ -6,8 +6,6 @@ import { isAddress } from '@ethersproject/address'
 
 import { Crc } from '@/src/components/assets/Crc'
 import { FirstLetter } from '@/src/components/assets/FirstLetter'
-import { circlesToTC } from '@/src/utils/circleConversor'
-import { formatToken } from '@/src/web3/bigNumber'
 
 const Wrapper = styled.div`
   display: flex;
@@ -79,8 +77,6 @@ const formatName = (text: string) => {
   return text
 }
 
-const formatAmountValue = (amount?: string) => circlesToTC(formatToken(amount))
-
 export const TransferUserInformation: React.FC<Props> = ({
   amountText,
   amountValue,
@@ -110,7 +106,7 @@ export const TransferUserInformation: React.FC<Props> = ({
             <p>
               {amountText}{' '}
               <strong>
-                <Crc /> {formatAmountValue(amountValue)}
+                <Crc /> {amountValue}
               </strong>
             </p>
           </InformationText>

@@ -6,6 +6,7 @@
 
 import { crcToTc, tcToCrc } from '@circles/timecircles'
 
+import { formatToken } from '../web3/bigNumber'
 import formatNumber from './formatNumber'
 
 /**
@@ -14,9 +15,11 @@ import formatNumber from './formatNumber'
  */
 export const circlesToTC = (amount?: string) => {
   if (!amount) return '0'
+  const formattedAmount = formatToken(amount)
+  if (!formattedAmount) return '0'
   const ts = new Date()
   // @TODO using parseInt might lose precision in the process
-  const numberAmount = parseInt(amount)
+  const numberAmount = parseInt(formattedAmount)
   const tc = crcToTc(ts, numberAmount)
   return formatNumber(tc)
 }
