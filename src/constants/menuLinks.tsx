@@ -12,6 +12,5 @@ export const menuLinks = [
   {
     title: 'Wallet connect',
     href: '/admin/wallet-connect',
-    gotoTab: null,
   },
 ]
