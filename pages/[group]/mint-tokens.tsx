@@ -56,6 +56,8 @@ const CreateGroup: NextPage = () => {
   const [mintAmount, setMintAmount] = useState<string>('')
   const [note, setNote] = useState<string>('')
 
+  const isMintAmountInvalid = parseFloat(mintAmount || '0') > parseFloat(mintMaxAmount || '0')
+
   return (
     <>
       {notification && (
@@ -106,7 +108,10 @@ const CreateGroup: NextPage = () => {
           value={note}
         />
         <ActionWrapper>
-          <ButtonSecondary disabled={!connected || loading} onClick={() => setNotification(true)}>
+          <ButtonSecondary
+            disabled={!connected || loading || isMintAmountInvalid}
+            onClick={() => setNotification(true)}
+          >
             Mint tokens
           </ButtonSecondary>
         </ActionWrapper>
