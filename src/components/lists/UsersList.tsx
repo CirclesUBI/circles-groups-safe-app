@@ -7,6 +7,7 @@ import { AddDeleteButton } from '@/src/components/assets/AddDeleteButton'
 import { ListContainer } from '@/src/components/assets/ListContainer'
 import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
+import { NoResultsText } from '@/src/components/assets/NoResultsText'
 import { SearchInput } from '@/src/components/assets/SearchInput'
 import { GroupMember } from '@/src/hooks/subgraph/useGroupMembers'
 
@@ -54,16 +55,11 @@ const GroupActions = styled.div`
     width: auto;
   }
 `
-const NoMembersText = styled.p`
-  margin: 0 ${({ theme }) => theme.general.space * 2}px;
-  padding: ${({ theme }) => theme.general.space * 4}px 0 0;
-  border-top: 1px solid #e0e0e0; ;
-`
 
 interface Props {
   action: string
   usersGroup: Array<GroupMember>
-  onCloseAlert: (openedValue: boolean, actionValue: string, userValue: number) => void
+  onCloseAlert?: (openedValue: boolean, actionValue: string, userValue: number) => void
 }
 
 export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup }) => {
@@ -72,7 +68,6 @@ export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup })
   const itemsPerPage = 5
 
   const totalItemsNum = usersGroup.length
-  const totalPages = Math.ceil(totalItemsNum / itemsPerPage)
 
   const filteredUsers = useMemo(() => {
     return usersGroup.filter((user: { username: string }) => {
@@ -84,9 +79,11 @@ export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup })
     })
   }, [usersGroup, query])
 
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
+
   return (
     <List>
-      {totalItemsNum > 4 && <SearchInput onChange={(e) => setQuery(e)} />}
+      {totalItemsNum > itemsPerPage && <SearchInput onChange={(e) => setQuery(e)} />}
       <ListContainer>
         {filteredUsers.length > 0 ? (
           filteredUsers
@@ -103,22 +100,18 @@ export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup })
                   </ImageWrapper>
                   <h3>{username}</h3>
                 </GroupInfo>
-                <GroupActions>
-                  <AddDeleteButton
-                    action={action}
-                    addRemoveUser={() => onCloseAlert(true, action, id)}
-                  />
-                </GroupActions>
+                {action != 'show' && (
+                  <GroupActions>
+                    <AddDeleteButton
+                      action={action}
+                      addRemoveUser={() => onCloseAlert?.(true, action, id)}
+                    />
+                  </GroupActions>
+                )}
               </ListItem>
             ))
         ) : (
-          <>
-            <NoMembersText>
-              {query
-                ? `We couldn't find a match for ${query}.`
-                : 'There are no members on this group.'}
-            </NoMembersText>
-          </>
+          <NoResultsText query={query} text={'There are no members on this group.'} />
         )}
       </ListContainer>
       {page < totalPages && filteredUsers.length > itemsPerPage && (

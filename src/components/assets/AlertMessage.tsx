@@ -97,8 +97,8 @@ export const AlertMessage: React.FC<Props> = ({
         </Close>
         <Text>{text}</Text>
         <Actions>
-          <ButtonConfirm onClick={confirmAction}>Confirm</ButtonConfirm>
           <ButtonCancel onClick={() => onCloseAlert()}>Cancel</ButtonCancel>
+          <ButtonConfirm onClick={confirmAction}>Confirm</ButtonConfirm>
         </Actions>
       </Message>
     </Wrapper>

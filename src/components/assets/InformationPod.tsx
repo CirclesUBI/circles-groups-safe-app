@@ -3,6 +3,9 @@ import Link from 'next/link'
 import React, { ReactNode } from 'react'
 import styled from 'styled-components'
 
+import { Info } from '@/src/components/assets/Info'
+import { Tooltip } from '@/src/components/assets/Tooltip'
+
 const InformationBlock = styled.div<{ bgColor: string }>`
   background-color: ${(props) => {
     switch (props.bgColor) {
@@ -22,7 +25,7 @@ const InformationBlock = styled.div<{ bgColor: string }>`
   }};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.general.space / 2}px;
+  gap: ${({ theme }) => theme.general.space}px;
   padding: ${({ theme }) => theme.general.space * 2}px;
   border-radius: ${({ theme }) => theme.general.borderRadius};
   font-size: 1.6rem;
@@ -37,6 +40,13 @@ const InformationBlock = styled.div<{ bgColor: string }>`
     color: ${({ theme }) => theme.colors.textColor};
   }
 `
+
+const InfoHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`
+
 const TextWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -74,6 +84,7 @@ interface Props {
   label?: string
   text: string
   bgColor?: string
+  information?: string
   owner?: boolean
   circles?: boolean
   icon?: ReactNode
@@ -82,13 +93,21 @@ interface Props {
 export const InformationPod: React.FC<Props> = ({
   bgColor = 'lightest',
   icon,
+  information = '',
   label,
   owner = false,
   text,
 }) => {
   return (
     <InformationBlock bgColor={bgColor}>
-      {label && <small>{label}</small>}
+      <InfoHeader>
+        {label && <small>{label}</small>}
+        {information && (
+          <Tooltip text={information}>
+            <Info />
+          </Tooltip>
+        )}
+      </InfoHeader>
       <TextWrapper>
         <Information>
           {icon}

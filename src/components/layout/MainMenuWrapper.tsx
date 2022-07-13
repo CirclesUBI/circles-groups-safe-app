@@ -28,11 +28,14 @@ const MenuWrapper = styled.div`
   width: 400px;
   max-width: 90%;
   z-index: 20;
-  padding: ${({ theme }) => theme.general.space * 4}px;
+  padding: ${({ theme }) => theme.general.space * 4}px ${({ theme }) => theme.general.space * 2}px;
   box-shadow: 59.8671px 3.99114px 121px rgba(0, 0, 0, 0.07),
     30.3077px 2.02051px 52.7484px rgba(0, 0, 0, 0.04725),
     11.9734px 0.798228px 19.6625px rgba(0, 0, 0, 0.035),
     2.61919px 0.174612px 6.99531px rgba(0, 0, 0, 0.02275);
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    padding: ${({ theme }) => theme.general.space * 4}px;
+  }
 `
 interface Props {
   closeMenu: () => void
