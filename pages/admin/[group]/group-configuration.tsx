@@ -36,7 +36,7 @@ const ConfigurateGroup: NextPage = () => {
 
   const [owner, setOwner] = useState(group?.owner)
   const [loading, setLoading] = useState<boolean>(false)
-  const [currentUser] = useState(String(safe.safeAddress))
+  const [currentUser] = useState(safe.safeAddress.toLowerCase())
 
   const isOwner = () => group?.owner == currentUser
   const saveConfiguration = async () => {
