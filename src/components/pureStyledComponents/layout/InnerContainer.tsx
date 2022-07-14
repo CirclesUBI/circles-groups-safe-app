@@ -17,7 +17,7 @@ export const InnerContainer = styled.div`
   transition: all 0.3s ease-in-out;
   width: auto;
   position: relative;
-  z-index: 1;
+  z-index: 0;
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     margin: 0 auto ${({ theme }) => theme.general.space * 2}px;
     width: ${({ theme }) => theme.general.containerWidth};
