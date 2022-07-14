@@ -32,31 +32,32 @@ interface Props {
 export const Tooltip: React.FC<Props> = ({ children, text }) => {
   const [isHovering, setIsHovering] = useState(false)
   return (
-    <Wrapper
-      onMouseEnter={() => {
-        {
-          setIsHovering(true)
-        }
-      }}
-      onMouseLeave={() => {
-        {
-          setIsHovering(false)
-        }
-      }}
-    >
+    <Wrapper>
       <AnimatePresence initial={true}>
         {isHovering && (
           <TooltipWrapper
             animate={{ opacity: 1, y: '0' }}
-            exit={{ opacity: 0, y: '-10px' }}
             initial={{ opacity: 0, y: '-10px' }}
-            transition={{ duration: 0.2, type: 'spring', stiffness: 1360, damping: 150 }}
+            transition={{ duration: 0.1, type: 'spring', stiffness: 1360, damping: 150 }}
           >
             {text}
           </TooltipWrapper>
         )}
       </AnimatePresence>
-      {children}
+      <div
+        onMouseEnter={() => {
+          {
+            setIsHovering(true)
+          }
+        }}
+        onMouseLeave={() => {
+          {
+            setIsHovering(false)
+          }
+        }}
+      >
+        {children}
+      </div>
     </Wrapper>
   )
 }
