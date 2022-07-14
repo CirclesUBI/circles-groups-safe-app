@@ -11,7 +11,11 @@ import { Columns } from '@/src/components/layout/Columns'
 import { UsersList } from '@/src/components/lists/UsersList'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
+<<<<<<< HEAD
 import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
+=======
+import { useGroupMembers } from '@/src/hooks/subgraph/useGroupMembers'
+>>>>>>> fixes import order for vercels deploy
 
 const Wrapper = styled.div`
   display: flex;
