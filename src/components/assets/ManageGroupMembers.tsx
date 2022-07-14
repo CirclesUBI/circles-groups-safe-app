@@ -48,7 +48,7 @@ interface Props {
 }
 
 export const ManageGroupMembers: React.FC<Props> = ({ groupMembers, groupMembersCount }) => {
-  const tabs = [{ text: 'Members' }, { text: 'Add members' }]
+  const tabs = ['Members', 'Add members']
   const [selectedTab, setSelectedTab] = useState(tabs[0])
 
   return (
@@ -56,11 +56,11 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupMembers, groupMembers
       <Section>
         <div className="groupsMenu">
           <Nav>
-            {tabs.map(({ text }, index) => (
-              <Tab key={`tab_${index}`} onClick={() => setSelectedTab({ text })}>
-                <span className={selectedTab.text == text ? 'active' : 'inactive'}>
+            {tabs.map((el, index) => (
+              <Tab key={`tab_${index}`} onClick={() => setSelectedTab(el)}>
+                <span className={selectedTab == el ? 'active' : 'inactive'}>
                   <>
-                    {text} {text == 'Members' && '(' + groupMembersCount + ')'}
+                    {el} {el == 'Members' && '(' + groupMembersCount + ')'}
                   </>
                 </span>
               </Tab>
@@ -72,10 +72,10 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupMembers, groupMembers
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 10, opacity: 0 }}
             initial={{ x: -20, opacity: 0 }}
-            key={selectedTab.text ? selectedTab.text : 'empty'}
+            key={selectedTab ? selectedTab : 'empty'}
             transition={{ duration: 0.2 }}
           >
-            {selectedTab.text == 'Members' ? (
+            {selectedTab == 'Members' ? (
               <UsersList action={'delete'} usersGroup={groupMembers} />
             ) : (
               <UsersList action={'add'} usersGroup={groupMembers} />
