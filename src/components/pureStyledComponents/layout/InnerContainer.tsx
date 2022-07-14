@@ -14,10 +14,10 @@ export const InnerContainer = styled.div`
   flex-shrink: 0;
   margin: 0 ${({ theme }) => theme.general.space * 2}px;
   max-width: ${({ theme }) => theme.layout.maxWidth};
-
   transition: all 0.3s ease-in-out;
   width: auto;
-  z-index: 0;
+  position: relative;
+  z-index: 1;
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     margin: 0 auto ${({ theme }) => theme.general.space * 2}px;
     width: ${({ theme }) => theme.general.containerWidth};

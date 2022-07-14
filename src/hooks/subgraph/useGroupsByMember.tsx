@@ -1,9 +1,6 @@
 import useSWR from 'swr'
 
-import {
-  GroupCurrencyToken,
-  fetchGroupCurrencyTokens,
-} from '@/src/hooks/subgraph/useGroupCurrencyToken'
+import { fetchGroupCurrencyTokens } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { GROUP_MEMBERS } from '@/src/queries/groupMembers'
 import { graphqlFetcher } from '@/src/utils/graphqlFetcher'
 import {

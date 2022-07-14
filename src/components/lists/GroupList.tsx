@@ -94,7 +94,7 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
                 <Tooltip text="Group information and members list">
                   <ActionItem
                     color="third"
-                    href="/group-information"
+                    href={`${id}/group-information`}
                     icon="/images/icon-information.svg"
                   />
                 </Tooltip>
