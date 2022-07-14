@@ -1,5 +1,4 @@
 import type { NextPage } from 'next'
-import { useState } from 'react'
 import styled from 'styled-components'
 
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
@@ -36,47 +35,50 @@ const Tab = styled.button`
     }
   }
 `
+interface tab {
+  text: string
+}
 
-const Section = styled.section``
-const Home: NextPage = () => {
-  const tabs = [{ text: 'My Groups' }, { text: 'All Groups' }]
-  const [selectedTab, setSelectedTab] = useState(tabs[0])
+interface Props {
+  tabs: tab[]
+  onChange: (text: string) => void
+  selectedTab: string
+}
+
+const Home: NextPage<Props> = ({ onChange, selectedTab, tabs }) => {
   const { safe } = useSafeAppsSDK()
   const { groups } = useGroupCurrencyTokens()
   const { groupsByMember } = useGroupsByMember(safe.safeAddress)
-
   return (
     <>
       <div className="groupsMenu">
         <Nav>
           {tabs.map(({ text }, index) => (
-            <Tab key={`tab_${index}`} onClick={() => setSelectedTab({ text })}>
-              <span className={selectedTab.text == text ? 'active' : 'inactive'}>{text}</span>
+            <Tab key={`tab_${index}`} onClick={() => onChange(text)}>
+              <span className={selectedTab == text ? 'active' : 'inactive'}>{text}</span>
             </Tab>
           ))}
         </Nav>
       </div>
-      <Title
-        text={selectedTab.text == 'My Groups' ? 'Groups where i belong' : 'All existing Groups'}
-      />
+      <Title text={selectedTab == 'My Groups' ? 'Groups where i belong' : 'All existing Groups'} />
 
-      <Section>
+      <section>
         <AnimatePresence exitBeforeEnter>
           <motion.div
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 10, opacity: 0 }}
             initial={{ x: -20, opacity: 0 }}
-            key={selectedTab.text ? selectedTab.text : 'empty'}
+            key={selectedTab ? selectedTab : 'empty'}
             transition={{ duration: 0.2 }}
           >
-            {selectedTab.text == 'My Groups' ? (
+            {selectedTab == 'My Groups' ? (
               <GroupList groups={groupsByMember} />
             ) : (
               <GroupList groups={groups} />
             )}
           </motion.div>
         </AnimatePresence>
-      </Section>
+      </section>
     </>
   )
 }

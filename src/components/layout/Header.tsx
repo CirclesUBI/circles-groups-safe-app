@@ -37,6 +37,7 @@ const Wrapper = styled.div`
   }
 `
 const HomeLink = styled.span`
+  cursor: pointer;
   transition: opacity 0.05s linear;
   width: 100px;
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
@@ -46,7 +47,7 @@ const HomeLink = styled.span`
     width: 184px;
   }
   &:active {
-    opacity: 0.7;
+    opacity: 0.8;
   }
 `
 

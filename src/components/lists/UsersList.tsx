@@ -66,6 +66,7 @@ interface groupMember {
 interface Props {
   action: string
   usersGroup: groupMember[]
+  onCloseAlert?: (openedValue: boolean, actionValue: string, userValue: number) => void
 }
 
 export const UsersList: React.FC<Props> = ({ action, usersGroup }) => {
@@ -118,14 +119,16 @@ export const UsersList: React.FC<Props> = ({ action, usersGroup }) => {
                     </ImageWrapper>
                     <h3>{username}</h3>
                   </GroupInfo>
-                  <GroupActions>
-                    <AddDeleteButton
-                      action={action}
-                      addRemoveUser={() =>
-                        setNotification({ opened: true, action: action, user: id })
-                      }
-                    />
-                  </GroupActions>
+                  {action != 'show' && (
+                    <GroupActions>
+                      <AddDeleteButton
+                        action={action}
+                        addRemoveUser={() =>
+                          setNotification?.({ opened: true, action: action, user: id })
+                        }
+                      />
+                    </GroupActions>
+                  )}
                 </ListItem>
               ))
           ) : (

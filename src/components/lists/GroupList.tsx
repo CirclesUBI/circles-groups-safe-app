@@ -8,6 +8,7 @@ import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
 import { NoResultsText } from '@/src/components/assets/NoResultsText'
 import { SearchInput } from '@/src/components/assets/SearchInput'
+import { Tooltip } from '@/src/components/assets/Tooltip'
 import { GroupCurrencyToken } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 
 const List = styled.div`
@@ -74,7 +75,7 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
       {totalItemsNum > itemsPerPage && <SearchInput onChange={(e) => setQuery(e)} />}
       <ListContainer>
         {filteredGroups.length > 0 ? (
-          filteredGroups.slice(0, page * itemsPerPage).map(({ members, name }, index) => (
+          filteredGroups.slice(0, page * itemsPerPage).map(({ id, members, name }, index) => (
             <ListItem key={`group_${index}`}>
               <GroupInfo>
                 <FirstLetter character={name.charAt(0)} />
@@ -90,11 +91,13 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
                   icon="/images/icon-send.svg"
                   text="Mint tokens"
                 />
-                <ActionItem
-                  color="third"
-                  href="/group-information"
-                  icon="/images/icon-information.svg"
-                />
+                <Tooltip text="Group information and members list">
+                  <ActionItem
+                    color="third"
+                    href={`${id}/group-information`}
+                    icon="/images/icon-information.svg"
+                  />
+                </Tooltip>
               </GroupActions>
             </ListItem>
           ))
