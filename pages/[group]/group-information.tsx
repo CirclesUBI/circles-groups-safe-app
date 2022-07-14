@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
@@ -10,8 +10,8 @@ import { TitleGroup } from '@/src/components/assets/TitleGroup'
 import { Columns } from '@/src/components/layout/Columns'
 import { UsersList } from '@/src/components/lists/UsersList'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { useGroupMembers } from '@/src/hooks/subgraph/useGroupMembers'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
+import { useGroupMembers } from '@/src/hooks/subgraph/useGroupMembers'
 
 const Wrapper = styled.div`
   display: flex;
