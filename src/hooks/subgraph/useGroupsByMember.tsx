@@ -29,7 +29,7 @@ export const fetchGroups = async (safeAddress: string) => {
   if (safeGroupMembers.length == 0) return [] as GroupCurrencyToken[]
   const groupId = getGroupId(safeGroupMembers)
 
-  return (await fetchGroupCurrencyTokens(groupId)) as GroupCurrencyToken[]
+  return (await fetchGroupCurrencyTokens({ where: { id: groupId } })) as GroupCurrencyToken[]
 }
 
 export const useGroupsByMember = (safeAddress: string) => {
