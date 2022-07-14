@@ -32,6 +32,7 @@ const Tab = styled.button`
     }
   }
 `
+
 const Section = styled.section`
   margin-top: ${({ theme }) => theme.general.space * 6}px;
 `
