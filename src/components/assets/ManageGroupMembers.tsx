@@ -61,7 +61,7 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupMembers, groupMembers
               <Tab key={`tab_${index}`} onClick={() => setSelectedTab(el)}>
                 <span className={selectedTab == el ? 'active' : 'inactive'}>
                   <>
-                    {el} {el == 'Members' && '(' + groupMembersCount + ')'}
+                    {el} {el === 'Members' && '(' + groupMembersCount + ')'}
                   </>
                 </span>
               </Tab>
@@ -76,7 +76,7 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupMembers, groupMembers
             key={selectedTab ? selectedTab : 'empty'}
             transition={{ duration: 0.2 }}
           >
-            {selectedTab == 'Members' ? (
+            {selectedTab === 'Members' ? (
               <UsersList action={'delete'} usersGroup={groupMembers} />
             ) : (
               <UsersList action={'add'} usersGroup={groupMembers} />

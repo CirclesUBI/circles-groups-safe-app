@@ -107,7 +107,7 @@ export const UsersList: React.FC<Props> = ({ action, usersGroup }) => {
           {filteredUsers.length > 0 ? (
             filteredUsers
               .slice(0, page * itemsPerPage)
-              .map(({ avatarUrl, id, username }, index: number | undefined) => (
+              .map(({ avatarUrl, id, username }, index) => (
                 <ListItem custom={index} key={`user_${id}`}>
                   <GroupInfo>
                     <ImageWrapper>
@@ -119,7 +119,7 @@ export const UsersList: React.FC<Props> = ({ action, usersGroup }) => {
                     </ImageWrapper>
                     <h3>{username}</h3>
                   </GroupInfo>
-                  {action != 'show' && (
+                  {action !== 'show' && (
                     <GroupActions>
                       <AddDeleteButton
                         action={action}
