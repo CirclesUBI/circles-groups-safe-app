@@ -4,12 +4,15 @@ import { ManageGroupMembers } from '@/src/components/assets/ManageGroupMembers'
 import { NoGroupCreated } from '@/src/components/assets/NoGroupCreated'
 import { Title } from '@/src/components/assets/Title'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
-import { useGroupMembers } from '@/src/hooks/subgraph/useGroupMembers'
+import { UsersList } from '@/src/components/lists/UsersList'
+import { allUsers } from '@/src/constants/allUsers'
+import { users } from '@/src/constants/users'
+import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
 
 const HomeAdmin: NextPage = () => {
   // @TODO: use a default group to fetch the members instead of this hardcoded group
   const groupId = '0x8c767b35123496469b21af9df28b1927b77441a7'
-  const { groupMembers } = useGroupMembers(groupId)
+  const { groupMembers } = useGroupMembersByGroupId(groupId)
   const groupMembersCount = groupMembers?.length ?? 0
 
   return (

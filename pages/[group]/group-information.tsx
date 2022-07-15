@@ -11,7 +11,7 @@ import { Columns } from '@/src/components/layout/Columns'
 import { UsersList } from '@/src/components/lists/UsersList'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
-import { useGroupMembers } from '@/src/hooks/subgraph/useGroupMembers'
+import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
 
 const Wrapper = styled.div`
   display: flex;
@@ -39,7 +39,7 @@ const H2 = styled.h2`
 const ConfigurateGroup: NextPage = () => {
   const router = useRouter()
   const groupAddr = String(router.query?.group)
-  const { groupMembers } = useGroupMembers(groupAddr)
+  const { groupMembers } = useGroupMembersByGroupId(groupAddr)
   const { group } = useGroupCurrencyTokensById(groupAddr)
   // const { owner } = useGroupOwner(group?.owner) // TODO: render username from CirclesAPI User
   // const { groupBalance } = useGroupBalance(groupAddr) // TODO: hookup Group Balance with CRC convertion
