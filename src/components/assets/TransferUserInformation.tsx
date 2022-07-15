@@ -2,6 +2,8 @@ import Image from 'next/image'
 import React from 'react'
 import styled from 'styled-components'
 
+import { isAddress } from '@ethersproject/address'
+
 import { Crc } from '@/src/components/assets/Crc'
 import { FirstLetter } from '@/src/components/assets/FirstLetter'
 
@@ -61,22 +63,27 @@ const InformationText = styled.span`
 `
 interface Props {
   amountText?: string
-  amountValue?: number
+  amountValue?: string
   name: string
   bgColor?: string
-  isGroup?: boolean
-  userPhoto?: string
+  photo?: string
   label?: string
 }
 
+const formatName = (text: string) => {
+  if (isAddress(text)) {
+    return `${text.slice(0, 7)}...${text.slice(-4)}`
+  }
+  return text
+}
+
 export const TransferUserInformation: React.FC<Props> = ({
-  amountText = '',
-  amountValue = 0,
+  amountText,
+  amountValue,
   bgColor = 'light',
-  isGroup = false,
-  label = '',
+  label,
   name,
-  userPhoto = '',
+  photo,
 }) => {
   return (
     <Wrapper>
@@ -88,14 +95,14 @@ export const TransferUserInformation: React.FC<Props> = ({
       <InformationBlock bgColor={bgColor}>
         <InfoWrapper>
           <InformationImage>
-            {isGroup ? (
+            {!photo ? (
               <FirstLetter character={name.charAt(0)} />
             ) : (
-              <Image alt={name} height={40} src={userPhoto} width={40} />
+              <Image alt={name} height={40} src={photo} width={40} />
             )}
           </InformationImage>
           <InformationText>
-            <h4>{name}</h4>
+            <h4>@{formatName(name)}</h4>
             <p>
               {amountText}{' '}
               <strong>

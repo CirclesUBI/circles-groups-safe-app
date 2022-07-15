@@ -11,7 +11,7 @@ import { TitleGroup } from '@/src/components/assets/TitleGroup'
 import { UsersList } from '@/src/components/lists/UsersList'
 import { allUsers } from '@/src/constants/allUsers'
 import { users } from '@/src/constants/users'
-import { useGroupMembers } from '@/src/hooks/subgraph/useGroupMembers'
+import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
 
 const Nav = styled.nav`
   align-items: center;
@@ -46,7 +46,7 @@ const Section = styled.section`
 const HomeAdmin: NextPage = () => {
   // @TODO: use a default group to fetch the members instead of this hardcoded group
   const groupId = '0x8c767b35123496469b21af9df28b1927b77441a7'
-  const { groupMembers } = useGroupMembers(groupId)
+  const { groupMembers } = useGroupMembersByGroupId(groupId)
   const groupMembersCount = groupMembers?.length ?? 0
 
   const tabs = [{ text: 'Members' }, { text: 'Add members' }]
