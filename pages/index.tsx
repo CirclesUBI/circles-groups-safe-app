@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 import { TabContent } from '@/src/components/tabs/TabContent'
 import { TabHeader } from '@/src/components/tabs/TabHeader'
-import GroupsTabs from '@/src/constants/GroupsTabs'
+import GroupsTabs from '@/src/hooks/useGroupsTabs'
 
 const Nav = styled.nav`
   align-items: center;

@@ -1,7 +1,6 @@
-import { useContext } from 'react'
 import styled from 'styled-components'
 
-import { TabContext } from '@/src/providers/groupsTabsProvider'
+import { useTab } from '@/src/providers/tabProvider'
 
 const Tab = styled.button`
   background-color: transparent;
@@ -24,10 +23,9 @@ interface Props {
 }
 
 export const TabHeader: React.FC<Props> = ({ title }) => {
-  const context = useContext(TabContext)
-  //{context?.activeTab == "" && context?.setTab(title)}
-  const isActive = title === context?.activeTab
-  const handleActive = () => context?.setTab(title)
+  const { activeTab, setTab } = useTab()
+  const isActive = title === activeTab
+  const handleActive = () => setTab(title)
   return (
     <Tab onClick={handleActive}>
       <span className={isActive ? 'active' : 'inactive'}>{title}</span>

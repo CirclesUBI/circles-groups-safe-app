@@ -1,11 +1,7 @@
 import Link from 'next/link'
-import { useContext } from 'react'
 import styled from 'styled-components'
 
 import { motion } from 'framer-motion'
-
-import GroupsTabs from '@/src/constants/GroupsTabs'
-import { TabContext } from '@/src/providers/groupsTabsProvider'
 
 const Item = styled.a`
   color: ${({ theme: { colors } }) => colors.primary};
@@ -24,11 +20,10 @@ const Item = styled.a`
 type Props = {
   href: string
   title: string
-  gotoTab?: number | null
   closeMenu: () => void
 }
 
-export const MenuItem: React.FC<Props> = ({ closeMenu, gotoTab = null, href, title }) => {
+export const ItemMainMenu: React.FC<Props> = ({ closeMenu, href, title }) => {
   const variants = {
     open: {
       y: 0,
@@ -45,11 +40,6 @@ export const MenuItem: React.FC<Props> = ({ closeMenu, gotoTab = null, href, tit
       },
     },
   }
-  const context = useContext(TabContext)
-  const { Tabs } = GroupsTabs()
-  const switchTab = () => {
-    gotoTab != null && context?.setTab(Tabs[gotoTab].title)
-  }
   return (
     <>
       <motion.div
@@ -62,7 +52,6 @@ export const MenuItem: React.FC<Props> = ({ closeMenu, gotoTab = null, href, tit
           <Item
             onClick={() => {
               closeMenu()
-              switchTab()
             }}
           >
             {' '}

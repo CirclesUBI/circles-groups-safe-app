@@ -1,10 +1,9 @@
 import React, { ReactNode } from 'react'
-import { useContext } from 'react'
 
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Title } from '@/src/components/assets/Title'
-import { TabContext } from '@/src/providers/groupsTabsProvider'
+import { useTab } from '@/src/providers/tabProvider'
 
 interface Props {
   content: ReactNode
@@ -13,10 +12,10 @@ interface Props {
 }
 
 export const TabContent: React.FC<Props> = ({ content, header, whenActive }) => {
-  const context = useContext(TabContext)
+  const { activeTab } = useTab()
   return (
     <>
-      {whenActive == context?.activeTab && (
+      {whenActive == activeTab && (
         <>
           <AnimatePresence exitBeforeEnter>
             <motion.div
