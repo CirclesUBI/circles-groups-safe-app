@@ -1,8 +1,10 @@
 import type { NextPage } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import styled from 'styled-components'
+
+import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 
 import { Crc } from '@/src/components/assets/Crc'
 import { InformationPod } from '@/src/components/assets/InformationPod'
@@ -11,11 +13,7 @@ import { Columns } from '@/src/components/layout/Columns'
 import { UsersList } from '@/src/components/lists/UsersList'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
-<<<<<<< HEAD
 import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
-=======
-import { useGroupMembers } from '@/src/hooks/subgraph/useGroupMembers'
->>>>>>> fixes import order for vercels deploy
 
 const Wrapper = styled.div`
   display: flex;
@@ -47,6 +45,9 @@ const ConfigurateGroup: NextPage = () => {
   const { group } = useGroupCurrencyTokensById(groupAddr)
   // const { owner } = useGroupOwner(group?.owner) // TODO: render username from CirclesAPI User
   // const { groupBalance } = useGroupBalance(groupAddr) // TODO: hookup Group Balance with CRC convertion
+  const { safe } = useSafeAppsSDK()
+  const [currentUser] = useState(safe.safeAddress.toLowerCase())
+  const isOwner = () => group?.owner == currentUser
   return (
     <>
       <TitleGroup hasBackButton information="Group information" text={group?.name ?? ''} />
@@ -55,7 +56,12 @@ const ConfigurateGroup: NextPage = () => {
           <InformationPod bgColor="lightest" label="Symbol" text={group?.symbol ?? ''} />
         </Columns>
         <Columns columnsNumber={1}>
-          <InformationPod bgColor="lightest" label="Owner" text={group?.owner ?? ''} />
+          <InformationPod
+            bgColor="lightest"
+            label="Owner"
+            owner={isOwner()}
+            text={group?.owner ?? ''}
+          />
         </Columns>
         <Columns columnsNumber={1}>
           <InformationPod bgColor="lightest" label="Treasury" text={group?.treasury ?? ''} />
