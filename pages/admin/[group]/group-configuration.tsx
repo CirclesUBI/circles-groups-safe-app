@@ -4,7 +4,9 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
+import { AnimatePresence } from 'framer-motion'
 
+import { AlertMessage } from '@/src/components/assets/AlertMessage'
 import { InformationPod } from '@/src/components/assets/InformationPod'
 import { Input } from '@/src/components/assets/Input'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
@@ -31,21 +33,39 @@ const ConfigurateGroup: NextPage = () => {
   const router = useRouter()
   const groupAddr = String(router.query?.group)
   const { group } = useGroupCurrencyTokensById(groupAddr)
-  const { execute } = useChangeOwner()
+  const { execute } = useChangeOwner(groupAddr)
   const { safe } = useSafeAppsSDK()
 
   const [owner, setOwner] = useState(group?.owner)
+  const [notification, setNotification] = useState(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [currentUser] = useState(safe.safeAddress.toLowerCase())
 
   const isOwner = () => group?.owner == currentUser
   const saveConfiguration = async () => {
-    setLoading(true)
-    await execute([owner], undefined)
-    setLoading(false)
+    try {
+      setLoading(true)
+      await execute([owner])
+    } catch (err) {
+      console.log({ err })
+    } finally {
+      setLoading(false)
+    }
   }
   return (
     <>
+      {notification && (
+        <AnimatePresence>
+          <AlertMessage
+            confirmAction={() => {
+              setNotification(false)
+              saveConfiguration()
+            }}
+            onCloseAlert={() => setNotification(false)}
+            text={`Are you sure you want to change Group Owner to ${owner}?`}
+          />
+        </AnimatePresence>
+      )}
       <TitleGroup hasBackButton information="Group configuration" text={group?.name ?? ''} />
       <FormWrapper>
         <Columns columnsNumber={1}>
@@ -61,7 +81,7 @@ const ConfigurateGroup: NextPage = () => {
           />
         </Columns>
         <ActionWrapper>
-          <ButtonPrimary disabled={!isOwner() || loading} onClick={saveConfiguration}>
+          <ButtonPrimary disabled={!isOwner() || loading} onClick={() => setNotification(true)}>
             Save configuration
           </ButtonPrimary>
         </ActionWrapper>
