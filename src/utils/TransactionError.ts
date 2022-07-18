@@ -12,3 +12,11 @@ export class TransactionError extends Error {
     this.data = JSON.stringify(data)
   }
 }
+
+export const createTransactionError = (error: any) => {
+  return new TransactionError(
+    error.data?.message || error.message || 'Unable to decode revert reason',
+    error.data?.code || error.code,
+    error.data,
+  )
+}

@@ -1,9 +1,6 @@
 import useSWR from 'swr'
 
-import {
-  GroupCurrencyToken,
-  fetchGroupCurrencyTokens,
-} from '@/src/hooks/subgraph/useGroupCurrencyToken'
+import { fetchGroupCurrencyTokens } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { GROUP_MEMBERS } from '@/src/queries/groupMembers'
 import { graphqlFetcher } from '@/src/utils/graphqlFetcher'
 import {
@@ -26,10 +23,10 @@ export const fetchGroups = async (safeAddress: string) => {
     },
   )
 
-  if (safeGroupMembers.length == 0) return [] as GroupCurrencyToken[]
+  if (safeGroupMembers.length == 0) return []
   const groupId = getGroupId(safeGroupMembers)
 
-  return (await fetchGroupCurrencyTokens(groupId)) as GroupCurrencyToken[]
+  return fetchGroupCurrencyTokens({ where: { id_in: [groupId] } })
 }
 
 export const useGroupsByMember = (safeAddress: string) => {

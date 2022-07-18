@@ -16,17 +16,15 @@ const transformToGroupMembers = async (safeGroupmembers: GroupMembers_safeGroupM
   const safeAddresses = safeGroupmembers.map((safeGroupMember) =>
     getAddress(safeGroupMember.safe.id),
   )
-  const users = await getUsers(safeAddresses)
-
-  return users
+  return getUsers(safeAddresses)
 }
 
-export const fetchGroupMembers = async (groupId: string) => {
+export const fetchGroupMembers = async (query: GroupMembersVariables['where']) => {
   const { safeGroupMembers } = await graphqlFetcher<GroupMembers, GroupMembersVariables>(
     GROUP_MEMBERS,
     {
       where: {
-        group: groupId,
+        ...query, // @TODO we might want to double check what we are sending as query object
       },
     },
   )
@@ -34,11 +32,28 @@ export const fetchGroupMembers = async (groupId: string) => {
   return transformToGroupMembers(safeGroupMembers)
 }
 
-export const useGroupMembers = (groupId?: string) => {
-  const { data, error, mutate } = useSWR(['groupMembers', groupId], () => {
+export const useGroupMembersByGroupId = (groupId?: string) => {
+  const { data, error, mutate } = useSWR(['groupMembersByGroupId', groupId], () => {
     if (!groupId) return []
-    return fetchGroupMembers(groupId)
+    return fetchGroupMembers({ group: groupId })
   })
 
   return { groupMembers: data ?? [], error, refetch: mutate }
+}
+
+export const useGroupMemberBySafeId = (safeId?: string) => {
+  const { data, error, mutate } = useSWR(['groupMemberBySafeId', safeId], () => {
+    if (!safeId) return undefined
+    return fetchGroupMembers({ safe: safeId })
+  })
+
+  return { belongedGroups: data ?? [], error, refetch: mutate }
+}
+
+export const useGroupMemberById = (safeId?: string, groupId?: string) => {
+  const { data, error, mutate } = useSWR(['groupMemberById', safeId, groupId], () => {
+    return fetchGroupMembers({ safe: safeId, group: groupId })
+  })
+  const member = data && data[0]
+  return { member, error, refetch: mutate }
 }

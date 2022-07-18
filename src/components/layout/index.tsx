@@ -10,7 +10,6 @@ import { NavMenu } from '@/src/components/navigation/NavMenu'
 import { InnerContainer } from '@/src/components/pureStyledComponents/layout/InnerContainer'
 
 const Wrapper = styled.div<{ isAdminLayout: boolean }>`
-  background: ${({ theme }) => theme.colors.primaryGradient};
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -18,6 +17,17 @@ const Wrapper = styled.div<{ isAdminLayout: boolean }>`
   position: relative;
   transition: all 0.3s ease-in-out;
   width: 100%;
+  &:after {
+    content: '';
+    background: ${({ theme }) => theme.colors.primaryGradient};
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    transition: all 0.3s ease-in-out;
+    width: 100%;
+    z-index: -2;
+  }
   &:before {
     content: '';
     background: ${({ theme }) => theme.colors.secondaryGradient};
@@ -28,13 +38,13 @@ const Wrapper = styled.div<{ isAdminLayout: boolean }>`
     top: 0;
     transition: all 0.3s ease-in-out;
     width: 100%;
-    z-index: 0;
+    z-index: -1;
   }
 `
 
 export const Layout: React.FC = ({ children }) => {
   const router = useRouter()
-  const showMenu = router.pathname === '/activity-log' ? false : true
+  const showMenu = useMemo(() => router.pathname !== '/activity-log', [router])
   const isAdminLayout = useMemo(() => router.pathname.includes('admin'), [router])
 
   const easing = [0.175, 0.85, 0.42, 0.96]

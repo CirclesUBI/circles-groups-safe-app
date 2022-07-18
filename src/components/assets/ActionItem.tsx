@@ -74,7 +74,10 @@ const ActionItemLink = styled.a<{ color: string }>`
   &:hover {
     div {
       &:not(.line) {
-        background-color: ${({ theme }) => theme.colors.secondary};
+        background-color: ${(props) =>
+          props.color == 'primary'
+            ? ({ theme }) => theme.colors.secondary
+            : ({ theme }) => theme.colors.tertiary};
       }
     }
   }
