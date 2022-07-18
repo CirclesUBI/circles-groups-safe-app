@@ -36,7 +36,6 @@ type Props = {
 }
 
 export const ListItemMainMenu: React.FC<Props> = ({ LinksList, onClose, switchTab, variants }) => {
-  console.log(LinksList)
   return (
     <Wrapper as={motion.div} variants={variants}>
       <AnimatePresence>
