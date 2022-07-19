@@ -112,12 +112,6 @@ export const DropdownItemCSS = css<DropdownItemProps>`
   text-decoration: none;
   transition: all 0.3s ease-in-out;
   user-select: none;
-  &:first-of-type {
-    margin-top: ${({ theme }) => theme.general.space * 2}px;
-  }
-  &:last-of-type {
-    margin-bottom: ${({ theme }) => theme.general.space * 3}px;
-  }
   &:after {
     content: '';
     width: 6px;

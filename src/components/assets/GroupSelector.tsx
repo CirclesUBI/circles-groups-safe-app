@@ -5,7 +5,6 @@ import styled from 'styled-components'
 
 import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/dropdown/Dropdown'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { createdGroups } from '@/src/constants/createdGroups'
 
 const LinkGroup = styled(LinkButton)`
   line-height: normal;
@@ -37,6 +36,7 @@ const Icon = styled.div`
 const ItemsList = styled.div`
   max-height: 50vh;
   overflow-y: auto;
+  margin: ${({ theme }) => theme.general.space * 2}px 0 ${({ theme }) => theme.general.space * 3}px;
 `
 
 const CreateLink = styled.a`
@@ -49,13 +49,20 @@ const CreateLink = styled.a`
     opacity: 1;
   }
 `
+interface tab {
+  name: string
+}
+type Props = {
+  groups: tab[]
+}
 
-export const GroupSelector: React.FC = () => {
+export const GroupSelector: React.FC<Props> = ({ groups }) => {
   const [isDropDownOpen, setDropDownIsOpen] = useState<boolean>(false)
   return (
     <Dropdown
       dropdownButtonContent={
         <SelectGroup>
+          {/* Fix me later. Show selected group */}
           <SelectedGroup>Bootnode</SelectedGroup>
           <Icon>
             <Image alt="down" height={5} src="/images/chevron-down.svg" width={9} />
@@ -68,9 +75,10 @@ export const GroupSelector: React.FC = () => {
         <>
           <h3>My created groups</h3>
           <ItemsList>
-            {createdGroups.map(({ title }, index) => (
+            {groups.map(({ name }, index) => (
               <DropdownItem key={index} onClick={() => setDropDownIsOpen(false)}>
-                {title}
+                {/* Fix me later. Add functionality to change groug when clicking  */}
+                {name}
               </DropdownItem>
             ))}
           </ItemsList>

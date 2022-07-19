@@ -3,11 +3,14 @@ import Image from 'next/image'
 import { useState } from 'react'
 import styled from 'styled-components'
 
+import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Title } from '@/src/components/assets/Title'
 import { User } from '@/src/components/assets/User'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
+import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
+import { useUserSafe } from '@/src/hooks/useUserSafe'
 
 const Wrapper = styled.div`
   align-items: center;
@@ -54,6 +57,11 @@ const WalletConnect: NextPage = () => {
     }, 2000)
   }
 
+  const { safe, sdk } = useSafeAppsSDK()
+  const { circles } = useCirclesBalance(sdk)
+
+  const { user } = useUserSafe(safe.safeAddress)
+
   return (
     <>
       <Title text="Wallet connect" />
@@ -68,8 +76,8 @@ const WalletConnect: NextPage = () => {
               width={40}
             />
           }
-          userTokens={1119.25}
-          username="@TomasBari"
+          userTokens={circles}
+          username={user?.username}
         />
         <QrWrapper>
           <Image alt="Configuration" height={244} src="/images/qr.png" width={244} />

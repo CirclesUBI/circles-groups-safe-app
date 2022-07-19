@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import styled from 'styled-components'
 
+import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { CloseButton } from '@/src/components/assets/CloseButton'
@@ -11,6 +12,9 @@ import { MenuItem } from '@/src/components/navigation/MenuItem'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { createdGroups } from '@/src/constants/createdGroups'
 import { menuLinks } from '@/src/constants/menuLinks'
+import { useGroupsByMember } from '@/src/hooks/subgraph/useGroupsByMember'
+import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
+import { useUserSafe } from '@/src/hooks/useUserSafe'
 
 const MenuHeader = styled.nav`
   display: flex;
@@ -66,6 +70,12 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
     },
   }
 
+  const { safe, sdk } = useSafeAppsSDK()
+  const { circles } = useCirclesBalance(sdk)
+
+  const { user } = useUserSafe(safe.safeAddress)
+  const { groupsByMember } = useGroupsByMember(safe.safeAddress)
+
   return (
     <>
       <MainMenuWrapper closeMenu={() => onClose()}>
@@ -93,8 +103,8 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
               width={40}
             />
           }
-          userTokens={1119.25}
-          username="@TomasBari"
+          userTokens={circles}
+          username={user?.username}
         />
         <LinksList as={motion.div} variants={variants}>
           <AnimatePresence>
@@ -107,16 +117,16 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
         </LinksList>
 
         <MyGroups>
-          {createdGroups.length > 0 ? (
+          {groupsByMember.length > 0 ? (
             <LinksList as={motion.div} variants={variants}>
               <AnimatePresence>
-                <h4>{createdGroups.length == 1 ? 'My created group' : 'My created groups'}</h4>
-                {createdGroups.map(({ title }, index) => (
+                <h4>{groupsByMember.length == 1 ? 'My created group' : 'My created groups'}</h4>
+                {groupsByMember.map(({ name }, index) => (
                   <MenuItem
                     closeMenu={() => onClose()}
                     href="/admin"
                     key={`links_${index}`}
-                    title={title}
+                    title={name}
                   />
                 ))}
               </AnimatePresence>
