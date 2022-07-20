@@ -70,18 +70,23 @@ export const ManageGroupMembers: React.FC<Props> = ({
   const { execute: execRemove } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
   const { execute: execAdd } = useGroupCurrencyTokenTx(groupAddress, 'addMemberToken')
 
+  const getUserToken = async (userAddress: string) => {
+    if (!isAppConnected) {
+      throw new Error('App is not connected')
+    }
+    if (!userAddress) {
+      throw new Error('User Address does not exists')
+    }
+    const userToken = await hubCall(web3Provider, 'userToToken', [userAddress])
+    if (!userToken) {
+      throw new Error('User Token does not exists')
+    }
+    return userToken
+  }
+
   const removeUser = async (userAddress: string) => {
     try {
-      if (!isAppConnected) {
-        throw new Error('App is not connected')
-      }
-      if (!userAddress) {
-        throw new Error('User Address does not exists')
-      }
-      const userToken = await hubCall(web3Provider, 'userToToken', [userAddress])
-      if (!userToken) {
-        throw new Error('User Token does not exists')
-      }
+      const userToken = await getUserToken(userAddress)
       await execRemove([userToken])
 
       const newUsers = users.filter((user) => user.safeAddress !== userAddress)
@@ -93,16 +98,7 @@ export const ManageGroupMembers: React.FC<Props> = ({
 
   const addUser = async (userAddress: string) => {
     try {
-      if (!isAppConnected) {
-        throw new Error('App is not connected')
-      }
-      if (!userAddress) {
-        throw new Error('User Address does not exists')
-      }
-      const userToken = await hubCall(web3Provider, 'userToToken', [userAddress])
-      if (!userToken) {
-        throw new Error('User Token does not exists')
-      }
+      const userToken = await getUserToken(userAddress)
       await execAdd([userToken])
 
       const nonMemberUsers = allUsers.filter((user) => user.safeAddress !== userAddress)
