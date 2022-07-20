@@ -13,6 +13,8 @@ import { UsersList } from '@/src/components/lists/UsersList'
 import { useGroupMembers } from '@/src/hooks/subgraph/useGroupMembers'
 import { useAllUsers } from '@/src/hooks/subgraph/useUsers'
 import { useAddMemberTx } from '@/src/hooks/useAddMember'
+import { useWeb3Connected } from '@/src/providers/web3ConnectionProvider'
+import hubCall from '@/src/utils/contracts/hubCall'
 
 const Nav = styled.nav`
   align-items: center;
@@ -45,12 +47,13 @@ const Section = styled.section`
 `
 
 const HomeAdmin: NextPage = () => {
-  const { execute } = useAddMemberTx()
   // @TODO: use a default group to fetch the members instead of this hardcoded group
   const groupId = '0x8c767b35123496469b21af9df28b1927b77441a7'
   const { groupMembers } = useGroupMembers(groupId)
   const groupMembersCount = groupMembers?.length ?? 0
   const { allUsers } = useAllUsers()
+  const { execute } = useAddMemberTx(groupId)
+  const { isAppConnected, web3Provider } = useWeb3Connected()
 
   const tabs = [{ text: 'Members' }, { text: 'Add members' }]
   const [selectedTab, setSelectedTab] = useState(tabs[0])
@@ -65,8 +68,21 @@ const HomeAdmin: NextPage = () => {
   })
 
   const addMemberToken = async (userAddress: string) => {
-    const user = getAddress(userAddress)
-    await execute([user], undefined)
+    try {
+      if (!isAppConnected) {
+        throw new Error('App is not connected')
+      }
+      if (!userAddress) {
+        throw new Error('User Address does not exists')
+      }
+      const userToken = await hubCall(web3Provider, 'userToToken', [userAddress])
+      if (!userToken) {
+        throw new Error('User Token does not exists')
+      }
+      await execute([userToken])
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   function notificationInfo(
