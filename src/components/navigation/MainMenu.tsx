@@ -2,6 +2,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import styled from 'styled-components'
 
+import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
+
 import { CloseButton } from '@/src/components/assets/CloseButton'
 import { User } from '@/src/components/assets/User'
 import { MainMenuWrapper } from '@/src/components/layout/MainMenuWrapper'
@@ -9,6 +11,9 @@ import { ListItemMainMenu } from '@/src/components/navigation/ListItemMainMenu'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { createdGroups } from '@/src/constants/createdGroups'
 import { menuLinks } from '@/src/constants/menuLinks'
+import { useGroupsByMember } from '@/src/hooks/subgraph/useGroupsByMember'
+import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
+import { useUserSafe } from '@/src/hooks/useUserSafe'
 import { useTab } from '@/src/providers/tabProvider'
 
 const MenuHeader = styled.nav`
@@ -64,6 +69,13 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
   }
   const { switchTab } = useTab()
 
+  const { safe, sdk } = useSafeAppsSDK()
+  const { circles } = useCirclesBalance(sdk)
+
+  const { user } = useUserSafe(safe.safeAddress)
+
+  // @TODO: Reeplace with list of user created groups
+  const { groupsByMember } = useGroupsByMember(safe.safeAddress)
   return (
     <>
       <MainMenuWrapper closeMenu={() => onClose()}>
@@ -83,16 +95,20 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
         </MenuHeader>
         <User
           userImage={
-            <Image
-              alt="@TomasBari"
-              height={40}
-              objectFit="cover"
-              src="/images/user.jpg"
-              width={40}
-            />
+            user.avatarUrl ? (
+              <Image
+                alt={user?.username}
+                height={40}
+                objectFit="cover"
+                src={user.avatarUrl}
+                width={40}
+              />
+            ) : (
+              <></>
+            )
           }
-          userTokens={1119.25}
-          username="@TomasBari"
+          userTokens={circles}
+          username={user?.username}
         />
         <ListItemMainMenu
           LinksList={menuLinks}

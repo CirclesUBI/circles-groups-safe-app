@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import styled from 'styled-components'
 
 import { Crc } from '@/src/components/assets/Crc'
@@ -53,7 +52,7 @@ const Tokens = styled.div`
 
 interface Props {
   username: string
-  userTokens: number
+  userTokens: string
   userImage?: React.ReactNode
   headerStyle?: boolean
 }
@@ -63,7 +62,7 @@ export const User: React.FC<Props> = ({ headerStyle = false, userImage, userToke
     <UserWrapper headerStyle={headerStyle}>
       <UserInformation>
         {userImage}
-        <UserName headerStyle={headerStyle}>{username}</UserName>
+        <UserName headerStyle={headerStyle}>@{username}</UserName>
       </UserInformation>
       <Tokens>
         <Crc /> {userTokens}
