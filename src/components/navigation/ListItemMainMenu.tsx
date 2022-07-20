@@ -29,10 +29,7 @@ type Props = {
       }
     }
   }
-  LinksList: (
-    | { title: string; href: string; gotoTab: number }
-    | { title: string; href: string; gotoTab?: undefined }
-  )[]
+  LinksList: { title: string; href: string; gotoTab?: number }[]
 }
 
 export const ListItemMainMenu: React.FC<Props> = ({ LinksList, onClose, switchTab, variants }) => {
