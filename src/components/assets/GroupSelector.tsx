@@ -62,7 +62,7 @@ export const GroupSelector: React.FC<Props> = ({ groups }) => {
     <Dropdown
       dropdownButtonContent={
         <SelectGroup>
-          {/* Fix me later. Show selected group */}
+          {/* @TODO: Fix me later. Show selected group */}
           <SelectedGroup>Bootnode</SelectedGroup>
           <Icon>
             <Image alt="down" height={5} src="/images/chevron-down.svg" width={9} />
@@ -77,7 +77,7 @@ export const GroupSelector: React.FC<Props> = ({ groups }) => {
           <ItemsList>
             {groups.map(({ name }, index) => (
               <DropdownItem key={index} onClick={() => setDropDownIsOpen(false)}>
-                {/* Fix me later. Add functionality to change groug when clicking  */}
+                {/* @TODO: Fix me later. Add functionality to change groug when clicking  */}
                 {name}
               </DropdownItem>
             ))}
