@@ -1,26 +1,12 @@
-import Image from 'next/image'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import { AnimatePresence, motion } from 'framer-motion'
 
 const Wrapper = styled.div`
-  cursor: pointer;
+  margin-right: 3px;
   position: relative;
   z-index: 10;
-`
-const Info = styled.span`
-  align-items: center;
-  background-color: ${({ theme }) => theme.colors.tertiary};
-  border-radius: 50%;
-  display: flex;
-  flex-shrink: 0;
-  justify-content: center;
-  height: 16px;
-  margin-right: 10px;
-  padding: 3px;
-  transition: all 0.3s ease-in-out;
-  width: 16px;
 `
 const TooltipWrapper = styled(motion.div)`
   background-color: ${({ theme }) => theme.colors.tertiary};
@@ -31,8 +17,8 @@ const TooltipWrapper = styled(motion.div)`
   padding: ${({ theme }) => theme.general.space / 4}px ${({ theme }) => theme.general.space}px;
   position: absolute;
   right: 100%;
-  top: -100%;
-  margin-top: 50%;
+  top: 0;
+  margin-top: -4px;
   margin-right: 5px;
   max-width: 180px;
   width: max-content;
@@ -43,36 +29,35 @@ interface Props {
   text: string
 }
 
-export const Tooltip: React.FC<Props> = ({ text }) => {
+export const Tooltip: React.FC<Props> = ({ children, text }) => {
   const [isHovering, setIsHovering] = useState(false)
   return (
-    <Wrapper
-      onMouseEnter={() => {
-        {
-          setIsHovering(true)
-        }
-      }}
-      onMouseLeave={() => {
-        {
-          setIsHovering(false)
-        }
-      }}
-    >
+    <Wrapper>
       <AnimatePresence initial={true}>
         {isHovering && (
           <TooltipWrapper
             animate={{ opacity: 1, y: '0' }}
-            exit={{ opacity: 0, y: '-10px' }}
             initial={{ opacity: 0, y: '-10px' }}
-            transition={{ duration: 0.2, type: 'spring', stiffness: 1360, damping: 150 }}
+            transition={{ duration: 0.1, type: 'spring', stiffness: 1360, damping: 150 }}
           >
             {text}
           </TooltipWrapper>
         )}
       </AnimatePresence>
-      <Info>
-        <Image alt="information" height={14} src="/images/icon-information.svg" width={14} />
-      </Info>
+      <div
+        onMouseEnter={() => {
+          {
+            setIsHovering(true)
+          }
+        }}
+        onMouseLeave={() => {
+          {
+            setIsHovering(false)
+          }
+        }}
+      >
+        {children}
+      </div>
     </Wrapper>
   )
 }

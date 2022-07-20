@@ -27,5 +27,5 @@ export const fetchUsers = async () => {
 
 export const useAllUsers = () => {
   const { data, error, mutate } = useSWR(['users'], () => fetchUsers())
-  return { allUsers: data ?? [], error, refetch: mutate, loading: !error && !data }
+  return { circlesUsers: data ?? [], error, refetch: mutate, loading: !error && !data }
 }

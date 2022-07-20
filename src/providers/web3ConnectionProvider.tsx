@@ -54,7 +54,7 @@ function initOnboard(appChainId: ChainsValues, subscriptions: Subscriptions) {
     networkId: appChainId,
     networkName: getNetworkConfig(appChainId).name,
     hideBranding: true,
-    darkMode: true, // @TODO: it is a default value
+    darkMode: false, // @TODO: it is a default value
     walletSelect: {
       heading: 'Select a Wallet',
       description: 'Pick a wallet to connect to FIAT DAO',

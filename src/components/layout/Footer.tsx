@@ -10,7 +10,7 @@ const Wrapper = styled.footer`
   padding-bottom: 0;
   padding-top: 40px;
   width: 100%;
-  z-index: 1;
+  z-index: 0;
 `
 
 const InnerContainer = styled(BaseInnerContainer)`

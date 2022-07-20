@@ -73,6 +73,27 @@ export const ButtonAlertCSS = css`
   }
 `
 
+export const ButtonSuccessCSS = css`
+  background-color: ${({ theme }) => theme.colors.success};
+  border-color: ${({ theme }) => theme.colors.success};
+  color: ${({ theme }) => theme.buttonPrimary.color};
+  position: relative;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.buttonPrimary.backgroundColorHover};
+    border-color: ${({ theme }) => theme.buttonPrimary.borderColorHover};
+    color: ${({ theme }) => theme.buttonPrimary.colorHover};
+  }
+
+  &[disabled],
+  &[disabled]:hover {
+    background-color: ${({ theme }) => theme.buttonPrimary.borderColor};
+    border-color: ${({ theme }) => theme.buttonPrimary.borderColor};
+    color: ${({ theme }) => theme.buttonPrimary.color};
+    ${DisabledButtonCSS}
+  }
+`
+
 export const ButtonPrimaryLineCSS = css`
   background-color: transparent;
   border-color: ${({ theme }) => theme.buttonPrimary.borderColor};
@@ -138,7 +159,7 @@ export const ButtonSecondary = styled(BaseButton)`
 `
 
 export const ButtonConfirm = styled(BaseButton)`
-  ${ButtonPrimaryCSS}
+  ${ButtonSuccessCSS}
 `
 
 export const ButtonCancel = styled(BaseButton)`

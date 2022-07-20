@@ -2,5 +2,5 @@ export enum Contracts {
   USDC,
   HUB,
   GCTFactory,
-  GCT,
+  GROUP_CURRENCY_TOKEN,
 }

@@ -2,15 +2,14 @@ import Image from 'next/image'
 import Link from 'next/link'
 import styled from 'styled-components'
 
-import { AnimatePresence, motion } from 'framer-motion'
-
 import { CloseButton } from '@/src/components/assets/CloseButton'
 import { User } from '@/src/components/assets/User'
 import { MainMenuWrapper } from '@/src/components/layout/MainMenuWrapper'
-import { MenuItem } from '@/src/components/navigation/MenuItem'
+import { ListItemMainMenu } from '@/src/components/navigation/ListItemMainMenu'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { createdGroups } from '@/src/constants/createdGroups'
 import { menuLinks } from '@/src/constants/menuLinks'
+import { useTab } from '@/src/providers/tabProvider'
 
 const MenuHeader = styled.nav`
   display: flex;
@@ -29,13 +28,11 @@ const HomeLink = styled.a`
   }
 `
 
-const LinksList = styled.div`
-  color: ${({ theme: { colors } }) => colors.primary};
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.general.space * 4}px;
+const LinksListWrapper = styled.div`
   padding: 0 ${({ theme }) => theme.general.space * 2}px;
-  width: 100%;
+  flex-direction: column;
+  display: flex;
+  gap: ${({ theme }) => theme.general.space * 4}px;
 `
 
 const MyGroups = styled.div`
@@ -65,6 +62,7 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
       transition: { staggerChildren: 0.05, staggerDirection: -1 },
     },
   }
+  const { switchTab } = useTab()
 
   return (
     <>
@@ -96,41 +94,34 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
           userTokens={1119.25}
           username="@TomasBari"
         />
-        <LinksList as={motion.div} variants={variants}>
-          <AnimatePresence>
-            {menuLinks.map(({ href, title }, index) => (
-              <div key={`links_${index}`}>
-                <MenuItem closeMenu={() => onClose()} href={href} title={title} />
-              </div>
-            ))}
-          </AnimatePresence>
-        </LinksList>
+        <ListItemMainMenu
+          LinksList={menuLinks}
+          onClose={onClose}
+          switchTab={switchTab}
+          variants={variants}
+        />
 
         <MyGroups>
           {createdGroups.length > 0 ? (
-            <LinksList as={motion.div} variants={variants}>
-              <AnimatePresence>
-                <h4>{createdGroups.length == 1 ? 'My created group' : 'My created groups'}</h4>
-                {createdGroups.map(({ title }, index) => (
-                  <MenuItem
-                    closeMenu={() => onClose()}
-                    href="/admin"
-                    key={`links_${index}`}
-                    title={title}
-                  />
-                ))}
-              </AnimatePresence>
+            <LinksListWrapper>
+              <h4>{createdGroups.length == 1 ? 'My created group' : 'My created groups'}</h4>
+              <ListItemMainMenu
+                LinksList={createdGroups}
+                onClose={onClose}
+                switchTab={switchTab}
+                variants={variants}
+              />
               <Link href="/admin/create-group" passHref>
                 <LinkButton onClick={() => onClose()}>Create new group</LinkButton>
               </Link>
-            </LinksList>
+            </LinksListWrapper>
           ) : (
-            <LinksList>
+            <LinksListWrapper>
               <NoGroupMessage>You don't have any group created yet.</NoGroupMessage>
               <Link href="/admin/create-group" passHref>
                 <LinkButton onClick={() => onClose()}>Create new group</LinkButton>
               </Link>
-            </LinksList>
+            </LinksListWrapper>
           )}
         </MyGroups>
       </MainMenuWrapper>

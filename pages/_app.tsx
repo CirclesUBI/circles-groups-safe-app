@@ -10,6 +10,7 @@ import 'sanitize.css'
 import { Layout } from '@/src/components/layout'
 import SafeSuspense from '@/src/components/safeSuspense'
 import Toast from '@/src/components/toast/Toast'
+import TabProvider from '@/src/providers/tabProvider'
 import { theme } from '@/src/theme'
 import { GlobalStyle } from '@/src/theme/globalStyle'
 
@@ -31,7 +32,6 @@ function App({ Component, pageProps }: AppProps) {
   const title = 'Circles'
   const description = 'Circles'
   const twitterHandle = '@'
-
   return (
     <>
       <Head>
@@ -57,10 +57,12 @@ function App({ Component, pageProps }: AppProps) {
             <Web3ConnectionProvider>
               <GlobalStyle />
               <SafeSuspense>
-                <Layout>
-                  <Toast />
-                  <Component {...pageProps} />
-                </Layout>
+                <TabProvider tab="">
+                  <Layout>
+                    <Toast />
+                    <Component {...pageProps} />
+                  </Layout>
+                </TabProvider>
               </SafeSuspense>
             </Web3ConnectionProvider>
           </SafeProvider>

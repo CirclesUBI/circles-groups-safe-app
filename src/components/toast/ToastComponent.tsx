@@ -7,9 +7,12 @@ import { Close } from '@/src/components/assets/Close'
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-columns: 50px 200px;
+  gap: ${({ theme }) => theme.general.space * 2}px;
+  grid-template-columns: 24px auto;
   padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
   min-height: 70px;
+  width: 300px;
+  max-width: 100%;
   border-radius: ${({ theme: { toast } }) => toast.borderRadius};
   border: none;
   background-color: ${({ theme: { toast } }) => toast.backgroundColor};
@@ -29,6 +32,7 @@ const IconContainer = styled.div`
   justify-content: center;
   align-items: center;
   height: 50px;
+  flex-shrink: 0;
 `
 
 const InnerWrapper = styled.div`
@@ -39,7 +43,7 @@ const InnerWrapper = styled.div`
 `
 
 const TextContainer = styled.div`
-  padding: 5px;
+  padding: 5px 0;
 `
 
 const ButtonClose = styled.button`
@@ -49,6 +53,10 @@ const ButtonClose = styled.button`
   padding: 0;
   outline: none;
   background: transparent;
+  position: absolute;
+  top: ${({ theme }) => theme.general.space}px;
+  right: ${({ theme }) => theme.general.space}px;
+  z-index: 1000;
 `
 
 const Title = styled.h4`
@@ -65,11 +73,13 @@ const Link = styled.a`
 `
 
 const Text = styled.p`
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 400;
   margin: ${({ theme }) => theme.general.space / 4}px 0 0;
   padding: 0;
   color: ${({ theme }) => theme.colors.white};
+  white-space: pre-wrap;
+  word-break: break-word;
 `
 
 export const ToastComponent = ({
@@ -102,9 +112,9 @@ export const ToastComponent = ({
         )}
         {message && <Text>{message}</Text>}
       </TextContainer>
-      <ButtonClose onClick={() => toast.dismiss(t.id)}>
-        <Close />
-      </ButtonClose>
     </InnerWrapper>
+    <ButtonClose onClick={() => toast.remove(t.id)}>
+      <Close />
+    </ButtonClose>
   </Wrapper>
 )

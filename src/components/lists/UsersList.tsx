@@ -3,13 +3,13 @@ import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { FirstLetter } from '../assets/FirstLetter'
-import { AddDeleteButton } from '@/src/components/assets/AddDeleteButton'
+import { AddRemoveUserNotification, AddRemoveUsers } from '@/src/components/actions/AddRemoveUsers'
+import { ActionAddDelete, AddDeleteButton } from '@/src/components/assets/AddDeleteButton'
 import { ListContainer } from '@/src/components/assets/ListContainer'
 import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
 import { NoResultsText } from '@/src/components/assets/NoResultsText'
 import { SearchInput } from '@/src/components/assets/SearchInput'
-import { GroupMember } from '@/src/hooks/subgraph/useGroupMembers'
 
 const List = styled.div`
   display: flex;
@@ -56,72 +56,127 @@ const GroupActions = styled.div`
   }
 `
 
-interface Props {
-  action: string
-  usersGroup: GroupMember[]
-  onCloseAlert: (
-    openedValue: boolean,
-    actionValue: string,
-    userValue: number,
-    userAddress: string,
-  ) => void
+interface groupMember {
+  id: number
+  username: string
+  safeAddress: string
+  avatarUrl?: string
 }
 
-export const UsersList: React.FC<Props> = ({ action, onCloseAlert, usersGroup }) => {
+interface Props {
+  action?: ActionAddDelete
+  users: groupMember[]
+  shouldShowAlert?: boolean
+  onRemoveUser?: (userAddress: string) => void
+  onAddUser?: (userAddress: string) => void
+}
+
+export const UsersList: React.FC<Props> = ({
+  action,
+  onAddUser,
+  onRemoveUser,
+  shouldShowAlert = false,
+  users,
+}) => {
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
 
-  const totalItemsNum = usersGroup.length
+  const totalItemsNum = users.length
 
   const filteredUsers = useMemo(() => {
-    return usersGroup.filter((user: { username: string }) => {
+    return users.filter((user: { username: string }) => {
       if (query === '') {
         return user
       } else if (user.username.toLowerCase().includes(query.toLowerCase())) {
         return user
       }
     })
-  }, [usersGroup, query])
+  }, [users, query])
 
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
 
+  const [notification, setNotification] = useState<AddRemoveUserNotification>({
+    opened: false,
+    action: action ?? 'add',
+    username: '',
+  })
+
+  const resetNotification = () => {
+    setNotification({ opened: false, action: action ?? 'add', username: '' })
+  }
+
+  const removeUser = () => {
+    if (onRemoveUser && notification.userAddress) {
+      onRemoveUser(notification.userAddress)
+    }
+    resetNotification()
+  }
+
+  const addUser = () => {
+    if (onAddUser && notification.userAddress) {
+      onAddUser(notification.userAddress)
+    }
+    resetNotification()
+  }
+
   return (
-    <List>
-      {totalItemsNum > itemsPerPage && <SearchInput onChange={(e) => setQuery(e)} />}
-      <ListContainer>
-        {filteredUsers.length > 0 ? (
-          filteredUsers
-            .slice(0, page * itemsPerPage)
-            .map(({ avatarUrl, id, safeAddress, username }, index: number | undefined) => (
-              <ListItem custom={index} key={`user_${id}`}>
-                <GroupInfo>
-                  <ImageWrapper>
-                    {!avatarUrl ? (
-                      <FirstLetter character={username.charAt(0)} />
-                    ) : (
-                      <Image alt={username} layout="fill" objectFit="cover" src={avatarUrl} />
-                    )}
-                  </ImageWrapper>
-                  <h3>{username}</h3>
-                </GroupInfo>
-                <GroupActions>
-                  <AddDeleteButton
-                    action={action}
-                    addRemoveUser={() => onCloseAlert(true, action, id, safeAddress)}
-                  />
-                </GroupActions>
-              </ListItem>
-            ))
-        ) : (
-          <NoResultsText query={query} text={'There are no members on this group.'} />
-        )}
-      </ListContainer>
-      {page < totalPages && filteredUsers.length > itemsPerPage && (
-        <>
-          <LoadMoreButton moreResults={() => setPage((prev) => prev + 1)} />
-        </>
+    <>
+      {shouldShowAlert && action && (
+        <AddRemoveUsers
+          cancelAction={resetNotification}
+          notification={notification}
+          onAddUserAction={addUser}
+          onRemoveUserAction={removeUser}
+        />
       )}
-    </List>
+      <List>
+        {totalItemsNum > itemsPerPage && <SearchInput onChange={(e) => setQuery(e)} />}
+        <ListContainer>
+          {filteredUsers.length > 0 ? (
+            filteredUsers
+              .slice(0, page * itemsPerPage)
+              .map(({ avatarUrl, id, safeAddress, username }, index) => (
+                <ListItem custom={index} key={`user_${id}`}>
+                  <GroupInfo>
+                    <ImageWrapper>
+                      {!avatarUrl ? (
+                        <FirstLetter character={username.charAt(0)} />
+                      ) : (
+                        <Image alt={username} layout="fill" objectFit="cover" src={avatarUrl} />
+                      )}
+                    </ImageWrapper>
+                    <h3>{username}</h3>
+                  </GroupInfo>
+                  {shouldShowAlert && action && (
+                    <GroupActions>
+                      <AddDeleteButton
+                        action={action}
+                        onClick={() =>
+                          setNotification({
+                            opened: true,
+                            action,
+                            username,
+                            userAddress: safeAddress,
+                          })
+                        }
+                      />
+                    </GroupActions>
+                  )}
+                </ListItem>
+              ))
+          ) : (
+            <>
+              <NoResultsText query={query} text={'There are no members on this group.'} />
+            </>
+          )}
+        </ListContainer>
+        {page < totalPages && filteredUsers.length > itemsPerPage && (
+          <>
+            <LoadMoreButton moreResults={() => setPage((prev) => prev + 1)} />
+          </>
+        )}
+      </List>
+    </>
   )
 }
