@@ -37,14 +37,17 @@ const ActionButton = styled.button<{ action: string }>`
   }
 `
 
+// @TODO should be in a different place
+export type ActionAddDelete = 'add' | 'delete'
+
 interface Props {
-  action?: string
-  addRemoveUser: () => void
+  action: ActionAddDelete
+  onClick: () => void
 }
 
-export const AddDeleteButton: React.FC<Props> = ({ action = 'delete', addRemoveUser }) => {
+export const AddDeleteButton: React.FC<Props> = ({ action, onClick }) => {
   return (
-    <ActionButton action={action} onClick={addRemoveUser}>
+    <ActionButton action={action} onClick={onClick}>
       <Image
         alt={action == 'delete' ? 'Remove member' : 'Add member'}
         height={14}
