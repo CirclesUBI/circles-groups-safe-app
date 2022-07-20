@@ -73,8 +73,9 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
   const { circles } = useCirclesBalance(sdk)
 
   const { user } = useUserSafe(safe.safeAddress)
+
+  // @TODO: Reeplace with list of user created groups
   const { groupsByMember } = useGroupsByMember(safe.safeAddress)
-  console.log(user)
   return (
     <>
       <MainMenuWrapper closeMenu={() => onClose()}>

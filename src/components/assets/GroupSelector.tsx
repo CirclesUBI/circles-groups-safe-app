@@ -5,6 +5,7 @@ import styled from 'styled-components'
 
 import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/dropdown/Dropdown'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { GroupCurrencyToken } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 
 const LinkGroup = styled(LinkButton)`
   line-height: normal;
@@ -49,15 +50,14 @@ const CreateLink = styled.a`
     opacity: 1;
   }
 `
-interface tab {
-  name: string
-}
+
 type Props = {
-  groups: tab[]
+  groups: Array<GroupCurrencyToken>
 }
 
 export const GroupSelector: React.FC<Props> = ({ groups }) => {
   const [isDropDownOpen, setDropDownIsOpen] = useState<boolean>(false)
+  console.log(groups)
   return (
     <Dropdown
       dropdownButtonContent={

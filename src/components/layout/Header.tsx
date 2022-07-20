@@ -144,6 +144,7 @@ export const Header: React.FC = (props) => {
 
   const { user } = useUserSafe(safe.safeAddress)
 
+  // @TODO: Reeplace with list of user created groups
   const { groupsByMember } = useGroupsByMember(safe.safeAddress)
 
   useEffect(() => {
