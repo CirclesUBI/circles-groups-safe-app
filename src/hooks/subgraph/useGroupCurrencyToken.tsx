@@ -53,3 +53,11 @@ export const useGroupCurrencyTokensById = (groupId: string) => {
   )
   return { group: data?.[0], error, refetch: mutate, loading: !error && !data }
 }
+
+export const useGroupCurrencyTokensByOwner = (owner: string) => {
+  const { data, error, mutate } = useSWR(['groupCurrencyTokensByOwner', owner], () => {
+    if (!owner) return []
+    return fetchGroupCurrencyTokens({ where: { owner: owner.toLowerCase() } })
+  })
+  return { groups: data, error, refetch: mutate, loading: !error && !data }
+}

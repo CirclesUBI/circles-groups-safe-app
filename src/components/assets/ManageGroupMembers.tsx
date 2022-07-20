@@ -4,6 +4,9 @@ import styled from 'styled-components'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { UsersList } from '@/src/components/lists/UsersList'
+import { useGroupCurrencyTokenTx } from '@/src/hooks/contracts/useGroupCurrencyTokenTx'
+import { useWeb3Connected } from '@/src/providers/web3ConnectionProvider'
+import hubCall from '@/src/utils/contracts/hubCall'
 
 const Nav = styled.nav`
   align-items: center;
@@ -44,13 +47,45 @@ interface groupMember {
 }
 
 interface Props {
+  groupAddress: string
   groupMembers: groupMember[]
   groupMembersCount: number
 }
 
-export const ManageGroupMembers: React.FC<Props> = ({ groupMembers, groupMembersCount }) => {
+export const ManageGroupMembers: React.FC<Props> = ({
+  groupAddress,
+  groupMembers,
+  groupMembersCount,
+}) => {
+  // @TODO we might need to delete this
+  const { isAppConnected, web3Provider } = useWeb3Connected()
+
   const tabs = ['Members', 'Add members']
   const [selectedTab, setSelectedTab] = useState(tabs[0])
+  // @TODO: cached users to fasten the add/remove of users
+  const [users, setUsers] = useState(groupMembers)
+  const { execute } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
+
+  const removeUser = async (userAddress: string) => {
+    try {
+      if (!isAppConnected) {
+        throw new Error('App is not connected')
+      }
+      if (!userAddress) {
+        throw new Error('User Address does not exists')
+      }
+      const userToken = await hubCall(web3Provider, 'userToToken', [userAddress])
+      if (!userToken) {
+        throw new Error('User Token does not exists')
+      }
+      await execute([userToken])
+
+      const newUsers = users.filter((user) => user.safeAddress !== userAddress)
+      setUsers(newUsers)
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   return (
     <>
@@ -77,9 +112,14 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupMembers, groupMembers
             transition={{ duration: 0.2 }}
           >
             {selectedTab === 'Members' ? (
-              <UsersList action={'delete'} usersGroup={groupMembers} />
+              <UsersList
+                action={'delete'}
+                onRemoveUser={removeUser}
+                shouldShowAlert
+                users={users}
+              />
             ) : (
-              <UsersList action={'add'} usersGroup={groupMembers} />
+              <UsersList action={'add'} shouldShowAlert users={users} />
             )}
           </motion.div>
         </AnimatePresence>

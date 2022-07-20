@@ -1,5 +1,4 @@
 import type { NextPage } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
@@ -67,12 +66,12 @@ const ConfigurateGroup: NextPage = () => {
         <Columns columnsNumber={1}>
           <ListWrapper>
             <H2>Group members</H2>
-            <UsersList action={'show'} usersGroup={groupMembers} />
+            <UsersList users={groupMembers} />
           </ListWrapper>
         </Columns>
 
         <ActionWrapper>
-          <Link href="/mint-tokens" passHref>
+          <Link href={`/${groupAddr}/mint-tokens`} passHref>
             <LinkButton>Mint Tokens</LinkButton>
           </Link>
         </ActionWrapper>

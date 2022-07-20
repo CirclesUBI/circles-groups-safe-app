@@ -1,20 +1,27 @@
 import type { NextPage } from 'next'
 
+import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
+
 import { ManageGroupMembers } from '@/src/components/assets/ManageGroupMembers'
 import { NoGroupCreated } from '@/src/components/assets/NoGroupCreated'
 import { Title } from '@/src/components/assets/Title'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
+import { useGroupCurrencyTokensByOwner } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
 
 const HomeAdmin: NextPage = () => {
-  // @TODO: use a default group to fetch the members instead of this hardcoded group
-  const groupId = '0x8c767b35123496469b21af9df28b1927b77441a7'
+  const { safe } = useSafeAppsSDK()
+  const { groups } = useGroupCurrencyTokensByOwner(safe.safeAddress)
+  // @TODO we will select the first group in the list
+  const group = groups?.[0]
+  const groupId = group?.id
+  // @TODO it might not be necessary if we fetch the members info in the group hook
   const { groupMembers } = useGroupMembersByGroupId(groupId)
   const groupMembersCount = groupMembers?.length ?? 0
 
   return (
     <>
-      {groupMembersCount == 0 ? (
+      {!groupId ? (
         <>
           <Title
             buttonHref="/admin/create-group"
@@ -35,7 +42,11 @@ const HomeAdmin: NextPage = () => {
             buttonHref="/admin/group-configuration"
             text="Bootnode"
           />
-          <ManageGroupMembers groupMembers={groupMembers} groupMembersCount={groupMembersCount} />
+          <ManageGroupMembers
+            groupAddress={groupId}
+            groupMembers={groupMembers}
+            groupMembersCount={groupMembersCount}
+          />
         </>
       )}
     </>

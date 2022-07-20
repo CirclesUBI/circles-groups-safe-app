@@ -3,8 +3,8 @@ import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { FirstLetter } from '../assets/FirstLetter'
-import { AddRemoveUsers } from '@/src/components/actions/AddRemoveUsers'
-import { AddDeleteButton } from '@/src/components/assets/AddDeleteButton'
+import { AddRemoveUserNotification, AddRemoveUsers } from '@/src/components/actions/AddRemoveUsers'
+import { ActionAddDelete, AddDeleteButton } from '@/src/components/assets/AddDeleteButton'
 import { ListContainer } from '@/src/components/assets/ListContainer'
 import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
@@ -64,50 +64,70 @@ interface groupMember {
 }
 
 interface Props {
-  action: string
-  usersGroup: groupMember[]
-  onCloseAlert?: (openedValue: boolean, actionValue: string, userValue: number) => void
+  action?: ActionAddDelete
+  users: groupMember[]
+  shouldShowAlert?: boolean
+  onRemoveUser?: (userAddress: string) => void
 }
 
-export const UsersList: React.FC<Props> = ({ action, usersGroup }) => {
+export const UsersList: React.FC<Props> = ({
+  action,
+  onRemoveUser,
+  shouldShowAlert = false,
+  users,
+}) => {
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
 
-  const totalItemsNum = usersGroup.length
+  const totalItemsNum = users.length
 
   const filteredUsers = useMemo(() => {
-    return usersGroup.filter((user: { username: string }) => {
+    return users.filter((user: { username: string }) => {
       if (query === '') {
         return user
       } else if (user.username.toLowerCase().includes(query.toLowerCase())) {
         return user
       }
     })
-  }, [usersGroup, query])
+  }, [users, query])
 
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage)
 
-  const [notification, setNotification] = useState({
+  const [notification, setNotification] = useState<AddRemoveUserNotification>({
     opened: false,
-    action: '',
-    user: 0,
+    action: action ?? 'add',
+    username: '',
   })
+
+  const resetNotification = () => {
+    setNotification({ opened: false, action: action ?? 'add', username: '' })
+  }
+
+  const removeUser = () => {
+    if (onRemoveUser && notification.userAddress) {
+      onRemoveUser(notification.userAddress)
+    }
+    resetNotification()
+  }
 
   return (
     <>
-      <AddRemoveUsers
-        cancelAction={() => setNotification({ opened: false, action: '', user: 0 })}
-        groupMembers={usersGroup}
-        notification={notification}
-      />
+      {shouldShowAlert && action && (
+        <AddRemoveUsers
+          cancelAction={resetNotification}
+          notification={notification}
+          onAddUserAction={() => console.log('@TODO: add needs to be implemented')}
+          onRemoveUserAction={removeUser}
+        />
+      )}
       <List>
         {totalItemsNum > itemsPerPage && <SearchInput onChange={(e) => setQuery(e)} />}
         <ListContainer>
           {filteredUsers.length > 0 ? (
             filteredUsers
               .slice(0, page * itemsPerPage)
-              .map(({ avatarUrl, id, username }, index) => (
+              .map(({ avatarUrl, id, safeAddress, username }, index) => (
                 <ListItem custom={index} key={`user_${id}`}>
                   <GroupInfo>
                     <ImageWrapper>
@@ -119,12 +139,17 @@ export const UsersList: React.FC<Props> = ({ action, usersGroup }) => {
                     </ImageWrapper>
                     <h3>{username}</h3>
                   </GroupInfo>
-                  {action !== 'show' && (
+                  {shouldShowAlert && action && (
                     <GroupActions>
                       <AddDeleteButton
                         action={action}
-                        addRemoveUser={() =>
-                          setNotification?.({ opened: true, action: action, user: id })
+                        onClick={() =>
+                          setNotification({
+                            opened: true,
+                            action,
+                            username,
+                            userAddress: safeAddress,
+                          })
                         }
                       />
                     </GroupActions>
