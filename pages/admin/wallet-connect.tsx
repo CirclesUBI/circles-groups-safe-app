@@ -68,13 +68,17 @@ const WalletConnect: NextPage = () => {
       <Wrapper>
         <User
           userImage={
-            <Image
-              alt="@TomasBari"
-              height={40}
-              objectFit="cover"
-              src="/images/user.jpg"
-              width={40}
-            />
+            user.avatarUrl ? (
+              <Image
+                alt={user?.username}
+                height={40}
+                objectFit="cover"
+                src={user.avatarUrl}
+                width={40}
+              />
+            ) : (
+              <></>
+            )
           }
           userTokens={circles}
           username={user?.username}

@@ -74,7 +74,7 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
 
   const { user } = useUserSafe(safe.safeAddress)
   const { groupsByMember } = useGroupsByMember(safe.safeAddress)
-
+  console.log(user)
   return (
     <>
       <MainMenuWrapper closeMenu={() => onClose()}>
@@ -94,13 +94,17 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
         </MenuHeader>
         <User
           userImage={
-            <Image
-              alt="@TomasBari"
-              height={40}
-              objectFit="cover"
-              src="/images/user.jpg"
-              width={40}
-            />
+            user.avatarUrl ? (
+              <Image
+                alt={user?.username}
+                height={40}
+                objectFit="cover"
+                src={user.avatarUrl}
+                width={40}
+              />
+            ) : (
+              <></>
+            )
           }
           userTokens={circles}
           username={user?.username}
