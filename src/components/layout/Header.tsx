@@ -6,6 +6,7 @@ import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { formatUnits } from '@ethersproject/units'
+import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Alert } from '@/src/components/assets/Alert'
@@ -16,8 +17,10 @@ import { MainMenu } from '@/src/components/navigation/MainMenu'
 import { ButtonPrimary, LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { activity } from '@/src/constants/activity'
 import { chainsConfig } from '@/src/constants/chains'
-import { createdGroups } from '@/src/constants/createdGroups'
 import { ZERO_BN } from '@/src/constants/misc'
+import { useGroupsByMember } from '@/src/hooks/subgraph/useGroupsByMember'
+import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
+import { useUserSafe } from '@/src/hooks/useUserSafe'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { truncateStringInTheMiddle } from '@/src/utils/tools'
 
@@ -96,6 +99,12 @@ const LinkGroup = styled(LinkButton)`
   border-color: ${({ theme }) => theme.colors.fourth};
   padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
 `
+const LinkGroupNew = styled(LinkButton)`
+  line-height: normal;
+  background-color: ${({ theme }) => theme.colors.fifth};
+  border-color: ${({ theme }) => theme.colors.fifth};
+  padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
+`
 const UserWrapper = styled.div`
   display: none;
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
@@ -130,8 +139,16 @@ export const Header: React.FC = (props) => {
 
   const [isOpen, toggleOpen] = useState(false)
 
+  const { safe, sdk } = useSafeAppsSDK()
+  const { circles } = useCirclesBalance(sdk)
+
+  const { user } = useUserSafe(safe.safeAddress)
+
+  // @TODO: Reeplace with list of user created groups
+  const { groupsByMember } = useGroupsByMember(safe.safeAddress)
+
   useEffect(() => {
-    //Fixme later
+    //Fix me later
     if (isOpen) window.document.body.style.overflow = 'hidden'
     if (!isOpen) {
       window.document.body.style.overflow = 'auto'
@@ -193,12 +210,17 @@ export const Header: React.FC = (props) => {
             {isWalletConnected ? (
               <UserGroups>
                 <UserWrapper>
-                  <User headerStyle userTokens={1119.25} username="@TomasBari" />
+                  <User headerStyle userTokens={circles} username={user?.username} />
                 </UserWrapper>
-                {createdGroups.length > 1 && <GroupSelector />}
-                {createdGroups.length == 1 && (
+                {groupsByMember.length > 1 && <GroupSelector groups={groupsByMember} />}
+                {groupsByMember.length == 1 && (
                   <Link href="/admin" passHref>
-                    <LinkGroup>{createdGroups[0].title}</LinkGroup>
+                    <LinkGroup>{groupsByMember[0].name}</LinkGroup>
+                  </Link>
+                )}
+                {groupsByMember.length == 0 && (
+                  <Link href="/admin/create-group" passHref>
+                    <LinkGroup>Create group</LinkGroup>
                   </Link>
                 )}
               </UserGroups>

@@ -1,7 +1,6 @@
 import type { AppProps } from 'next/app'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
-import { useState } from 'react'
 import { ThemeProvider } from 'styled-components'
 
 import { SWRConfig } from 'swr'
@@ -11,6 +10,7 @@ import 'sanitize.css'
 import { Layout } from '@/src/components/layout'
 import SafeSuspense from '@/src/components/safeSuspense'
 import Toast from '@/src/components/toast/Toast'
+import TabProvider from '@/src/providers/tabProvider'
 import { theme } from '@/src/theme'
 import { GlobalStyle } from '@/src/theme/globalStyle'
 
@@ -32,14 +32,6 @@ function App({ Component, pageProps }: AppProps) {
   const title = 'Circles'
   const description = 'Circles'
   const twitterHandle = '@'
-
-  const tabs = [{ text: 'My Groups' }, { text: 'All Groups' }]
-  const [selectedTab, setSelectedTab] = useState(tabs[0].text)
-
-  function changeTab(param: string) {
-    setSelectedTab(param)
-  }
-
   return (
     <>
       <Head>
@@ -65,15 +57,12 @@ function App({ Component, pageProps }: AppProps) {
             <Web3ConnectionProvider>
               <GlobalStyle />
               <SafeSuspense>
-                <Layout>
-                  <Toast />
-                  <Component
-                    {...pageProps}
-                    onChange={changeTab}
-                    selectedTab={selectedTab}
-                    tabs={tabs}
-                  />
-                </Layout>
+                <TabProvider tab="">
+                  <Layout>
+                    <Toast />
+                    <Component {...pageProps} />
+                  </Layout>
+                </TabProvider>
               </SafeSuspense>
             </Web3ConnectionProvider>
           </SafeProvider>

@@ -43,8 +43,6 @@ const ConfigurateGroup: NextPage = () => {
   const groupAddr = String(router.query?.group)
   const { groupMembers } = useGroupMembersByGroupId(groupAddr)
   const { group } = useGroupCurrencyTokensById(groupAddr)
-  // const { owner } = useGroupOwner(group?.owner) // TODO: render username from CirclesAPI User
-  // const { groupBalance } = useGroupBalance(groupAddr) // TODO: hookup Group Balance with CRC convertion
   const { safe } = useSafeAppsSDK()
   const [currentUser] = useState(safe.safeAddress.toLowerCase())
   const isOwner = () => group?.owner == currentUser
@@ -58,6 +56,7 @@ const ConfigurateGroup: NextPage = () => {
         <Columns columnsNumber={1}>
           <InformationPod
             bgColor="lightest"
+            groupId={groupAddr}
             label="Owner"
             owner={isOwner()}
             text={group?.owner ?? ''}
@@ -77,12 +76,12 @@ const ConfigurateGroup: NextPage = () => {
         <Columns columnsNumber={1}>
           <ListWrapper>
             <H2>Group members</H2>
-            <UsersList action={'show'} usersGroup={groupMembers} />
+            <UsersList users={groupMembers} />
           </ListWrapper>
         </Columns>
 
         <ActionWrapper>
-          <Link href="/mint-tokens" passHref>
+          <Link href={`/${groupAddr}/mint-tokens`} passHref>
             <LinkButton>Mint Tokens</LinkButton>
           </Link>
         </ActionWrapper>

@@ -23,7 +23,7 @@ type Props = {
   closeMenu: () => void
 }
 
-export const MenuItem: React.FC<Props> = ({ closeMenu, href, title }) => {
+export const ItemMainMenu: React.FC<Props> = ({ closeMenu, href, title }) => {
   const variants = {
     open: {
       y: 0,
@@ -49,7 +49,7 @@ export const MenuItem: React.FC<Props> = ({ closeMenu, href, title }) => {
         whileTap={{ x: '8px' }}
       >
         <Link href={href} passHref>
-          <Item onClick={() => closeMenu()}>{title}</Item>
+          <Item onClick={closeMenu}>{title}</Item>
         </Link>
       </motion.div>
     </>
