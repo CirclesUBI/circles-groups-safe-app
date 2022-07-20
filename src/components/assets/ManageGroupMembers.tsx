@@ -77,9 +77,9 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupMembers, groupMembers
             transition={{ duration: 0.2 }}
           >
             {selectedTab === 'Members' ? (
-              <UsersList action={'delete'} usersGroup={groupMembers} />
+              <UsersList action={'delete'} shouldShowAlert users={groupMembers} />
             ) : (
-              <UsersList action={'add'} usersGroup={groupMembers} />
+              <UsersList action={'add'} shouldShowAlert users={groupMembers} />
             )}
           </motion.div>
         </AnimatePresence>

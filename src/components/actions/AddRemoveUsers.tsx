@@ -1,86 +1,38 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 import { AnimatePresence } from 'framer-motion'
 
+import { ActionAddDelete } from '../assets/AddDeleteButton'
 import { AlertMessage } from '@/src/components/assets/AlertMessage'
-import { allUsers } from '@/src/constants/allUsers'
-import { users } from '@/src/constants/users'
 
-interface groupMember {
-  id: number
+export type AddRemoveUserNotification = {
+  opened: boolean
+  action: ActionAddDelete
   username: string
-  safeAddress: string
-  avatarUrl?: string
 }
 
 interface Props {
-  notification: { opened: boolean; action: string; user: number }
+  notification: AddRemoveUserNotification
   cancelAction: () => void
-  groupMembers: groupMember[]
+  onAddUserAction: () => void
+  onRemoveUserAction: () => void
 }
 
-export const AddRemoveUsers: React.FC<Props> = ({ cancelAction, groupMembers, notification }) => {
-  const [usersGroup, setUsers] = useState(users)
-  const [usersAll, setUsersAll] = useState(allUsers)
-
-  const handleRemove = (userID: number) => {
-    // add user to all users list
-    const moveUser = usersGroup.filter((user) => user.id == userID)
-    setUsersAll((usersAll) => [moveUser[0], ...usersAll])
-
-    // remove item from my group list
-    const newList = usersGroup.filter((user) => user.id !== userID)
-    setUsers(newList)
-  }
-
-  const handleAdd = (userID: number) => {
-    // remove user all users list
-    const newAllList = usersAll.filter((user) => user.id !== userID)
-    setUsersAll(newAllList)
-
-    // add user to my group list
-    const newUser = usersAll.filter((user) => user.id == userID)
-    setUsers((usersGroup) => [newUser[0], ...usersGroup])
-  }
-
-  const getUserNameAllList = (userID: number) => {
-    // get user name from all members list
-    const getUser = allUsers.filter((user) => user.id == userID)
-    const getUserName = getUser[0].name
-    return getUserName
-  }
-
-  const getUserNameMyGroupList = (userID: number) => {
-    // get user name from group list
-    const user = groupMembers.find((user) => user.id === userID)
-    return user?.username ?? ''
-  }
-
+export const AddRemoveUsers: React.FC<Props> = ({
+  cancelAction,
+  notification,
+  onAddUserAction,
+  onRemoveUserAction,
+}) => {
+  const REMOVE_USER_TEXT = `Are you sure you want to remove ${notification.username} from your group?`
+  const ADD_USER_TEXT = `Are you sure you want to add ${notification.username} to your group?`
+  const alertAction = notification.action === 'delete' ? onRemoveUserAction : onAddUserAction
+  const alertText = notification.action === 'delete' ? REMOVE_USER_TEXT : ADD_USER_TEXT
   return (
     <>
       {notification.opened && (
         <AnimatePresence>
-          {notification.action == 'delete' ? (
-            <AlertMessage
-              confirmAction={() => handleRemove(notification.user)}
-              onCloseAlert={cancelAction}
-              text={
-                'Are you sure you want to remove ' +
-                getUserNameMyGroupList(notification.user) +
-                ' from your group?'
-              }
-            />
-          ) : (
-            <AlertMessage
-              confirmAction={() => handleAdd(notification.user)}
-              onCloseAlert={cancelAction}
-              text={
-                'Are you sure you want to add ' +
-                getUserNameAllList(notification.user) +
-                ' to your group?'
-              }
-            />
-          )}
+          <AlertMessage confirmAction={alertAction} onCloseAlert={cancelAction} text={alertText} />
         </AnimatePresence>
       )}
     </>

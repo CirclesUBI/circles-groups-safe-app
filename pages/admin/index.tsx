@@ -4,9 +4,6 @@ import { ManageGroupMembers } from '@/src/components/assets/ManageGroupMembers'
 import { NoGroupCreated } from '@/src/components/assets/NoGroupCreated'
 import { Title } from '@/src/components/assets/Title'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
-import { UsersList } from '@/src/components/lists/UsersList'
-import { allUsers } from '@/src/constants/allUsers'
-import { users } from '@/src/constants/users'
 import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
 
 const HomeAdmin: NextPage = () => {
