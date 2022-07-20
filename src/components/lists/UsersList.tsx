@@ -66,11 +66,16 @@ interface groupMember {
 interface Props {
   action?: ActionAddDelete
   users: groupMember[]
-  onCloseAlert?: (openedValue: boolean, actionValue: string, userValue: number) => void
   shouldShowAlert?: boolean
+  onRemoveUser?: (userAddress: string) => void
 }
 
-export const UsersList: React.FC<Props> = ({ action, shouldShowAlert = false, users }) => {
+export const UsersList: React.FC<Props> = ({
+  action,
+  onRemoveUser,
+  shouldShowAlert = false,
+  users,
+}) => {
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
@@ -91,18 +96,29 @@ export const UsersList: React.FC<Props> = ({ action, shouldShowAlert = false, us
 
   const [notification, setNotification] = useState<AddRemoveUserNotification>({
     opened: false,
-    action: 'add',
+    action: action ?? 'add',
     username: '',
   })
+
+  const resetNotification = () => {
+    setNotification({ opened: false, action: action ?? 'add', username: '' })
+  }
+
+  const removeUser = () => {
+    if (onRemoveUser && notification.userAddress) {
+      onRemoveUser(notification.userAddress)
+    }
+    resetNotification()
+  }
 
   return (
     <>
       {shouldShowAlert && action && (
         <AddRemoveUsers
-          cancelAction={() => setNotification({ opened: false, action, username: '' })}
+          cancelAction={resetNotification}
           notification={notification}
           onAddUserAction={() => console.log('@TODO: add needs to be implemented')}
-          onRemoveUserAction={() => console.log('@TODO: remove needs to be implemented')}
+          onRemoveUserAction={removeUser}
         />
       )}
       <List>
@@ -111,7 +127,7 @@ export const UsersList: React.FC<Props> = ({ action, shouldShowAlert = false, us
           {filteredUsers.length > 0 ? (
             filteredUsers
               .slice(0, page * itemsPerPage)
-              .map(({ avatarUrl, id, username }, index) => (
+              .map(({ avatarUrl, id, safeAddress, username }, index) => (
                 <ListItem custom={index} key={`user_${id}`}>
                   <GroupInfo>
                     <ImageWrapper>
@@ -127,7 +143,14 @@ export const UsersList: React.FC<Props> = ({ action, shouldShowAlert = false, us
                     <GroupActions>
                       <AddDeleteButton
                         action={action}
-                        onClick={() => setNotification({ opened: true, action, username })}
+                        onClick={() =>
+                          setNotification({
+                            opened: true,
+                            action,
+                            username,
+                            userAddress: safeAddress,
+                          })
+                        }
                       />
                     </GroupActions>
                   )}

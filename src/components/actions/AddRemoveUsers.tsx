@@ -9,6 +9,7 @@ export type AddRemoveUserNotification = {
   opened: boolean
   action: ActionAddDelete
   username: string
+  userAddress?: string
 }
 
 interface Props {
