@@ -1,5 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
+
+import { AnimatePresence } from 'framer-motion'
 
 import { ActionItem } from '@/src/components/assets/ActionItem'
 import { FirstLetter } from '@/src/components/assets/FirstLetter'
@@ -7,9 +9,12 @@ import { ListContainer } from '@/src/components/assets/ListContainer'
 import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
 import { NoResultsText } from '@/src/components/assets/NoResultsText'
+import { Popup } from '@/src/components/assets/Popup'
 import { SearchInput } from '@/src/components/assets/SearchInput'
 import { Tooltip } from '@/src/components/assets/Tooltip'
+import { UsersList } from '@/src/components/lists/UsersList'
 import { GroupCurrencyToken } from '@/src/hooks/subgraph/useGroupCurrencyToken'
+import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
 
 const List = styled.div`
   display: flex;
@@ -28,11 +33,6 @@ const GroupInfo = styled.div`
     font-weight: 700;
     margin: 0;
   }
-  p {
-    font-size: 1.2rem;
-    color: ${({ theme }) => theme.colors.textColor};
-    margin: ${({ theme }) => theme.general.space / 2}px 0 0;
-  }
 `
 
 const GroupActions = styled.div`
@@ -47,6 +47,16 @@ const GroupActions = styled.div`
   }
 `
 
+const MembersButton = styled.button`
+  background-color: transparent;
+  border: none;
+  color: ${({ theme }) => theme.colors.textColor};
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0;
+  margin: ${({ theme }) => theme.general.space / 2}px 0 0;
+`
+
 interface Props {
   groups: Array<GroupCurrencyToken>
 }
@@ -55,6 +65,25 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
+
+  const [isOpen, setIsOpen] = useState(false)
+  const [groupAddr, setGroupAddr] = useState('')
+  const [isTitle, setTitle] = useState('')
+  const { groupMembers } = useGroupMembersByGroupId(groupAddr)
+
+  const handleModal = (groupId: string, groupName: string) => {
+    setGroupAddr(groupId)
+    setTitle(groupName)
+    setIsOpen(true)
+  }
+
+  useEffect(() => {
+    //Fix me later
+    if (isOpen) window.document.body.style.overflow = 'hidden'
+    if (!isOpen) {
+      window.document.body.style.overflow = 'auto'
+    }
+  }, [isOpen])
 
   const totalItemsNum = groups.length
 
@@ -71,45 +100,64 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
   const totalPages = Math.ceil(filteredGroups.length / itemsPerPage)
 
   return (
-    <List>
-      {totalItemsNum > itemsPerPage && <SearchInput onChange={(e) => setQuery(e)} />}
-      <ListContainer>
-        {filteredGroups.length > 0 ? (
-          filteredGroups.slice(0, page * itemsPerPage).map(({ id, members, name }, index) => (
-            <ListItem key={`group_${index}`}>
-              <GroupInfo>
-                <FirstLetter character={name.charAt(0)} />
-                <div>
-                  <h3>{name}</h3>
-                  <p>{members.length} members</p>
-                </div>
-              </GroupInfo>
-              <GroupActions>
-                <ActionItem
-                  color="primary"
-                  href={`${id}/mint-tokens`}
-                  icon="/images/icon-send.svg"
-                  text="Mint tokens"
-                />
-                <Tooltip text="Group information and members list">
-                  <ActionItem
-                    color="third"
-                    href={`${id}/group-information`}
-                    icon="/images/icon-information.svg"
-                  />
-                </Tooltip>
-              </GroupActions>
-            </ListItem>
-          ))
-        ) : (
-          <NoResultsText query={query} text={"You don't belong to any group yet."} />
+    <>
+      <AnimatePresence>
+        {isOpen && (
+          <Popup
+            content={<UsersList users={groupMembers} />}
+            isOpen={isOpen}
+            onCloseAlert={() => setIsOpen(false)}
+            title={`${isTitle} group users`}
+          />
         )}
-      </ListContainer>
-      {page < totalPages && filteredGroups.length > itemsPerPage && (
-        <>
-          <LoadMoreButton moreResults={() => setPage((prev) => prev + 1)} />
-        </>
-      )}
-    </List>
+      </AnimatePresence>
+
+      <List>
+        {totalItemsNum > itemsPerPage && <SearchInput onChange={(e) => setQuery(e)} />}
+        <ListContainer>
+          {filteredGroups.length > 0 ? (
+            filteredGroups.slice(0, page * itemsPerPage).map(({ id, members, name }, index) => (
+              <ListItem key={`group_${index}`}>
+                <GroupInfo>
+                  <FirstLetter character={name.charAt(0)} />
+                  <div>
+                    <h3>{name}</h3>
+                    <MembersButton
+                      onClick={() => {
+                        handleModal(id, name)
+                      }}
+                    >
+                      {members.length} members
+                    </MembersButton>
+                  </div>
+                </GroupInfo>
+                <GroupActions>
+                  <ActionItem
+                    color="primary"
+                    href={`${id}/mint-tokens`}
+                    icon="/images/icon-send.svg"
+                    text="Mint tokens"
+                  />
+                  <Tooltip text="Group information and members list">
+                    <ActionItem
+                      color="third"
+                      href={`${id}/group-information`}
+                      icon="/images/icon-information.svg"
+                    />
+                  </Tooltip>
+                </GroupActions>
+              </ListItem>
+            ))
+          ) : (
+            <NoResultsText query={query} text={"You don't belong to any group yet."} />
+          )}
+        </ListContainer>
+        {page < totalPages && filteredGroups.length > itemsPerPage && (
+          <>
+            <LoadMoreButton moreResults={() => setPage((prev) => prev + 1)} />
+          </>
+        )}
+      </List>
+    </>
   )
 }

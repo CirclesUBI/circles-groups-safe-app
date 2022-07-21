@@ -9,10 +9,9 @@ const Li = styled.li`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap: ${({ theme }) => theme.general.space * 3}px;
   &:not(:last-child) {
     border-bottom: 1px solid #e0e0e0;
-    padding-bottom: ${({ theme }) => theme.general.space * 3}px;
+    padding-bottom: ${({ theme }) => theme.general.space * 2}px;
   }
   &:not(.noColors) {
     &:nth-child(3n + 2) > div > div:first-child {
@@ -25,6 +24,9 @@ const Li = styled.li`
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     align-items: center;
     flex-direction: row;
+    &:not(:last-child) {
+      padding-bottom: ${({ theme }) => theme.general.space * 3}px;
+    }
   }
 `
 
