@@ -99,7 +99,7 @@ interface Props {
 }
 
 export const TitleGroup: React.FC<Props> = ({
-  amountNumber = 0,
+  amountNumber,
   buttonHref = '',
   hasBackButton = false,
   information = 'Manage group',
@@ -118,7 +118,7 @@ export const TitleGroup: React.FC<Props> = ({
       </TitleInformation>
 
       <Actions>
-        {amountNumber >= 0 && (
+        {amountNumber && amountNumber >= 0 && (
           <Amount>
             <Crc />
             {amountNumber}
