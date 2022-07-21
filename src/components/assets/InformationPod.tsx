@@ -82,7 +82,7 @@ const LinkCanEdit = styled.a`
 
 interface Props {
   label?: string
-  text: string
+  text: string | number
   bgColor?: string
   information?: string
   owner?: boolean

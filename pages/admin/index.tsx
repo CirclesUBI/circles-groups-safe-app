@@ -38,9 +38,9 @@ const HomeAdmin: NextPage = () => {
       ) : (
         <>
           <TitleGroup
-            amountNumber={7.268}
-            buttonHref="/admin/group-configuration"
-            text="Bootnode"
+            amountNumber={group.minted}
+            buttonHref={`/admin/${groupId}/group-configuration`}
+            text={group.name}
           />
           <ManageGroupMembers
             groupAddress={groupId}
