@@ -57,7 +57,6 @@ type Props = {
 
 export const GroupSelector: React.FC<Props> = ({ groups }) => {
   const [isDropDownOpen, setDropDownIsOpen] = useState<boolean>(false)
-  console.log(groups)
   return (
     <Dropdown
       dropdownButtonContent={

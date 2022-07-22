@@ -62,27 +62,29 @@ const PopWrapper = styled.section`
   margin-top: ${({ theme }) => theme.general.space * 5}px;
 `
 const ContentWrapper = styled.div`
-  max-height: 70vh;
+  max-height: 60vh;
   min-height: 120px;
   overflow-y: auto;
+`
+const Title = styled.div`
+  padding: 0 ${({ theme }) => theme.general.space * 2}px ${({ theme }) => theme.general.space * 2}px;
 `
 
 const H2 = styled.h2`
   font-size: 2.8rem;
-  padding: 0 ${({ theme }) => theme.general.space * 2}px ${({ theme }) => theme.general.space * 2}px;
 `
 
 interface Props {
   title?: string
+  subtitle?: string
   content?: ReactNode
-  isOpen: boolean
   onCloseAlert: () => void
 }
 
 export const Popup: React.FC<Props> = ({
-  content = 'Are you sure you want to add USERNAME to your group?',
-  isOpen = false,
+  content = '',
   onCloseAlert,
+  subtitle = '',
   title = 'test',
 }) => {
   return (
@@ -98,7 +100,10 @@ export const Popup: React.FC<Props> = ({
           <Image alt="Close" height={10} src="/images/icon-close.svg" width={10} />
         </Close>
         <PopWrapper>
-          <H2>{title}</H2>
+          <Title>
+            <H2>{title}</H2>
+            <h3>{subtitle}</h3>
+          </Title>
           <ContentWrapper>{content}</ContentWrapper>
         </PopWrapper>
       </Message>
