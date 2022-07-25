@@ -70,6 +70,7 @@ export const ManageGroupMembers: React.FC<Props> = ({
   const [allUsers, setAllUsers] = useState(circlesUsers)
   const { execute: execRemove } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
   const { execute: execAdd } = useGroupCurrencyTokenTx(groupAddress, 'addMemberToken')
+  const [membersCount, setMembersCount] = useState(groupMembersCount)
 
   const getUserToken = async (userAddress: string) => {
     if (!isAppConnected) {
@@ -106,6 +107,7 @@ export const ManageGroupMembers: React.FC<Props> = ({
       setUsers((users) => [...users, addedUser[0]])
       const nonMemberUsers = allUsers.filter((user) => user.safeAddress !== userAddress)
       setAllUsers(nonMemberUsers)
+      setMembersCount(membersCount + 1)
     } catch (err) {
       console.log(err)
     }
@@ -120,7 +122,7 @@ export const ManageGroupMembers: React.FC<Props> = ({
               <Tab key={`tab_${index}`} onClick={() => setSelectedTab(el)}>
                 <span className={selectedTab == el ? 'active' : 'inactive'}>
                   <>
-                    {el} {el === 'Members' && '(' + groupMembersCount + ')'}
+                    {el} {el === 'Members' && '(' + membersCount + ')'}
                   </>
                 </span>
               </Tab>
