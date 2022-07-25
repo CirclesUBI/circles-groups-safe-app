@@ -23,19 +23,11 @@ interface Props {
   groupName: string
 }
 
-export const MembersListButton: React.FC<Props> = ({
-  groupId = '',
-  groupName = '',
-  numberMembers = 0,
-}) => {
+export const MembersListButton: React.FC<Props> = ({ groupId, groupName, numberMembers }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false)
-  const [groupAddr, setGroupAddr] = useState('')
-  const [isTitle, setTitle] = useState('')
-  const { groupMembers } = useGroupMembersByGroupId(groupAddr)
+  const { groupMembers } = useGroupMembersByGroupId(groupId)
 
-  const handleModal = (groupId: string, groupName: string) => {
-    setGroupAddr(groupId)
-    setTitle(groupName)
+  const handleModal = () => {
     setIsPopupOpen(true)
   }
   useEffect(() => {
@@ -54,13 +46,13 @@ export const MembersListButton: React.FC<Props> = ({
             content={<UsersList users={groupMembers} />}
             onCloseAlert={() => setIsPopupOpen(false)}
             subtitle="group users"
-            title={isTitle}
+            title={groupName}
           />
         )}
       </AnimatePresence>
       <MembersButton
         onClick={() => {
-          handleModal(groupId, groupName)
+          handleModal()
         }}
       >
         {numberMembers} members

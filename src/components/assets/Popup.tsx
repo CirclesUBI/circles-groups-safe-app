@@ -96,7 +96,7 @@ export const Popup: React.FC<Props> = ({
       transition={{ duration: 1.3, type: 'spring', stiffness: 1000, damping: 100 }}
     >
       <Message>
-        <Close onClick={() => onCloseAlert()}>
+        <Close onClick={onCloseAlert}>
           <Image alt="Close" height={10} src="/images/icon-close.svg" width={10} />
         </Close>
         <PopWrapper>

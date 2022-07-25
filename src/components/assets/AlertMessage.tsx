@@ -92,12 +92,12 @@ export const AlertMessage: React.FC<Props> = ({
       transition={{ duration: 1.3, type: 'spring', stiffness: 1000, damping: 100 }}
     >
       <Message>
-        <Close onClick={() => onCloseAlert()}>
+        <Close onClick={onCloseAlert}>
           <Image alt="Close" height={10} src="/images/icon-close.svg" width={10} />
         </Close>
         <Text>{text}</Text>
         <Actions>
-          <ButtonCancel onClick={() => onCloseAlert()}>Cancel</ButtonCancel>
+          <ButtonCancel onClick={onCloseAlert}>Cancel</ButtonCancel>
           <ButtonConfirm onClick={confirmAction}>Confirm</ButtonConfirm>
         </Actions>
       </Message>

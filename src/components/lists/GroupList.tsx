@@ -10,6 +10,7 @@ import { MembersListButton } from '@/src/components/assets/MembersListButton'
 import { NoResultsText } from '@/src/components/assets/NoResultsText'
 import { SearchInput } from '@/src/components/assets/SearchInput'
 import { Tooltip } from '@/src/components/assets/Tooltip'
+import SafeSuspense from '@/src/components/safeSuspense'
 import { GroupCurrencyToken } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 
 const List = styled.div`
@@ -78,11 +79,13 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
                   <FirstLetter character={name.charAt(0)} />
                   <div>
                     <h3>{name}</h3>
-                    <MembersListButton
-                      groupId={id}
-                      groupName={name}
-                      numberMembers={members.length}
-                    />
+                    <SafeSuspense>
+                      <MembersListButton
+                        groupId={id}
+                        groupName={name}
+                        numberMembers={members.length}
+                      />
+                    </SafeSuspense>
                   </div>
                 </GroupInfo>
                 <GroupActions>
