@@ -64,34 +64,23 @@ export const transformPathToTransferThroughParams = (
 }
 
 /**
- * mint params are:
- * - collateral[] is an array of circle tokens addresses which must be trusted by the sender
- * - amount[] is an array of string amounts to send to each of the USERS (not token) from the collateral array
- * - as the user who mint the token must be a trusted user, we will use the latest user from the path
- * - which is the second last from the dests array
- * - if there is a direct path to the group, we have to use the first user from the path
- * - which is the first element from the srcs array
- * - otherwise there are no way to create this collaterals string array
+ * @description Mint Params
+ * - users[] is an array of safe address signed into circles garden (See Hub signup)
+ * @returns tokens[] which is an array of tokens
+ * - for each user in the users array (See Hub userToToken)
  */
 export const transformPathToMintParams = async (
-  dests: string[],
-  srcs: string[],
+  users: string[],
   provider: JsonRpcProvider | JsonRpcSigner,
 ) => {
-  let collaterals: string[] = []
-  let user = undefined
-  if (dests.length > 1) {
-    user = dests[dests.length - 2]
-  } else if (dests.length == 1) {
-    user = srcs[0]
-  } else {
-    console.log('ERROR: no dests!!!')
-  }
-  if (!user) return collaterals
+  if (!users) return []
 
-  const token = await hubCall(provider, 'userToToken', [user])
-  if (token) {
-    collaterals = [token]
-  }
-  return collaterals
+  const tokensResponse = users.map(async (user) => {
+    const r = await hubCall(provider, 'userToToken', [user])
+    return r ?? ''
+  })
+  const tokens = await Promise.all(tokensResponse)
+  if (!tokens) return []
+
+  return tokens
 }
