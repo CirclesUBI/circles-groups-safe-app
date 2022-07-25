@@ -10,7 +10,7 @@ import 'sanitize.css'
 import { Layout } from '@/src/components/layout'
 import SafeSuspense from '@/src/components/safeSuspense'
 import Toast from '@/src/components/toast/Toast'
-import TabProvider from '@/src/providers/tabProvider'
+import GeneralContextProvider from '@/src/providers/generalProvider'
 import { theme } from '@/src/theme'
 import { GlobalStyle } from '@/src/theme/globalStyle'
 
@@ -57,12 +57,12 @@ function App({ Component, pageProps }: AppProps) {
             <Web3ConnectionProvider>
               <GlobalStyle />
               <SafeSuspense>
-                <TabProvider tab="">
+                <GeneralContextProvider tab="">
                   <Layout>
                     <Toast />
                     <Component {...pageProps} />
                   </Layout>
-                </TabProvider>
+                </GeneralContextProvider>
               </SafeSuspense>
             </Web3ConnectionProvider>
           </SafeProvider>
