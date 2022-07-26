@@ -6,6 +6,7 @@ import { Input } from '@/src/components/assets/Input'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
 import { Columns } from '@/src/components/layout/Columns'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
+import { genericSuspense } from '@/src/components/safeSuspense'
 
 const FormWrapper = styled.div`
   display: flex;
@@ -59,4 +60,4 @@ const ConfigurateGroup: NextPage = () => {
     </>
   )
 }
-export default ConfigurateGroup
+export default genericSuspense(ConfigurateGroup)
