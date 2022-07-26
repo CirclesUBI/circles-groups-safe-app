@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 
 import { ActionItem } from '@/src/components/assets/ActionItem'
 import { FirstLetter } from '@/src/components/assets/FirstLetter'
@@ -44,6 +44,23 @@ const GroupActions = styled.div`
   }
 `
 
+const skeletonloading = keyframes`
+from {
+  background-color: rgb(241 242 243 / 80%);
+}
+to {
+  background-color: rgb(241 242 243 / 95%);
+}
+`
+
+const Skeleton = styled.div`
+  border-radius: 10px;
+  margin: ${({ theme }) => theme.general.space / 2}px 0 0;
+  height: 1.2rem;
+  max-width: 60px;
+  animation: ${skeletonloading} 1s linear infinite alternate;
+`
+
 interface Props {
   groups: Array<GroupCurrencyToken>
 }
@@ -79,7 +96,7 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
                   <FirstLetter character={name.charAt(0)} />
                   <div>
                     <h3>{name}</h3>
-                    <SafeSuspense>
+                    <SafeSuspense fallback={<Skeleton></Skeleton>}>
                       <MembersListButton
                         groupId={id}
                         groupName={name}
