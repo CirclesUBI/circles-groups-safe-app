@@ -13,6 +13,7 @@ export type CirclesGardenUser = {
 }
 
 export const getUsers = async (safeAddresses: string[]) => {
+  if (safeAddresses.length === 0) return []
   const addresses = safeAddresses.join('&address[]=')
   const url = `${CIRCLES_GARDEN_API}users/?address[]=${addresses}`
   const response = await fetch(url)
