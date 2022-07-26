@@ -17,7 +17,7 @@ export type GroupCurrencyToken = {
   treasury: string
   hub: string
   mintFeePerThousand: string
-  minted: number
+  minted: string
   members: Array<any> // TODO define Member's Group type
 }
 
@@ -32,7 +32,7 @@ const transformToGroupCurrencyToken = (
     treasury: group.treasury ?? '',
     hub: group.hub ?? '',
     mintFeePerThousand: group.mintFeePerThousand ?? '',
-    minted: Number(circlesToTC(group.minted)) ?? 0,
+    minted: circlesToTC(group.minted) ?? '0',
     members: group.members,
   }
 }

@@ -63,7 +63,7 @@ const ConfigurateGroup: NextPage = () => {
             bgColor="light"
             icon={<Crc />}
             label="Treasure"
-            text={group?.minted ?? 0}
+            text={group?.minted ?? '0'}
           />
         </Columns>
 
