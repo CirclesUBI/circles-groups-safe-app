@@ -19,7 +19,7 @@ const ToastTypes = {
   [WAITING_TYPE]: ({ explorerUrl, message, t }: ToastComponentProps) => (
     <ToastComponent
       icon={<LoadingIcon />}
-      link={explorerUrl ? { url: explorerUrl, text: 'Click to verify on Etherscan' } : undefined}
+      link={explorerUrl ? { url: explorerUrl, text: 'Click to verify on Blockscout' } : undefined}
       message={message ? message : undefined}
       t={t}
       title="Transaction Sent"
@@ -29,7 +29,7 @@ const ToastTypes = {
   [FAILED_TYPE]: ({ explorerUrl, message, t }: ToastComponentProps) => (
     <ToastComponent
       icon={<FailedIcon />}
-      link={explorerUrl ? { url: explorerUrl, text: 'Click to see on Etherscan' } : undefined}
+      link={explorerUrl ? { url: explorerUrl, text: 'Click to see on Blockscout' } : undefined}
       message={message ? message : undefined}
       t={t}
       title="Transaction Failed"
@@ -39,7 +39,7 @@ const ToastTypes = {
   [SUCCESS_TYPE]: ({ explorerUrl, message, t }: ToastComponentProps) => (
     <ToastComponent
       icon={<SuccessIcon />}
-      link={explorerUrl ? { url: explorerUrl, text: 'Click to verify on Etherscan' } : undefined}
+      link={explorerUrl ? { url: explorerUrl, text: 'Click to verify on Blockscout' } : undefined}
       message={message ? message : undefined}
       t={t}
       title="Transaction confirmed"
