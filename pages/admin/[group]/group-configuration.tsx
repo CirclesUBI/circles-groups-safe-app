@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import styled from 'styled-components'
 
+import { getAddress } from '@ethersproject/address'
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 import { AnimatePresence } from 'framer-motion'
 
@@ -35,17 +36,24 @@ const ConfigurateGroup: NextPage = () => {
   const { group } = useGroupCurrencyTokensById(groupAddr)
   const { execute } = useChangeOwner(groupAddr)
   const { safe } = useSafeAppsSDK()
+  const currentUser = safe.safeAddress.toLowerCase()
 
   const [owner, setOwner] = useState(group?.owner)
   const [notification, setNotification] = useState(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const [currentUser] = useState(safe.safeAddress.toLowerCase())
 
   const isOwner = () => group?.owner == currentUser
   const saveConfiguration = async () => {
     try {
       setLoading(true)
-      await execute([owner])
+      if (!owner) {
+        throw new Error('Invalid Group Owner')
+      }
+      if (!isOwner()) {
+        throw new Error('Current User is not a Group Owner')
+      }
+      const checksumOwner = getAddress(owner.toLowerCase())
+      await execute([checksumOwner])
     } catch (err) {
       console.log({ err })
     } finally {
