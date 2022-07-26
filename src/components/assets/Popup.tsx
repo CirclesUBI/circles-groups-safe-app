@@ -1,9 +1,8 @@
 import Image from 'next/image'
+import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 import { motion } from 'framer-motion'
-
-import { ButtonCancel, ButtonConfirm } from '@/src/components/pureStyledComponents/buttons/Button'
 
 const Wrapper = styled.section`
   align-items: center;
@@ -31,7 +30,7 @@ const Message = styled.div`
   padding: ${({ theme }) => theme.general.space * 2}px 0;
   border-radius: ${({ theme }) => theme.general.borderRadius};
   position: relative;
-  width: 350px;
+  width: 550px;
   max-width: 80%;
   position: relative;
   z-index: 1;
@@ -57,31 +56,35 @@ const Close = styled.button`
     background-color: ${({ theme }) => theme.colors.secondary};
   }
 `
-const Text = styled.h3`
-  line-height: 1.6;
-  padding: ${({ theme }) => theme.general.space * 5}px ${({ theme }) => theme.general.space * 2}px
-    ${({ theme }) => theme.general.space * 2}px;
+
+const PopWrapper = styled.section`
+  padding: 0 ${({ theme }) => theme.general.space * 2}px ${({ theme }) => theme.general.space * 2}px;
+  margin-top: ${({ theme }) => theme.general.space * 5}px;
 `
-const Actions = styled.div`
-  align-items: center;
-  border-top: 1px solid #e0e0e0;
-  display: flex;
-  justify-content: space-between;
-  gap: ${({ theme }) => theme.general.space}px;
-  margin-top: ${({ theme }) => theme.general.space * 3}px;
-  padding: ${({ theme }) => theme.general.space * 2}px ${({ theme }) => theme.general.space * 2}px 0;
+const ContentWrapper = styled.div`
+  max-height: 60vh;
+  min-height: 120px;
+  overflow-y: auto;
+`
+const Title = styled.div`
+  padding: 0 ${({ theme }) => theme.general.space * 2}px ${({ theme }) => theme.general.space * 2}px;
+`
+
+const H2 = styled.h2`
+  font-size: 2.8rem;
 `
 
 interface Props {
-  text?: string
+  title?: string
+  subtitle?: string
   onCloseAlert: () => void
-  confirmAction: () => void
 }
 
-export const AlertMessage: React.FC<Props> = ({
-  confirmAction,
+export const Popup: React.FC<Props> = ({
+  children,
   onCloseAlert,
-  text = 'Are you sure you want to add USERNAME to your group?',
+  subtitle = '',
+  title = 'test',
 }) => {
   return (
     <Wrapper
@@ -95,11 +98,13 @@ export const AlertMessage: React.FC<Props> = ({
         <Close onClick={onCloseAlert}>
           <Image alt="Close" height={10} src="/images/icon-close.svg" width={10} />
         </Close>
-        <Text>{text}</Text>
-        <Actions>
-          <ButtonCancel onClick={onCloseAlert}>Cancel</ButtonCancel>
-          <ButtonConfirm onClick={confirmAction}>Confirm</ButtonConfirm>
-        </Actions>
+        <PopWrapper>
+          <Title>
+            <H2>{title}</H2>
+            <h3>{subtitle}</h3>
+          </Title>
+          <ContentWrapper>{children}</ContentWrapper>
+        </PopWrapper>
       </Message>
     </Wrapper>
   )

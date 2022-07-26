@@ -99,12 +99,7 @@ const LinkGroup = styled(LinkButton)`
   border-color: ${({ theme }) => theme.colors.fourth};
   padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
 `
-const LinkGroupNew = styled(LinkButton)`
-  line-height: normal;
-  background-color: ${({ theme }) => theme.colors.fifth};
-  border-color: ${({ theme }) => theme.colors.fifth};
-  padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
-`
+
 const UserWrapper = styled.div`
   display: none;
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
