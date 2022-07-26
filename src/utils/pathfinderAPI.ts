@@ -21,12 +21,12 @@ export type PathfinderTransfer = {
   value: string // a number represented in a string
 }
 
-export const getPath = async (fromAddress: string, toAddress: string) => {
+export const getPath = async (fromAddress: string, toAddress: string, amount?: string) => {
   const url = `${PATHFINDER_API}flow`
   const body = {
     from: fromAddress,
     to: toAddress,
-    value: MAX_VALUE_FROM_PATH,
+    value: amount ?? MAX_VALUE_FROM_PATH,
   }
   try {
     const response = await fetch(url, {
