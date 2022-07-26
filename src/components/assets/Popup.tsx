@@ -77,12 +77,11 @@ const H2 = styled.h2`
 interface Props {
   title?: string
   subtitle?: string
-  content?: ReactNode
   onCloseAlert: () => void
 }
 
 export const Popup: React.FC<Props> = ({
-  content = '',
+  children,
   onCloseAlert,
   subtitle = '',
   title = 'test',
@@ -104,7 +103,7 @@ export const Popup: React.FC<Props> = ({
             <H2>{title}</H2>
             <h3>{subtitle}</h3>
           </Title>
-          <ContentWrapper>{content}</ContentWrapper>
+          <ContentWrapper>{children}</ContentWrapper>
         </PopWrapper>
       </Message>
     </Wrapper>

@@ -43,20 +43,15 @@ export const MembersListButton: React.FC<Props> = ({ groupId, groupName, numberM
       <AnimatePresence>
         {isPopupOpen && (
           <Popup
-            content={<UsersList users={groupMembers} />}
             onCloseAlert={() => setIsPopupOpen(false)}
             subtitle="group users"
             title={groupName}
-          />
+          >
+            <UsersList users={groupMembers} />
+          </Popup>
         )}
       </AnimatePresence>
-      <MembersButton
-        onClick={() => {
-          handleModal()
-        }}
-      >
-        {numberMembers} members
-      </MembersButton>
+      <MembersButton onClick={handleModal}>{numberMembers} members</MembersButton>
     </>
   )
 }
