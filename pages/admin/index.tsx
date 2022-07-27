@@ -23,10 +23,10 @@ const GroupItem = styled.li`
   color: ${({ theme }) => theme.colors.primary};
   cursor: pointer;
   display: flex;
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   font-weight: 400;
   justify-content: space-between;
-  padding: ${({ theme }) => theme.general.space * 2}px 0;
+  padding: ${({ theme }) => theme.general.space * 3}px 0;
   text-decoration: none;
   transition: all 0.3s ease-in-out;
   user-select: none;
