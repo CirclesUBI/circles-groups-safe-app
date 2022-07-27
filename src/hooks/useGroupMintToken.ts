@@ -66,7 +66,13 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
           dests,
           wads,
         ])
-        const collaterals = await transformPathToMintParams(dests, srcs, provider)
+        /**
+         * @TODO is it correct that safe address will transfer to treasury?
+         * Using this user will fix the issue when the path does not have a trusted user
+         * to be able to call the mint method from the group
+         */
+        const users = [userAddress]
+        const collaterals = await transformPathToMintParams(users, provider)
         const formattedAmount = toFreckles(mintAmount)
         const amounts = [formattedAmount]
         if (collaterals.length === 0) {
@@ -84,7 +90,7 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
         setLoading(false)
       }
     },
-    [group, isAppConnected, web3Provider, mintTokenData, execute, groupAddress],
+    [group, isAppConnected, web3Provider, mintTokenData, execute, groupAddress, userAddress],
   )
   return {
     path: mintTokenData?.path,

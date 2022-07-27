@@ -68,10 +68,12 @@ interface Props {
   users: groupMember[]
   shouldShowAlert?: boolean
   onRemoveUser?: (userAddress: string) => void
+  onAddUser?: (userAddress: string) => void
 }
 
 export const UsersList: React.FC<Props> = ({
   action,
+  onAddUser,
   onRemoveUser,
   shouldShowAlert = false,
   users,
@@ -111,13 +113,20 @@ export const UsersList: React.FC<Props> = ({
     resetNotification()
   }
 
+  const addUser = () => {
+    if (onAddUser && notification.userAddress) {
+      onAddUser(notification.userAddress)
+    }
+    resetNotification()
+  }
+
   return (
     <>
       {shouldShowAlert && action && (
         <AddRemoveUsers
           cancelAction={resetNotification}
           notification={notification}
-          onAddUserAction={() => console.log('@TODO: add needs to be implemented')}
+          onAddUserAction={addUser}
           onRemoveUserAction={removeUser}
         />
       )}

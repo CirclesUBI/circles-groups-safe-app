@@ -106,6 +106,7 @@ const LinkGroup = styled(LinkButton)`
   flex-shrink: 0;
   display: block;
 `
+
 const UserWrapper = styled.div`
   display: none;
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
