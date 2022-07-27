@@ -59,18 +59,11 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
 
         const formattedMintAmount = toFreckles(mintAmount)
 
-        console.log('................ fetching path from params')
-        console.log({ userAddress })
-        console.log({ groupAddress })
-        console.log({ formattedMintAmount })
         const { mintMaxAmount, path } = await fetchGroupMintTokenData(
           userAddress,
           groupAddress,
           formattedMintAmount,
         )
-        console.log('................ result path from query')
-        console.log({ path })
-        console.log({ mintMaxAmount })
         if (path.length === 0) {
           throw new Error('Path does not exists yet')
         }
@@ -88,12 +81,11 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
          * Using this user will fix the issue when the path does not have a trusted user
          * to be able to call the mint method from the group
          */
-        const users = [userAddress]
-        const collaterals = await transformPathToMintParams(users, provider)
+        const users = dests
+        const collaterals = await transformPathToMintParams(groupAddress, users, provider)
         // @TODO shall we convert mintAmount to tc?
         // const tcMintAmount = formattedMintAmount
         const tcMintAmount = String(tcToCircles(formattedMintAmount))
-        console.log({ tcMintAmount })
         const amounts = [formattedMintAmount]
         if (collaterals.length === 0) {
           throw new Error('Collaterals must have some elements')
