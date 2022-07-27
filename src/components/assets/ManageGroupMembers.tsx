@@ -66,9 +66,6 @@ export const ManageGroupMembers: React.FC<Props> = ({
   const [selectedTab, setSelectedTab] = useState(tabs[0])
   // @TODO: cached users to fasten the add/remove of users
   const [users, setUsers] = useState(groupMembers)
-  useEffect(() => {
-    setUsers(groupMembers)
-  }, [groupMembers])
   const { execute } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
   // @TODO: filter already groupMembers from allUsers
   const [allUsers, setAllUsers] = useState(circlesUsers)
@@ -97,6 +94,7 @@ export const ManageGroupMembers: React.FC<Props> = ({
 
       const newUsers = users.filter((user) => user.safeAddress !== userAddress)
       setUsers(newUsers)
+      setMembersCount(membersCount - 1)
     } catch (err) {
       console.log(err)
     }
@@ -116,6 +114,11 @@ export const ManageGroupMembers: React.FC<Props> = ({
       console.log(err)
     }
   }
+
+  useEffect(() => {
+    setMembersCount(groupMembersCount)
+    setUsers(groupMembers)
+  }, [groupMembers, groupMembersCount])
 
   return (
     <>
