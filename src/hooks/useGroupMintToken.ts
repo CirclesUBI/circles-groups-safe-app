@@ -8,6 +8,7 @@ import { useWeb3Connected } from '../providers/web3ConnectionProvider'
 import { circlesToTC } from '../utils/circleConversor'
 import encodeGCTTransaction from '../utils/contracts/encodeGCTTransaction'
 import encodeHubTransaction from '../utils/contracts/encodeHubTransaction'
+import formatNumber from '../utils/formatNumber'
 import {
   getPath,
   transformPathToMintParams,
@@ -94,7 +95,7 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
   )
   return {
     path: mintTokenData?.path,
-    mintMaxAmount: circlesToTC(mintTokenData?.mintMaxAmount),
+    mintMaxAmount: formatNumber(circlesToTC(mintTokenData?.mintMaxAmount)),
     error,
     refetch: mutate,
     mintToken,
