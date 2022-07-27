@@ -57,7 +57,7 @@ function App({ Component, pageProps }: AppProps) {
             <Web3ConnectionProvider>
               <GlobalStyle />
               <SafeSuspense>
-                <GeneralContextProvider tab="">
+                <GeneralContextProvider>
                   <Layout>
                     <Toast />
                     <Component {...pageProps} />

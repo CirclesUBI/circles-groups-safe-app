@@ -74,8 +74,7 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
 
   const { user } = useUserSafe(safe.safeAddress)
 
-  const { groups } = useGroupCurrencyTokensByOwner(safe.safeAddress)
-  const myCreatedGroups = groups
+  const { groups: myCreatedGroups } = useGroupCurrencyTokensByOwner(safe.safeAddress)
 
   return (
     <>
@@ -123,7 +122,7 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
             <LinksListWrapper>
               <h4>{myCreatedGroups.length == 1 ? 'My created group' : 'My created groups'}</h4>
               <ListCreatedGroupsMenu
-                GroupsList={myCreatedGroups}
+                groupsList={myCreatedGroups}
                 onClick={switchCreatedGroup}
                 onClose={onClose}
                 variants={variants}

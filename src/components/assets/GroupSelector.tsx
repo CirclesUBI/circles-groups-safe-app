@@ -61,13 +61,17 @@ export const GroupSelector: React.FC<Props> = ({ groups }) => {
   const router = useRouter()
   const [isDropDownOpen, setDropDownIsOpen] = useState<boolean>(false)
   const { activeCreatedGroup, switchCreatedGroup } = useGeneral()
+
+  const switchGroup = (groupIndex: number) => {
+    switchCreatedGroup(groupIndex), setDropDownIsOpen(false), router.push('/admin/')
+  }
   return (
     <Dropdown
       dropdownButtonContent={
         <SelectGroup>
           {/* @TODO: Fix me later. Show selected group */}
           <SelectedGroup>
-            {activeCreatedGroup != -1 ? groups[activeCreatedGroup].name : 'Select group'}
+            {activeCreatedGroup !== -1 ? groups[activeCreatedGroup].name : 'Select group'}
           </SelectedGroup>
           <Icon>
             <Image alt="down" height={5} src="/images/chevron-down.svg" width={9} />
@@ -84,10 +88,9 @@ export const GroupSelector: React.FC<Props> = ({ groups }) => {
               <DropdownItem
                 key={index}
                 onClick={() => {
-                  setDropDownIsOpen(false), switchCreatedGroup(index), router.push('/admin/')
+                  switchGroup(index)
                 }}
               >
-                {/* @TODO: Fix me later. Add functionality to change groug when clicking  */}
                 <span>{name}</span>
               </DropdownItem>
             ))}

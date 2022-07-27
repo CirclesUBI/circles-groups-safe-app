@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, createContext, useContext, useState } from 'react'
+import { Dispatch, SetStateAction, createContext, useContext, useEffect, useState } from 'react'
 
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 
@@ -15,17 +15,12 @@ interface GeneralContextType {
   switchCreatedGroup: (groupIndex: number) => void
 }
 
-interface Props {
-  tab?: string
-  groupIndex?: number
-}
-
 export const GeneralContext = createContext({} as GeneralContextType)
 
-const GeneralContextProvider: React.FC<Props> = ({ children, tab, groupIndex = -1 }) => {
+const GeneralContextProvider: React.FC = ({ children }) => {
   /* My groups, all groups TABS */
   const { Tabs } = GroupsTabs()
-  const [activeTab, setTab] = useState(tab ? tab : Tabs[0].title)
+  const [activeTab, setTab] = useState(Tabs[0].title)
   const switchTab = (tab?: number) => {
     tab != null && setTab(Tabs[tab].title)
   }
@@ -33,13 +28,16 @@ const GeneralContextProvider: React.FC<Props> = ({ children, tab, groupIndex = -
   /* My created group selection */
   const { safe } = useSafeAppsSDK()
   const { groups } = useGroupCurrencyTokensByOwner(safe.safeAddress)
-  if (groups.length === 1) {
-    groupIndex = 0
-  }
+
+  const groupIndex = groups.length === 1 ? 0 : -1
   const [activeCreatedGroup, setCreatedGroup] = useState(groupIndex)
   const switchCreatedGroup = (groupIndex: number) => {
-    groupIndex != null && setCreatedGroup(groupIndex)
+    if (groupIndex !== -1) {
+      setCreatedGroup(groupIndex)
+    }
   }
+
+  useEffect(() => switchCreatedGroup(groupIndex), [groupIndex])
 
   const initialValues = {
     activeTab,

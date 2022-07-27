@@ -29,11 +29,11 @@ type Props = {
       }
     }
   }
-  GroupsList: { id: string; name: string }[]
+  groupsList: { id: string; name: string }[]
 }
 
 export const ListCreatedGroupsMenu: React.FC<Props> = ({
-  GroupsList,
+  groupsList,
   onClick,
   onClose,
   variants,
@@ -41,7 +41,7 @@ export const ListCreatedGroupsMenu: React.FC<Props> = ({
   return (
     <Wrapper as={motion.div} variants={variants}>
       <AnimatePresence>
-        {GroupsList.map(({ name }, index) => (
+        {groupsList.map(({ name }, index) => (
           <div key={`links_${index}`}>
             <ItemMainMenu
               closeMenu={() => {

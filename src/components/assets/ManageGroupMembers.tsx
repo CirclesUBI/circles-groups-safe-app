@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { AnimatePresence, motion } from 'framer-motion'
@@ -64,6 +64,9 @@ export const ManageGroupMembers: React.FC<Props> = ({
   const [selectedTab, setSelectedTab] = useState(tabs[0])
   // @TODO: cached users to fasten the add/remove of users
   const [users, setUsers] = useState(groupMembers)
+  useEffect(() => {
+    setUsers(groupMembers)
+  }, [groupMembers])
   const { execute } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
 
   const removeUser = async (userAddress: string) => {

@@ -145,8 +145,7 @@ export const Header: React.FC = (props) => {
 
   const { user } = useUserSafe(safe.safeAddress)
 
-  const { groups } = useGroupCurrencyTokensByOwner(safe.safeAddress)
-  const myCreatedGroups = groups
+  const { groups: myCreatedGroups } = useGroupCurrencyTokensByOwner(safe.safeAddress)
 
   const { activeCreatedGroup } = useGeneral()
 
@@ -217,7 +216,7 @@ export const Header: React.FC = (props) => {
                 {myCreatedGroups.length > 1 && <GroupSelector groups={myCreatedGroups} />}
                 {myCreatedGroups.length == 1 && (
                   <Link href="/admin" passHref>
-                    <LinkGroup>{activeCreatedGroup}</LinkGroup>
+                    <LinkGroup>{myCreatedGroups[activeCreatedGroup].name}</LinkGroup>
                   </Link>
                 )}
                 {myCreatedGroups.length == 0 && (
