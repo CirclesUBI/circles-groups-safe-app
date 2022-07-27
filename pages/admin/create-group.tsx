@@ -5,13 +5,23 @@ import styled from 'styled-components'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
+import {
+  BaseTransaction,
+  SendTransactionRequestParams,
+  SendTransactionsParams,
+  SendTransactionsResponse,
+} from '@gnosis.pm/safe-apps-sdk'
+import Wei from '@synthetixio/wei'
 
 import { Input } from '@/src/components/assets/Input'
 import { Title } from '@/src/components/assets/Title'
 import { Columns } from '@/src/components/layout/Columns'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { useCreateGroupTx } from '@/src/hooks/useCreateGroup'
+import useSafeTransaction from '@/src/hooks/useSafeTransaction'
+import { useWeb3Connected } from '@/src/providers/web3ConnectionProvider'
 import { addresses } from '@/src/utils/addresses'
+import encodeGroupCurrencyTokenFactoryTransaction from '@/src/utils/contracts/encodeGroupCurrencyTokenFactoryTransaction'
 
 const FormWrapper = styled.div`
   display: flex;
@@ -27,8 +37,10 @@ const ActionWrapper = styled.div`
 `
 
 const CreateGroup: NextPage = () => {
-  const { safe } = useSafeAppsSDK()
-  const { execute } = useCreateGroupTx()
+  const { safe, sdk } = useSafeAppsSDK()
+  const { execute } = useSafeTransaction(sdk)
+  // @TODO we dont need this provider most of the time, we can get rid of it
+  const { web3Provider } = useWeb3Connected()
 
   const [groupName, setGroupName] = useState<string>('')
   const [groupSymbol, setGroupSymbol] = useState<string>('')
@@ -43,7 +55,13 @@ const CreateGroup: NextPage = () => {
   }
   const createGroup = async () => {
     setLoading(true)
-    await execute(
+    // @TODO it is necessary to fix the issue when using imported circles accounts
+    const createGroupOptions: SendTransactionRequestParams = {
+      safeTxGas: 0,
+    }
+    const createGroupTx = await encodeGroupCurrencyTokenFactoryTransaction(
+      web3Provider,
+      'createGroupCurrencyToken',
       [
         addresses.gnosis.HUB.address, // @TODO Should work for other networks, not just gnosis
         treasury,
@@ -52,9 +70,9 @@ const CreateGroup: NextPage = () => {
         groupName,
         groupSymbol,
       ],
-      undefined,
-      onSuccess,
     )
+    await execute({ txs: [createGroupTx], params: createGroupOptions }, onSuccess)
+    console.log('post encoding')
     setLoading(false)
   }
 

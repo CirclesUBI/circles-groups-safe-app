@@ -83,7 +83,7 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
           amounts,
         ])
         const txs = [transferThroughTx, mintTx]
-        await execute(txs)
+        await execute({ txs })
       } catch (err) {
         console.log({ err })
       } finally {

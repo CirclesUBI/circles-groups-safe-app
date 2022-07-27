@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 
-import { BaseTransaction, SendTransactionsResponse } from '@gnosis.pm/safe-apps-sdk'
+import { SendTransactionsParams, SendTransactionsResponse } from '@gnosis.pm/safe-apps-sdk'
 import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk/dist/src/sdk'
 import { toast } from 'react-hot-toast'
 
@@ -17,7 +17,11 @@ const getGnosisExplorerUrl = (hash: string) => {
 
 export default function useSafeTransaction(sdk: SafeAppsSDK) {
   const execute = useCallback(
-    async (txs: BaseTransaction[], onSuccess?: () => void, onError?: () => void) => {
+    async (
+      safeTransaction: SendTransactionsParams,
+      onSuccess?: () => void,
+      onError?: () => void,
+    ) => {
       if (!sdk) {
         console.error('Transaction failed, there is no sdk')
         return null
@@ -29,9 +33,7 @@ export default function useSafeTransaction(sdk: SafeAppsSDK) {
       try {
         console.info('Please sign the transaction.')
         notify({ type: WAITING_TYPE, explorerUrl: 'waiting for approval' })
-        txResponse = await sdk.txs.send({
-          txs,
-        })
+        txResponse = await sdk.txs.send(safeTransaction)
         txHash = txResponse.safeTxHash
         txExplorerUrl = getGnosisExplorerUrl(txHash)
         notify({ type: SUCCESS_TYPE, explorerUrl: txExplorerUrl })
@@ -39,6 +41,8 @@ export default function useSafeTransaction(sdk: SafeAppsSDK) {
         if (onSuccess) onSuccess()
         return txResponse.safeTxHash
       } catch (e: any) {
+        console.log('everything that could fail, failed')
+        console.log({ e })
         toast.dismiss()
 
         const error = createTransactionError(e)
