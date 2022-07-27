@@ -19,11 +19,28 @@ const Wrapper = styled.div`
   box-shadow: ${({ theme: { toast } }) => toast.boxShadow};
   position: relative;
   z-index: 1000;
+  a {
+    font-size: 1.3rem;
+    color: ${({ theme: { colors } }) => colors.white};
+    &:hover {
+      color: ${({ theme: { colors } }) => colors.secondary};
+    }
+  }
   &.failed {
     background-color: ${({ theme }) => theme.colors.error};
+    a {
+      &:hover {
+        color: ${({ theme: { colors } }) => colors.black};
+      }
+    }
   }
   &.success {
     background-color: ${({ theme }) => theme.colors.success};
+    a {
+      &:hover {
+        color: ${({ theme: { colors } }) => colors.black};
+      }
+    }
   }
 `
 
@@ -67,11 +84,6 @@ const Title = styled.h4`
   color: ${({ theme }) => theme.colors.white};
 `
 
-const Link = styled.a`
-  font-size: 1.2rem;
-  color: ${({ theme: { colors } }) => colors.textColorLight};
-`
-
 const Text = styled.p`
   font-size: 1.3rem;
   font-weight: 400;
@@ -106,9 +118,9 @@ export const ToastComponent = ({
       <TextContainer>
         <Title>{title}</Title>
         {link && (
-          <Link href={link.url} rel="noreferrer" target="_blank">
+          <a href={link.url} rel="noreferrer" target="_blank">
             {link.text}
-          </Link>
+          </a>
         )}
         {message && <Text>{message}</Text>}
       </TextContainer>
