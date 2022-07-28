@@ -69,7 +69,7 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
   }
   const { switchTab } = useTab()
 
-  const { safe, sdk } = useSafeAppsSDK()
+  const { connected, safe, sdk } = useSafeAppsSDK()
   const { circles } = useCirclesBalance(sdk)
 
   const { user } = useUserSafe(safe.safeAddress)
@@ -116,30 +116,31 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
           switchTab={switchTab}
           variants={variants}
         />
-
-        <MyGroups>
-          {createdGroups.length > 0 ? (
-            <LinksListWrapper>
-              <h4>{createdGroups.length == 1 ? 'My created group' : 'My created groups'}</h4>
-              <ListItemMainMenu
-                LinksList={createdGroups}
-                onClose={onClose}
-                switchTab={switchTab}
-                variants={variants}
-              />
-              <Link href="/admin/create-group" passHref>
-                <LinkButton onClick={() => onClose()}>Create new group</LinkButton>
-              </Link>
-            </LinksListWrapper>
-          ) : (
-            <LinksListWrapper>
-              <NoGroupMessage>You don't have any group created yet.</NoGroupMessage>
-              <Link href="/admin/create-group" passHref>
-                <LinkButton onClick={() => onClose()}>Create new group</LinkButton>
-              </Link>
-            </LinksListWrapper>
-          )}
-        </MyGroups>
+        {connected && (
+          <MyGroups>
+            {createdGroups.length > 0 ? (
+              <LinksListWrapper>
+                <h4>{createdGroups.length == 1 ? 'My created group' : 'My created groups'}</h4>
+                <ListItemMainMenu
+                  LinksList={createdGroups}
+                  onClose={onClose}
+                  switchTab={switchTab}
+                  variants={variants}
+                />
+                <Link href="/admin/create-group" passHref>
+                  <LinkButton onClick={() => onClose()}>Create new group</LinkButton>
+                </Link>
+              </LinksListWrapper>
+            ) : (
+              <LinksListWrapper>
+                <NoGroupMessage>You don't have any group created yet.</NoGroupMessage>
+                <Link href="/admin/create-group" passHref>
+                  <LinkButton onClick={() => onClose()}>Create new group</LinkButton>
+                </Link>
+              </LinksListWrapper>
+            )}
+          </MyGroups>
+        )}
       </MainMenuWrapper>
     </>
   )

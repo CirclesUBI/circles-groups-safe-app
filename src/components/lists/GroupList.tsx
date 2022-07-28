@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 
+import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
+
 import { ActionItem } from '@/src/components/assets/ActionItem'
 import { FirstLetter } from '@/src/components/assets/FirstLetter'
 import { ListContainer } from '@/src/components/assets/ListContainer'
@@ -20,7 +22,7 @@ const List = styled.div`
   padding: ${({ theme }) => theme.general.space * 4}px 0 0;
 `
 
-const GroupInfo = styled.div`
+const GroupInfo = styled.header`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.general.space * 2}px;
@@ -69,6 +71,7 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
+  const { connected } = useSafeAppsSDK()
 
   const totalItemsNum = groups.length
 
@@ -106,12 +109,14 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
                   </div>
                 </GroupInfo>
                 <GroupActions>
-                  <ActionItem
-                    color="primary"
-                    href={`${id}/mint-tokens`}
-                    icon="/images/icon-send.svg"
-                    text="Mint tokens"
-                  />
+                  {connected && (
+                    <ActionItem
+                      color="primary"
+                      href={`${id}/mint-tokens`}
+                      icon="/images/icon-send.svg"
+                      text="Mint tokens"
+                    />
+                  )}
                   <Tooltip text="Group information and members list">
                     <ActionItem
                       color="third"

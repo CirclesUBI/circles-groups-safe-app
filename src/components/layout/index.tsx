@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import styled from 'styled-components'
 
+import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Footer } from '@/src/components/layout/Footer'
@@ -46,6 +47,7 @@ export const Layout: React.FC = ({ children }) => {
   const router = useRouter()
   const showMenu = useMemo(() => router.pathname !== '/activity-log', [router])
   const isAdminLayout = useMemo(() => router.pathname.includes('admin'), [router])
+  const { connected } = useSafeAppsSDK()
 
   const easing = [0.175, 0.85, 0.42, 0.96]
   const variants = {
@@ -77,7 +79,7 @@ export const Layout: React.FC = ({ children }) => {
   return (
     <Wrapper isAdminLayout={isAdminLayout}>
       <Header />
-      {showMenu && <NavMenu isAdminLayout={isAdminLayout} />}
+      {showMenu && connected && <NavMenu isAdminLayout={isAdminLayout} />}
       <AnimatePresence>
         <InnerContainer
           animate="enter"
@@ -86,9 +88,11 @@ export const Layout: React.FC = ({ children }) => {
           key={router.pathname}
           variants={variantsBox}
         >
-          <motion.div animate="enter" initial="hidden" key={router.pathname} variants={variants}>
-            {children}
-          </motion.div>
+          <AnimatePresence exitBeforeEnter>
+            <motion.div animate="enter" initial="hidden" key={router.pathname} variants={variants}>
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </InnerContainer>
       </AnimatePresence>
       <Footer />

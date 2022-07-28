@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
+import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
+
 import { Crc } from '@/src/components/assets/Crc'
 import { InformationPod } from '@/src/components/assets/InformationPod'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
@@ -41,6 +43,8 @@ const ConfigurateGroup: NextPage = () => {
   const groupAddr = String(router.query?.group)
   const { groupMembers } = useGroupMembersByGroupId(groupAddr)
   const { group } = useGroupCurrencyTokensById(groupAddr)
+
+  const { connected } = useSafeAppsSDK()
   // const { owner } = useGroupOwner(group?.owner) // TODO: render username from CirclesAPI User
   // const { groupBalance } = useGroupBalance(groupAddr) // TODO: hookup Group Balance with CRC convertion
   return (
@@ -70,12 +74,13 @@ const ConfigurateGroup: NextPage = () => {
             <UsersList users={groupMembers} />
           </ListWrapper>
         </Columns>
-
-        <ActionWrapper>
-          <Link href={`/${groupAddr}/mint-tokens`} passHref>
-            <LinkButton>Mint Tokens</LinkButton>
-          </Link>
-        </ActionWrapper>
+        {connected && (
+          <ActionWrapper>
+            <Link href={`/${groupAddr}/mint-tokens`} passHref>
+              <LinkButton>Mint Tokens</LinkButton>
+            </Link>
+          </ActionWrapper>
+        )}
       </Wrapper>
     </>
   )

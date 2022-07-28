@@ -18,6 +18,8 @@ import { useGroupCurrencyTokensById } from './subgraph/useGroupCurrencyToken'
 import useSafeTransaction from './useSafeTransaction'
 
 const fetchGroupMintTokenData = async (from: string, to: string) => {
+  if (!from || !to) return { path: [], mintMaxAmount: '0' }
+
   const checksumFromAddress = getAddress(from)
   const checksumToAddress = getAddress(to)
   const data = await getPath(checksumFromAddress, checksumToAddress)
