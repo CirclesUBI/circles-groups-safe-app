@@ -86,7 +86,7 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
         // @TODO shall we convert mintAmount to tc?
         // const tcMintAmount = formattedMintAmount
         const tcMintAmount = String(tcToCircles(formattedMintAmount))
-        const amounts = [formattedMintAmount]
+        const amounts = [tcMintAmount]
         if (collaterals.length === 0) {
           throw new Error('Collaterals must have some elements')
         }
