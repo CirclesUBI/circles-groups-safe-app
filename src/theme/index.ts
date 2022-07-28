@@ -8,6 +8,7 @@ const fifth = '#F26240'
 const textColor = '#4E4E4E'
 const gray = '#D9D9D9'
 const white = '#fff'
+const black = '#000'
 const primaryGradient = 'linear-gradient(54.36deg, #AA5285 16.89%, #502A50 84.07%)'
 const secondaryGradient = 'linear-gradient(59.47deg, #6EBE9F 16.72%, #502A50 79.34%)'
 const borderRadius = '8px'
@@ -48,6 +49,7 @@ export const theme = {
     fifth: fifth,
     gray: gray,
     white: white,
+    black: black,
     textColor: textColor,
     primaryGradient: primaryGradient,
     secondaryGradient: secondaryGradient,

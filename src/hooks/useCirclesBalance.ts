@@ -29,9 +29,9 @@ export const getCirclesFromBalances = (tokenBalances: TokenBalance[]) => {
 export const useCirclesBalance = (sdk: SafeAppsSDK) => {
   const [tokenBalances] = useSafeBalances(sdk)
   const circles = useMemo(() => {
-    const balance = getCirclesFromBalances(tokenBalances)
-    const tc = circlesToTC(balance)
-    return formatNumber(tc)
+    const numericBalance = getCirclesFromBalances(tokenBalances)
+    const tcBalance = circlesToTC(numericBalance)
+    return formatNumber(tcBalance)
   }, [tokenBalances])
 
   return { circles }

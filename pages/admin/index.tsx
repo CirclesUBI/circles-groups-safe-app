@@ -6,6 +6,7 @@ import { ManageGroupMembers } from '@/src/components/assets/ManageGroupMembers'
 import { NoGroupCreated } from '@/src/components/assets/NoGroupCreated'
 import { Title } from '@/src/components/assets/Title'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
+import { genericSuspense } from '@/src/components/safeSuspense'
 import { useGroupCurrencyTokensByOwner } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
 
@@ -38,9 +39,9 @@ const HomeAdmin: NextPage = () => {
       ) : (
         <>
           <TitleGroup
-            amountNumber={7.268}
-            buttonHref="/admin/group-configuration"
-            text="Bootnode"
+            amountNumber={group.minted}
+            buttonHref={`/admin/${groupId}/group-configuration`}
+            text={group.name}
           />
           <ManageGroupMembers
             groupAddress={groupId}
@@ -52,4 +53,4 @@ const HomeAdmin: NextPage = () => {
     </>
   )
 }
-export default HomeAdmin
+export default genericSuspense(HomeAdmin)

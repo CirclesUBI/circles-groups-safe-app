@@ -10,6 +10,7 @@ import { Input } from '@/src/components/assets/Input'
 import { Title } from '@/src/components/assets/Title'
 import { Columns } from '@/src/components/layout/Columns'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
+import { genericSuspense } from '@/src/components/safeSuspense'
 import { useCreateGroupTx } from '@/src/hooks/useCreateGroup'
 import { addresses } from '@/src/utils/addresses'
 
@@ -112,4 +113,4 @@ const CreateGroup: NextPage = () => {
     </>
   )
 }
-export default CreateGroup
+export default genericSuspense(CreateGroup)

@@ -12,6 +12,7 @@ import { Input } from '@/src/components/assets/Input'
 import { Title } from '@/src/components/assets/Title'
 import { TransferUserInformation } from '@/src/components/assets/TransferUserInformation'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
+import { genericSuspense } from '@/src/components/safeSuspense'
 import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
 import { useGroupMintToken } from '@/src/hooks/useGroupMintToken'
 import { useUserSafe } from '@/src/hooks/useUserSafe'
@@ -56,7 +57,10 @@ const CreateGroup: NextPage = () => {
   const [mintAmount, setMintAmount] = useState<string>('')
   const [note, setNote] = useState<string>('')
 
-  const isMintAmountInvalid = stringToValidFloat(mintAmount) > stringToValidFloat(mintMaxAmount)
+  const isMintAmountGreaterThanMaxAmount =
+    stringToValidFloat(mintAmount) > stringToValidFloat(mintMaxAmount)
+  const isZero = stringToValidFloat(mintAmount) === 0
+  const isMintAmountInvalid = isMintAmountGreaterThanMaxAmount || isZero
 
   return (
     <>
@@ -119,4 +123,4 @@ const CreateGroup: NextPage = () => {
     </>
   )
 }
-export default CreateGroup
+export default genericSuspense(CreateGroup)
