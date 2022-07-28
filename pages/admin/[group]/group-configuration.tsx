@@ -37,19 +37,18 @@ const ConfigurateGroup: NextPage = () => {
   const { execute } = useChangeOwner(groupAddr)
   const { safe } = useSafeAppsSDK()
   const currentUser = safe.safeAddress.toLowerCase()
+  const isOwner = group?.owner === currentUser
 
-  const [owner, setOwner] = useState(group?.owner)
-  const [notification, setNotification] = useState(false)
+  const [owner, setOwner] = useState(group?.owner ?? '')
+  const [notification, setNotification] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
 
-  const isDisabledSaveButton = currentUser !== group?.owner || !owner || !isAddress(owner)
-  const onSuccess = () => {
-    router.back()
-  }
+  const isDisabledSaveButton =
+    owner.toLowerCase() === group?.owner || !owner || !isAddress(owner) || !isOwner
   const saveConfiguration = async () => {
     try {
       setLoading(true)
-      await execute([owner], undefined, onSuccess)
+      await execute([owner])
     } catch (err) {
       console.log({ err })
     } finally {
