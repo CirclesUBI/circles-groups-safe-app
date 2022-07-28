@@ -9,6 +9,7 @@ import { TitleGroup } from '@/src/components/assets/TitleGroup'
 import { Columns } from '@/src/components/layout/Columns'
 import { UsersList } from '@/src/components/lists/UsersList'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { genericSuspense } from '@/src/components/safeSuspense'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
 
@@ -40,8 +41,7 @@ const ConfigurateGroup: NextPage = () => {
   const groupAddr = String(router.query?.group)
   const { groupMembers } = useGroupMembersByGroupId(groupAddr)
   const { group } = useGroupCurrencyTokensById(groupAddr)
-  // const { owner } = useGroupOwner(group?.owner) // TODO: render username from CirclesAPI User
-  // const { groupBalance } = useGroupBalance(groupAddr) // TODO: hookup Group Balance with CRC convertion
+
   return (
     <>
       <TitleGroup hasBackButton information="Group information" text={group?.name ?? ''} />
@@ -60,7 +60,12 @@ const ConfigurateGroup: NextPage = () => {
         </Columns>
         <Columns columnsNumber={2}>
           <InformationPod bgColor="light" label="Fee" text={group?.mintFeePerThousand ?? ''} />
-          <InformationPod bgColor="light" icon={<Crc />} label="Treasure" text="7.268" />
+          <InformationPod
+            bgColor="light"
+            icon={<Crc />}
+            label="Treasure"
+            text={group?.minted ?? '0'}
+          />
         </Columns>
 
         <Columns columnsNumber={1}>
@@ -79,4 +84,4 @@ const ConfigurateGroup: NextPage = () => {
     </>
   )
 }
-export default ConfigurateGroup
+export default genericSuspense(ConfigurateGroup)
