@@ -46,10 +46,10 @@ const ConfigurateGroup: NextPage = () => {
     try {
       setLoading(true)
       await execute([owner])
+      router.back()
     } catch (err) {
       console.log({ err })
     } finally {
-      router.back()
       setLoading(false)
     }
   }
