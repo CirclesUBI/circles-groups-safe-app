@@ -4,6 +4,7 @@ import { TokenBalance } from '@gnosis.pm/safe-apps-sdk'
 import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk/dist/src/sdk'
 
 import { circlesToTC } from '../utils/circleConversor'
+import formatNumber from '../utils/formatNumber'
 import { useSafeBalances } from './useSafeBalances'
 
 const CRC = 'CRC'
@@ -23,8 +24,9 @@ export const getCirclesFromBalances = (tokenBalances: TokenBalance[]) => {
 export const useCirclesBalance = (sdk: SafeAppsSDK) => {
   const [tokenBalances] = useSafeBalances(sdk)
   const circles = useMemo(() => {
-    const balance = getCirclesFromBalances(tokenBalances)
-    return circlesToTC(balance)
+    const numericBalance = getCirclesFromBalances(tokenBalances)
+    const tcBalance = circlesToTC(numericBalance)
+    return formatNumber(tcBalance)
   }, [tokenBalances])
 
   return { circles }

@@ -3,6 +3,8 @@
 import { JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers'
 
 import { PATHFINDER_API } from '../constants/misc'
+import { fromBN } from '../web3/bigNumber'
+import { tcToCircles } from './circleConversor'
 import hubCall from './contracts/hubCall'
 
 // @TODO Pathfinder API does not allow '0' to fetch the maximum amount, so we need to pass the greater possible amount
@@ -21,12 +23,12 @@ export type PathfinderTransfer = {
   value: string // a number represented in a string
 }
 
-export const getPath = async (fromAddress: string, toAddress: string) => {
+export const getPath = async (fromAddress: string, toAddress: string, amount?: string) => {
   const url = `${PATHFINDER_API}flow`
   const body = {
     from: fromAddress,
     to: toAddress,
-    value: MAX_VALUE_FROM_PATH,
+    value: amount ?? MAX_VALUE_FROM_PATH,
   }
   try {
     const response = await fetch(url, {
@@ -54,7 +56,7 @@ export const transformPathToTransferThroughParams = (
   const tokenOwners = path.map((p) => p.tokenOwner)
   const srcs = path.map((p) => p.from)
   const dests = path.map((p) => p.to)
-  const wads = path.map((p) => p.value)
+  const wads = path.map((p) => String(tcToCircles(p.value)))
   return {
     tokenOwners,
     srcs,
@@ -70,17 +72,30 @@ export const transformPathToTransferThroughParams = (
  * - for each user in the users array (See Hub userToToken)
  */
 export const transformPathToMintParams = async (
-  users: string[],
+  groupAddress: string,
+  userAddresses: string[],
   provider: JsonRpcProvider | JsonRpcSigner,
 ) => {
-  if (!users) return []
+  if (userAddresses.length === 0) return []
 
-  const tokensResponse = users.map(async (user) => {
-    const r = await hubCall(provider, 'userToToken', [user])
-    return r ?? ''
-  })
-  const tokens = await Promise.all(tokensResponse)
-  if (!tokens) return []
+  const userLimits = await Promise.all(
+    userAddresses.map(async (user) => {
+      const limit = await hubCall(provider, 'limits', [groupAddress, user])
+      if (!limit) return null
+      const limitBN = fromBN(limit)
+      if (!limitBN) return null
+      if (limitBN.eq(fromBN('0'))) return null
+      return user
+    }),
+  )
+  const filteredLimits = userLimits.filter(Boolean)
+  const mintUser = filteredLimits[filteredLimits.length - 1]
+  if (!mintUser) return []
 
+  // @TODO we might want to mint to each user in the array
+  const token = await hubCall(provider, 'userToToken', [mintUser])
+
+  if (!token) return []
+  const tokens = [token]
   return tokens
 }
