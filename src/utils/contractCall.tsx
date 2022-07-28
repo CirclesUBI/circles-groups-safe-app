@@ -16,11 +16,7 @@ export default async function contractCall<
   try {
     const deployedContract = await contract.deployed()
     const contractMethod = deployedContract[method]
-    let result = Array.isArray(params) ? await contractMethod(...params) : await contractMethod()
-    if (result?._isBigNumber) {
-      //Convert ethersjs bignumber to bignumber.js
-      result = BigNumber.from(result.toString())
-    }
+    const result = Array.isArray(params) ? await contractMethod(...params) : await contractMethod()
     return result
   } catch (e) {
     return null

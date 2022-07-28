@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { isAddress } from '@ethersproject/address'
@@ -40,16 +40,16 @@ const ConfigurateGroup: NextPage = () => {
   const currentUser = safe.safeAddress.toLowerCase()
   const isOwner = group?.owner === currentUser
 
-  const [owner, setOwner] = useState(group?.owner ?? '')
   const [notification, setNotification] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const [refetch] = useGroupCurrencyTokenCall(groupAddr, 'owner', [])
+  const [owner, setOwner] = useState(group?.owner ?? '')
 
   const isDisabledSaveButton =
     owner.toLowerCase() === group?.owner || !owner || !isAddress(owner) || !isOwner
 
-  const onSuccess = () => {
-    // refetch()
+  const [groupOwner, refetchGroupOwner] = useGroupCurrencyTokenCall(groupAddr, 'owner', [])
+  const onSuccess = async () => {
+    await refetchGroupOwner()
   }
   const saveConfiguration = async () => {
     try {
@@ -61,6 +61,11 @@ const ConfigurateGroup: NextPage = () => {
       setLoading(false)
     }
   }
+  useEffect(() => {
+    if (groupOwner) {
+      setOwner(groupOwner)
+    }
+  }, [groupOwner])
   return (
     <>
       {notification && (

@@ -71,7 +71,12 @@ const ConfigurateGroup: NextPage = () => {
         </Columns>
         <Columns columnsNumber={2}>
           <InformationPod bgColor="light" label="Fee" text={group?.mintFeePerThousand ?? ''} />
-          <InformationPod bgColor="light" icon={<Crc />} label="Treasure" text="7.268" />
+          <InformationPod
+            bgColor="light"
+            icon={<Crc />}
+            label="Treasure"
+            text={group?.minted ?? '0'}
+          />
         </Columns>
 
         <Columns columnsNumber={1}>
