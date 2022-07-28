@@ -45,7 +45,7 @@ const ConfigurateGroup: NextPage = () => {
   const { group } = useGroupCurrencyTokensById(groupAddr)
   const { safe } = useSafeAppsSDK()
   const [currentUser] = useState(safe.safeAddress.toLowerCase())
-  const isOwner = () => group?.owner == currentUser
+  const isOwner = group?.owner === currentUser
   return (
     <>
       <TitleGroup hasBackButton information="Group information" text={group?.name ?? ''} />
@@ -58,7 +58,7 @@ const ConfigurateGroup: NextPage = () => {
             bgColor="lightest"
             groupId={groupAddr}
             label="Owner"
-            owner={isOwner()}
+            owner={isOwner}
             text={group?.owner ?? ''}
           />
         </Columns>
