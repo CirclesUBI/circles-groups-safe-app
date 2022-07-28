@@ -13,6 +13,7 @@ import { Input } from '@/src/components/assets/Input'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
 import { Columns } from '@/src/components/layout/Columns'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
+import { useGroupCurrencyTokenCall } from '@/src/hooks/contracts/useGroupCurrencyTokenCall'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useChangeOwner } from '@/src/hooks/useChangeOwner'
 
@@ -42,13 +43,18 @@ const ConfigurateGroup: NextPage = () => {
   const [owner, setOwner] = useState(group?.owner ?? '')
   const [notification, setNotification] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
+  const [refetch] = useGroupCurrencyTokenCall(groupAddr, 'owner', [])
 
   const isDisabledSaveButton =
     owner.toLowerCase() === group?.owner || !owner || !isAddress(owner) || !isOwner
+
+  const onSuccess = () => {
+    // refetch()
+  }
   const saveConfiguration = async () => {
     try {
       setLoading(true)
-      await execute([owner])
+      await execute([owner], undefined, onSuccess)
     } catch (err) {
       console.log({ err })
     } finally {
