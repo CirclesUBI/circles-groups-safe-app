@@ -85,7 +85,6 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
         const users = dests
         const collaterals = await transformPathToMintParams(groupAddress, users, provider)
         const tcMintAmount = toBN(String(tcToCircles(formattedMintAmount)))
-        console.log({ tcMintAmount })
         const amounts = [tcMintAmount.toString()]
         if (collaterals.length === 0) {
           throw new Error('Collaterals must have some elements')
