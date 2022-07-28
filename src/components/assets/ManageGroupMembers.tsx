@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 import { UsersList } from '@/src/components/lists/UsersList'
 import { useGroupCurrencyTokenTx } from '@/src/hooks/contracts/useGroupCurrencyTokenTx'
+import { useAllUsers } from '@/src/hooks/subgraph/useUsers'
 import { useWeb3Connected } from '@/src/providers/web3ConnectionProvider'
 import hubCall from '@/src/utils/contracts/hubCall'
 
@@ -59,29 +60,54 @@ export const ManageGroupMembers: React.FC<Props> = ({
 }) => {
   // @TODO we might need to delete this
   const { isAppConnected, web3Provider } = useWeb3Connected()
+  const { circlesUsers } = useAllUsers()
 
   const tabs = ['Members', 'Add members']
   const [selectedTab, setSelectedTab] = useState(tabs[0])
   // @TODO: cached users to fasten the add/remove of users
   const [users, setUsers] = useState(groupMembers)
-  const { execute } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
+  // @TODO: filter already groupMembers from allUsers
+  const [allUsers, setAllUsers] = useState(circlesUsers)
+  const { execute: execRemove } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
+  const { execute: execAdd } = useGroupCurrencyTokenTx(groupAddress, 'addMemberToken')
+  const [membersCount, setMembersCount] = useState(groupMembersCount)
+
+  const getUserToken = async (userAddress: string) => {
+    if (!isAppConnected) {
+      throw new Error('App is not connected')
+    }
+    if (!userAddress) {
+      throw new Error('User Address does not exists')
+    }
+    const userToken = await hubCall(web3Provider, 'userToToken', [userAddress])
+    if (!userToken) {
+      throw new Error('User Token does not exists')
+    }
+    return userToken
+  }
 
   const removeUser = async (userAddress: string) => {
     try {
-      if (!isAppConnected) {
-        throw new Error('App is not connected')
-      }
-      if (!userAddress) {
-        throw new Error('User Address does not exists')
-      }
-      const userToken = await hubCall(web3Provider, 'userToToken', [userAddress])
-      if (!userToken) {
-        throw new Error('User Token does not exists')
-      }
-      await execute([userToken])
+      const userToken = await getUserToken(userAddress)
+      await execRemove([userToken])
 
       const newUsers = users.filter((user) => user.safeAddress !== userAddress)
       setUsers(newUsers)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const addUser = async (userAddress: string) => {
+    try {
+      const userToken = await getUserToken(userAddress)
+      await execAdd([userToken])
+
+      const addedUser = allUsers.filter((user) => user.safeAddress == userAddress)
+      setUsers((users) => [...users, addedUser[0]])
+      const nonMemberUsers = allUsers.filter((user) => user.safeAddress !== userAddress)
+      setAllUsers(nonMemberUsers)
+      setMembersCount(membersCount + 1)
     } catch (err) {
       console.log(err)
     }
@@ -96,7 +122,7 @@ export const ManageGroupMembers: React.FC<Props> = ({
               <Tab key={`tab_${index}`} onClick={() => setSelectedTab(el)}>
                 <span className={selectedTab == el ? 'active' : 'inactive'}>
                   <>
-                    {el} {el === 'Members' && '(' + groupMembersCount + ')'}
+                    {el} {el === 'Members' && '(' + membersCount + ')'}
                   </>
                 </span>
               </Tab>
@@ -119,7 +145,7 @@ export const ManageGroupMembers: React.FC<Props> = ({
                 users={users}
               />
             ) : (
-              <UsersList action={'add'} shouldShowAlert users={users} />
+              <UsersList action={'add'} onAddUser={addUser} shouldShowAlert users={allUsers} />
             )}
           </motion.div>
         </AnimatePresence>

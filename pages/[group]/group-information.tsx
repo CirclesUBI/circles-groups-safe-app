@@ -12,6 +12,7 @@ import { TitleGroup } from '@/src/components/assets/TitleGroup'
 import { Columns } from '@/src/components/layout/Columns'
 import { UsersList } from '@/src/components/lists/UsersList'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { genericSuspense } from '@/src/components/safeSuspense'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
 
@@ -89,4 +90,4 @@ const ConfigurateGroup: NextPage = () => {
     </>
   )
 }
-export default ConfigurateGroup
+export default genericSuspense(ConfigurateGroup)
