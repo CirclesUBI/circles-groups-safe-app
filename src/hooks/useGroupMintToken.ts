@@ -5,15 +5,16 @@ import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk/dist/src/sdk'
 import useSWR from 'swr'
 
 import { useWeb3Connected } from '../providers/web3ConnectionProvider'
-import { tcToCircles } from '../utils/circleConversor'
+import { circlesToTC, tcToCircles } from '../utils/circleConversor'
 import encodeGCTTransaction from '../utils/contracts/encodeGCTTransaction'
 import encodeHubTransaction from '../utils/contracts/encodeHubTransaction'
+import formatNumber from '../utils/formatNumber'
 import {
   getPath,
   transformPathToMintParams,
   transformPathToTransferThroughParams,
 } from '../utils/pathfinderAPI'
-import { formatToken, toFreckles } from '../web3/bigNumber'
+import { formatToken, toBN, toFreckles } from '../web3/bigNumber'
 import { useGroupCurrencyTokensById } from './subgraph/useGroupCurrencyToken'
 import useSafeTransaction from './useSafeTransaction'
 
@@ -59,7 +60,7 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
 
         const formattedMintAmount = toFreckles(mintAmount)
 
-        const { mintMaxAmount, path } = await fetchGroupMintTokenData(
+        const { path } = await fetchGroupMintTokenData(
           userAddress,
           groupAddress,
           formattedMintAmount,
@@ -83,10 +84,8 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
          */
         const users = dests
         const collaterals = await transformPathToMintParams(groupAddress, users, provider)
-        // @TODO shall we convert mintAmount to tc?
-        // const tcMintAmount = formattedMintAmount
-        const tcMintAmount = String(tcToCircles(formattedMintAmount))
-        const amounts = [tcMintAmount]
+        const tcMintAmount = toBN(String(tcToCircles(formattedMintAmount)))
+        const amounts = [tcMintAmount.toString()]
         if (collaterals.length === 0) {
           throw new Error('Collaterals must have some elements')
         }
@@ -105,8 +104,8 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
     [group, isAppConnected, web3Provider, execute, groupAddress, userAddress],
   )
   return {
-    // @TODO we don't convert anymore from circles to tc, investigate if this is correct
-    mintMaxAmount: formatToken(mintTokenData?.mintMaxAmount) ?? '0',
+    path: mintTokenData?.path,
+    mintMaxAmount: formatNumber(circlesToTC(mintTokenData?.mintMaxAmount)),
     error,
     refetch: mutate,
     mintToken,

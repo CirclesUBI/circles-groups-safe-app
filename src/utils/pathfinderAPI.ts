@@ -3,7 +3,7 @@
 import { JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers'
 
 import { PATHFINDER_API } from '../constants/misc'
-import { fromBN } from '../web3/bigNumber'
+import { fromBN, toBN } from '../web3/bigNumber'
 import { tcToCircles } from './circleConversor'
 import hubCall from './contracts/hubCall'
 
@@ -56,7 +56,11 @@ export const transformPathToTransferThroughParams = (
   const tokenOwners = path.map((p) => p.tokenOwner)
   const srcs = path.map((p) => p.from)
   const dests = path.map((p) => p.to)
-  const wads = path.map((p) => String(tcToCircles(p.value)))
+  const wads = path.map((p) => {
+    const circles = tcToCircles(p.value)
+    const bn = toBN(String(circles))
+    return bn?.toString() ?? '0'
+  })
   return {
     tokenOwners,
     srcs,

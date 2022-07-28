@@ -17,9 +17,8 @@ const CURRENT_TS = new Date()
  */
 export const circlesToTC = (amount?: string) => {
   if (!amount) return 0
-  const formattedAmount = formatToken(amount)
-  if (!formattedAmount) return 0
-  const numberAmount = parseFloat(formattedAmount)
+  const numberAmount = formatToken(amount)
+  if (!numberAmount) return 0
   const tc = crcToTc(CURRENT_TS, numberAmount)
   return tc
 }
@@ -30,9 +29,8 @@ export const circlesToTC = (amount?: string) => {
  */
 export const tcToCircles = (amount?: string) => {
   if (!amount) return 0
-  const formattedAmount = formatToken(amount)
-  if (!formattedAmount) return 0
-  const numberAmount = parseFloat(amount)
+  const numberAmount = formatToken(amount)
+  if (!numberAmount) return 0
   const circles = tcToCrc(CURRENT_TS, numberAmount)
   return circles
 }

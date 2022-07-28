@@ -1,8 +1,6 @@
 import { BigNumber, BigNumberish } from '@ethersproject/bignumber'
 import Wei from '@synthetixio/wei'
 
-import formatNumber from '@/src/utils/formatNumber'
-
 export const fromBN = (value?: BigNumberish, valueScale = 18) => {
   if (value === undefined || value === null || Number.isNaN(value)) {
     return undefined
@@ -10,9 +8,9 @@ export const fromBN = (value?: BigNumberish, valueScale = 18) => {
   return new Wei(BigNumber.from(value), valueScale)
 }
 
-export function formatToken(value?: BigNumberish, valueScale = 18): string | undefined {
+export function formatToken(value?: BigNumberish, valueScale = 18): number | undefined {
   const bn = fromBN(value, valueScale)
-  return bn ? formatNumber(bn.toNumber()) : undefined
+  return bn ? bn.toNumber() : undefined
 }
 
 export const toBN = (value: string) => new Wei(value).toBN()
