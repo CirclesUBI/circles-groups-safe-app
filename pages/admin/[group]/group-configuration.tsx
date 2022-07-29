@@ -38,16 +38,16 @@ const ConfigurateGroup: NextPage = () => {
   const { execute } = useChangeOwner(groupAddr)
   const { safe } = useSafeAppsSDK()
   const currentUser = safe.safeAddress.toLowerCase()
-  const isOwner = group?.owner === currentUser
 
   const [notification, setNotification] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [owner, setOwner] = useState(group?.owner ?? '')
+  const [groupOwner, refetchGroupOwner] = useGroupCurrencyTokenCall(groupAddr, 'owner', [])
+  const isOwner = groupOwner && groupOwner.toLowerCase() === currentUser
 
   const isDisabledSaveButton =
     owner.toLowerCase() === group?.owner || !owner || !isAddress(owner) || !isOwner
 
-  const [groupOwner, refetchGroupOwner] = useGroupCurrencyTokenCall(groupAddr, 'owner', [])
   const onSuccess = async () => {
     await refetchGroupOwner()
   }
