@@ -7,14 +7,14 @@ import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 import { CloseButton } from '@/src/components/assets/CloseButton'
 import { User } from '@/src/components/assets/User'
 import { MainMenuWrapper } from '@/src/components/layout/MainMenuWrapper'
+import { ListCreatedGroupsMenu } from '@/src/components/navigation/ListCreatedGroupsMenu'
 import { ListItemMainMenu } from '@/src/components/navigation/ListItemMainMenu'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { createdGroups } from '@/src/constants/createdGroups'
 import { menuLinks } from '@/src/constants/menuLinks'
-import { useGroupsByMember } from '@/src/hooks/subgraph/useGroupsByMember'
+import { useGroupCurrencyTokensByOwner } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
 import { useUserSafe } from '@/src/hooks/useUserSafe'
-import { useTab } from '@/src/providers/tabProvider'
+import { useGeneral } from '@/src/providers/generalProvider'
 
 const MenuHeader = styled.nav`
   display: flex;
@@ -67,15 +67,15 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
       transition: { staggerChildren: 0.05, staggerDirection: -1 },
     },
   }
-  const { switchTab } = useTab()
+  const { switchCreatedGroup, switchTab } = useGeneral()
 
   const { safe, sdk } = useSafeAppsSDK()
   const { circles } = useCirclesBalance(sdk)
 
   const { user } = useUserSafe(safe.safeAddress)
 
-  // @TODO: Reeplace with list of user created groups
-  const { groupsByMember } = useGroupsByMember(safe.safeAddress)
+  const { groups: myCreatedGroups } = useGroupCurrencyTokensByOwner(safe.safeAddress)
+
   return (
     <>
       <MainMenuWrapper closeMenu={() => onClose()}>
@@ -118,13 +118,13 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
         />
 
         <MyGroups>
-          {createdGroups.length > 0 ? (
+          {myCreatedGroups.length > 0 ? (
             <LinksListWrapper>
-              <h4>{createdGroups.length == 1 ? 'My created group' : 'My created groups'}</h4>
-              <ListItemMainMenu
-                LinksList={createdGroups}
+              <h4>{myCreatedGroups.length === 1 ? 'My created group' : 'My created groups'}</h4>
+              <ListCreatedGroupsMenu
+                groupsList={myCreatedGroups}
+                onClick={switchCreatedGroup}
                 onClose={onClose}
-                switchTab={switchTab}
                 variants={variants}
               />
               <Link href="/admin/create-group" passHref>

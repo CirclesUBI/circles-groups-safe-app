@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { AnimatePresence, motion } from 'framer-motion'
@@ -50,14 +50,9 @@ interface groupMember {
 interface Props {
   groupAddress: string
   groupMembers: groupMember[]
-  groupMembersCount: number
 }
 
-export const ManageGroupMembers: React.FC<Props> = ({
-  groupAddress,
-  groupMembers,
-  groupMembersCount,
-}) => {
+export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers }) => {
   // @TODO we might need to delete this
   const { isAppConnected, web3Provider } = useWeb3Connected()
   const { circlesUsers } = useAllUsers()
@@ -66,11 +61,12 @@ export const ManageGroupMembers: React.FC<Props> = ({
   const [selectedTab, setSelectedTab] = useState(tabs[0])
   // @TODO: cached users to fasten the add/remove of users
   const [users, setUsers] = useState(groupMembers)
+  const { execute } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
   // @TODO: filter already groupMembers from allUsers
   const [allUsers, setAllUsers] = useState(circlesUsers)
   const { execute: execRemove } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
   const { execute: execAdd } = useGroupCurrencyTokenTx(groupAddress, 'addMemberToken')
-  const [membersCount, setMembersCount] = useState(groupMembersCount)
+  const [membersCount, setMembersCount] = useState(groupMembers.length)
 
   const getUserToken = async (userAddress: string) => {
     if (!isAppConnected) {
@@ -93,6 +89,7 @@ export const ManageGroupMembers: React.FC<Props> = ({
 
       const newUsers = users.filter((user) => user.safeAddress !== userAddress)
       setUsers(newUsers)
+      setMembersCount(membersCount - 1)
     } catch (err) {
       console.log(err)
     }
@@ -113,6 +110,11 @@ export const ManageGroupMembers: React.FC<Props> = ({
     }
   }
 
+  useEffect(() => {
+    setUsers(groupMembers)
+    setMembersCount(groupMembers.length)
+  }, [groupMembers])
+
   return (
     <>
       <Section>
@@ -122,7 +124,7 @@ export const ManageGroupMembers: React.FC<Props> = ({
               <Tab key={`tab_${index}`} onClick={() => setSelectedTab(el)}>
                 <span className={selectedTab == el ? 'active' : 'inactive'}>
                   <>
-                    {el} {el === 'Members' && '(' + membersCount + ')'}
+                    {el} {el === 'Members' && '(' + groupMembers.length + ')'}
                   </>
                 </span>
               </Tab>

@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Title } from '@/src/components/assets/Title'
-import { useTab } from '@/src/providers/tabProvider'
+import { useGeneral } from '@/src/providers/generalProvider'
 
 interface Props {
   content: ReactNode
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const TabContent: React.FC<Props> = ({ content, header, whenActive }) => {
-  const { activeTab } = useTab()
+  const { activeTab } = useGeneral()
   return (
     <>
       {whenActive == activeTab && (

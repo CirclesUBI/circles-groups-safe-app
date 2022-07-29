@@ -18,9 +18,10 @@ import { ButtonPrimary, LinkButton } from '@/src/components/pureStyledComponents
 import { activity } from '@/src/constants/activity'
 import { chainsConfig } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
-import { useGroupsByMember } from '@/src/hooks/subgraph/useGroupsByMember'
+import { useGroupCurrencyTokensByOwner } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
 import { useUserSafe } from '@/src/hooks/useUserSafe'
+import { useGeneral } from '@/src/providers/generalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
 import { truncateStringInTheMiddle } from '@/src/utils/tools'
 
@@ -98,6 +99,12 @@ const LinkGroup = styled(LinkButton)`
   background-color: ${({ theme }) => theme.colors.fourth};
   border-color: ${({ theme }) => theme.colors.fourth};
   padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
+  max-width: 170px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: block;
 `
 
 const UserWrapper = styled.div`
@@ -139,8 +146,9 @@ export const Header: React.FC = (props) => {
 
   const { user } = useUserSafe(safe.safeAddress)
 
-  // @TODO: Reeplace with list of user created groups
-  const { groupsByMember } = useGroupsByMember(safe.safeAddress)
+  const { groups: myCreatedGroups } = useGroupCurrencyTokensByOwner(safe.safeAddress)
+
+  const { activeCreatedGroup } = useGeneral()
 
   useEffect(() => {
     //Fix me later
@@ -176,7 +184,6 @@ export const Header: React.FC = (props) => {
   }, [isAppConnected, isWalletConnected, readOnlyAppProvider, web3Provider, address])
 
   const [currentChain, setCurrentChain] = useState(chainOptions[0].name)
-
   return (
     <>
       <Wrapper as="header" {...props}>
@@ -207,13 +214,13 @@ export const Header: React.FC = (props) => {
                 <UserWrapper>
                   <User headerStyle userTokens={circles} username={user?.username} />
                 </UserWrapper>
-                {groupsByMember.length > 1 && <GroupSelector groups={groupsByMember} />}
-                {groupsByMember.length == 1 && (
+                {myCreatedGroups.length > 1 && <GroupSelector groups={myCreatedGroups} />}
+                {myCreatedGroups.length === 1 && (
                   <Link href="/admin" passHref>
-                    <LinkGroup>{groupsByMember[0].name}</LinkGroup>
+                    <LinkGroup>{myCreatedGroups[activeCreatedGroup].name}</LinkGroup>
                   </Link>
                 )}
-                {groupsByMember.length == 0 && (
+                {myCreatedGroups.length === 0 && (
                   <Link href="/admin/create-group" passHref>
                     <LinkGroup>Create group</LinkGroup>
                   </Link>

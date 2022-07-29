@@ -63,5 +63,5 @@ export const useGroupCurrencyTokensByOwner = (owner: string) => {
     if (!owner) return []
     return fetchGroupCurrencyTokens({ where: { owner: owner.toLowerCase() } })
   })
-  return { groups: data, error, refetch: mutate, loading: !error && !data }
+  return { groups: data ?? [], error, refetch: mutate, loading: !error && !data }
 }
