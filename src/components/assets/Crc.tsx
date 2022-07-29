@@ -1,13 +1,18 @@
 import React from 'react'
 
-export const Crc: React.FC<{ className?: string }> = (props) => (
+interface Props {
+  className?: string
+  height?: number
+  width?: number
+}
+
+export const Crc: React.FC<Props> = ({ className, height = 16, width = 12 }) => (
   <svg
-    className={`crc ${props.className}`}
-    height="16"
+    className={`crc ${className}`}
+    height={height}
     viewBox="0 0 12 16"
-    width="12"
+    width={width}
     xmlns="http://www.w3.org/2000/svg"
-    {...props}
   >
     <g clipPath="url(#clip0_472_3313)">
       <path
