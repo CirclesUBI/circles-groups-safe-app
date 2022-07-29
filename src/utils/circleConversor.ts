@@ -7,21 +7,20 @@
 import { crcToTc, tcToCrc } from '@circles/timecircles'
 
 import { formatToken } from '../web3/bigNumber'
-import formatNumber from './formatNumber'
+
+// @TODO using a default timestamp fixes the issue about calculating different amount per use
+const CURRENT_TS = new Date()
 
 /**
  * @param amount is a number in wei
  * @returns a formatted number with decimals
  */
 export const circlesToTC = (amount?: string) => {
-  if (!amount) return '0'
-  const formattedAmount = formatToken(amount)
-  if (!formattedAmount) return '0'
-  const ts = new Date()
-  // @TODO using parseInt might lose precision in the process
-  const numberAmount = parseInt(formattedAmount)
-  const tc = crcToTc(ts, numberAmount)
-  return formatNumber(tc)
+  if (!amount) return 0
+  const numberAmount = formatToken(amount)
+  if (!numberAmount) return 0
+  const tc = crcToTc(CURRENT_TS, numberAmount)
+  return tc
 }
 
 /**
@@ -29,10 +28,9 @@ export const circlesToTC = (amount?: string) => {
  * @returns a formatted number with decimals
  */
 export const tcToCircles = (amount?: string) => {
-  if (!amount) return '0'
-  const ts = new Date()
-  // @TODO using parseInt might lose precision in the process
-  const numberAmount = parseInt(amount)
-  const circles = tcToCrc(ts, numberAmount)
-  return formatNumber(circles)
+  if (!amount) return 0
+  const numberAmount = formatToken(amount)
+  if (!numberAmount) return 0
+  const circles = tcToCrc(CURRENT_TS, numberAmount)
+  return circles
 }

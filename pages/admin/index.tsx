@@ -7,6 +7,7 @@ import { ManageGroupMembers } from '@/src/components/assets/ManageGroupMembers'
 import { NoGroupCreated } from '@/src/components/assets/NoGroupCreated'
 import { Title } from '@/src/components/assets/Title'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
+import { genericSuspense } from '@/src/components/safeSuspense'
 import { useGroupCurrencyTokensByOwner } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
 import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
@@ -62,7 +63,6 @@ const HomeAdmin: NextPage = () => {
   const { circles } = useCirclesBalance(sdk)
   // @TODO it might not be necessary if we fetch the members info in the group hook
   const { groupMembers } = useGroupMembersByGroupId(groupId)
-  const groupMembersCount = groupMembers?.length ?? 0
 
   return (
     <>
@@ -104,4 +104,4 @@ const HomeAdmin: NextPage = () => {
     </>
   )
 }
-export default HomeAdmin
+export default genericSuspense(HomeAdmin)
