@@ -1,7 +1,10 @@
 import type { NextPage } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import styled from 'styled-components'
+
+import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 
 import { Crc } from '@/src/components/assets/Crc'
 import { InformationPod } from '@/src/components/assets/InformationPod'
@@ -41,7 +44,9 @@ const ConfigurateGroup: NextPage = () => {
   const groupAddr = String(router.query?.group)
   const { groupMembers } = useGroupMembersByGroupId(groupAddr)
   const { group } = useGroupCurrencyTokensById(groupAddr)
-
+  const { safe } = useSafeAppsSDK()
+  const [currentUser] = useState(safe.safeAddress.toLowerCase())
+  const isOwner = group?.owner === currentUser
   return (
     <>
       <TitleGroup hasBackButton information="Group information" text={group?.name ?? ''} />
@@ -50,7 +55,13 @@ const ConfigurateGroup: NextPage = () => {
           <InformationPod bgColor="lightest" label="Symbol" text={group?.symbol ?? ''} />
         </Columns>
         <Columns columnsNumber={1}>
-          <InformationPod bgColor="lightest" label="Owner" text={group?.owner ?? ''} />
+          <InformationPod
+            bgColor="lightest"
+            groupId={groupAddr}
+            label="Owner"
+            owner={isOwner}
+            text={group?.owner ?? ''}
+          />
         </Columns>
         <Columns columnsNumber={1}>
           <InformationPod bgColor="lightest" label="Treasury" text={group?.treasury ?? ''} />
