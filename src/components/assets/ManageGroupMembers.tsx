@@ -50,14 +50,9 @@ interface groupMember {
 interface Props {
   groupAddress: string
   groupMembers: groupMember[]
-  groupMembersCount: number
 }
 
-export const ManageGroupMembers: React.FC<Props> = ({
-  groupAddress,
-  groupMembers,
-  groupMembersCount,
-}) => {
+export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers }) => {
   // @TODO we might need to delete this
   const { isAppConnected, web3Provider } = useWeb3Connected()
   const { circlesUsers } = useAllUsers()
@@ -71,7 +66,7 @@ export const ManageGroupMembers: React.FC<Props> = ({
   const [allUsers, setAllUsers] = useState(circlesUsers)
   const { execute: execRemove } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
   const { execute: execAdd } = useGroupCurrencyTokenTx(groupAddress, 'addMemberToken')
-  const [membersCount, setMembersCount] = useState(groupMembersCount)
+  const [membersCount, setMembersCount] = useState(groupMembers.length)
 
   const getUserToken = async (userAddress: string) => {
     if (!isAppConnected) {
@@ -116,9 +111,9 @@ export const ManageGroupMembers: React.FC<Props> = ({
   }
 
   useEffect(() => {
-    setMembersCount(groupMembersCount)
     setUsers(groupMembers)
-  }, [groupMembers, groupMembersCount])
+    setMembersCount(groupMembers.length)
+  }, [groupMembers])
 
   return (
     <>
@@ -129,7 +124,7 @@ export const ManageGroupMembers: React.FC<Props> = ({
               <Tab key={`tab_${index}`} onClick={() => setSelectedTab(el)}>
                 <span className={selectedTab == el ? 'active' : 'inactive'}>
                   <>
-                    {el} {el === 'Members' && '(' + membersCount + ')'}
+                    {el} {el === 'Members' && '(' + groupMembers.length + ')'}
                   </>
                 </span>
               </Tab>

@@ -215,12 +215,12 @@ export const Header: React.FC = (props) => {
                   <User headerStyle userTokens={circles} username={user?.username} />
                 </UserWrapper>
                 {myCreatedGroups.length > 1 && <GroupSelector groups={myCreatedGroups} />}
-                {myCreatedGroups.length == 1 && (
+                {myCreatedGroups.length === 1 && (
                   <Link href="/admin" passHref>
                     <LinkGroup>{myCreatedGroups[activeCreatedGroup].name}</LinkGroup>
                   </Link>
                 )}
-                {myCreatedGroups.length == 0 && (
+                {myCreatedGroups.length === 0 && (
                   <Link href="/admin/create-group" passHref>
                     <LinkGroup>Create group</LinkGroup>
                   </Link>

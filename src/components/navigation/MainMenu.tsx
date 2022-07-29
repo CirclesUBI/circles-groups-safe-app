@@ -120,7 +120,7 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
         <MyGroups>
           {myCreatedGroups.length > 0 ? (
             <LinksListWrapper>
-              <h4>{myCreatedGroups.length == 1 ? 'My created group' : 'My created groups'}</h4>
+              <h4>{myCreatedGroups.length === 1 ? 'My created group' : 'My created groups'}</h4>
               <ListCreatedGroupsMenu
                 groupsList={myCreatedGroups}
                 onClick={switchCreatedGroup}

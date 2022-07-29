@@ -73,11 +73,7 @@ const HomeAdmin: NextPage = () => {
             buttonHref="/admin/group-configuration"
             text={group.name}
           />
-          <ManageGroupMembers
-            groupAddress={groupId}
-            groupMembers={groupMembers}
-            groupMembersCount={groupMembersCount}
-          />
+          <ManageGroupMembers groupAddress={groupId} groupMembers={groupMembers} />
         </>
       ) : activeCreatedGroup === -1 && groups.length > 0 ? (
         <>
