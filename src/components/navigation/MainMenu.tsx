@@ -116,31 +116,31 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
           switchTab={switchTab}
           variants={variants}
         />
-        {connected && (
-          <MyGroups>
-            {createdGroups.length > 0 ? (
-              <LinksListWrapper>
-                <h4>{createdGroups.length == 1 ? 'My created group' : 'My created groups'}</h4>
-                <ListItemMainMenu
-                  LinksList={createdGroups}
-                  onClose={onClose}
-                  switchTab={switchTab}
-                  variants={variants}
-                />
-                <Link href="/admin/create-group" passHref>
-                  <LinkButton onClick={() => onClose()}>Create new group</LinkButton>
-                </Link>
-              </LinksListWrapper>
-            ) : (
-              <LinksListWrapper>
-                <NoGroupMessage>You don't have any group created yet.</NoGroupMessage>
-                <Link href="/admin/create-group" passHref>
-                  <LinkButton onClick={() => onClose()}>Create new group</LinkButton>
-                </Link>
-              </LinksListWrapper>
-            )}
-          </MyGroups>
-        )}
+        <MyGroups>
+          {connected && createdGroups.length > 0 ? (
+            <LinksListWrapper>
+              <h4>{createdGroups.length == 1 ? 'My created group' : 'My created groups'}</h4>
+              <ListItemMainMenu
+                LinksList={createdGroups}
+                onClose={onClose}
+                switchTab={switchTab}
+                variants={variants}
+              />
+              <Link href="/admin/create-group" passHref>
+                <LinkButton onClick={() => onClose()}>Create new group</LinkButton>
+              </Link>
+            </LinksListWrapper>
+          ) : (
+            <LinksListWrapper className={!connected ? 'not-allowed' : ''}>
+              <NoGroupMessage>You don't have any group created yet.</NoGroupMessage>
+              <Link href="/admin/create-group" passHref>
+                <LinkButton className={!connected ? 'disabled' : ''} onClick={() => onClose()}>
+                  Create new group
+                </LinkButton>
+              </Link>
+            </LinksListWrapper>
+          )}
+        </MyGroups>
       </MainMenuWrapper>
     </>
   )

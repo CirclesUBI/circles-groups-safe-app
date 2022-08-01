@@ -109,14 +109,13 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
                   </div>
                 </GroupInfo>
                 <GroupActions>
-                  {connected && (
-                    <ActionItem
-                      color="primary"
-                      href={`${id}/mint-tokens`}
-                      icon="/images/icon-send.svg"
-                      text="Mint tokens"
-                    />
-                  )}
+                  <ActionItem
+                    color="primary"
+                    disabled={!connected}
+                    href={`${id}/mint-tokens`}
+                    icon="/images/icon-send.svg"
+                    text="Mint tokens"
+                  />
                   <Tooltip text="Group information and members list">
                     <ActionItem
                       color="third"

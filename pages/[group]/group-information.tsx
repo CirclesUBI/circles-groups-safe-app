@@ -32,6 +32,9 @@ const ActionWrapper = styled.div`
 const ListWrapper = styled.div`
   margin-top: ${({ theme }) => theme.general.space * 2}px;
 `
+const UserListWrapper = styled.div`
+  margin: 0 ${({ theme }) => theme.general.space * -2}px;
+`
 
 const H2 = styled.h2`
   font-size: 2.8rem;
@@ -71,16 +74,16 @@ const ConfigurateGroup: NextPage = () => {
         <Columns columnsNumber={1}>
           <ListWrapper>
             <H2>Group members</H2>
-            <UsersList users={groupMembers} />
+            <UserListWrapper>
+              <UsersList users={groupMembers} />
+            </UserListWrapper>
           </ListWrapper>
         </Columns>
-        {connected && (
-          <ActionWrapper>
-            <Link href={`/${groupAddr}/mint-tokens`} passHref>
-              <LinkButton>Mint Tokens</LinkButton>
-            </Link>
-          </ActionWrapper>
-        )}
+        <ActionWrapper className={!connected ? 'not-allowed' : ''}>
+          <Link href={`/${groupAddr}/mint-tokens`} passHref>
+            <LinkButton className={!connected ? 'disabled' : ''}>Mint Tokens</LinkButton>
+          </Link>
+        </ActionWrapper>
       </Wrapper>
     </>
   )

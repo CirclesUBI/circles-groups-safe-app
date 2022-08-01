@@ -82,4 +82,14 @@ export const GlobalStyle = createGlobalStyle<{ theme: ThemeType }>`
     border: 0; 
     border-top: 1px solid #e0e0e0;
   }
+  .not-allowed{
+    cursor: not-allowed !important;
+  }
+  .disabled {
+    pointer-events: none !important;
+    opacity: 0.4;
+    &:hover{
+      text-decoration: none;
+    }
+  }
 `

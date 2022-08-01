@@ -85,6 +85,7 @@ const ActionItemLink = styled.a<{ color: string }>`
 
 interface Props {
   color?: string
+  disabled?: boolean
   icon?: string
   text?: string
   href: string
@@ -94,18 +95,21 @@ interface Props {
 export const ActionItem: React.FC<Props> = ({
   buttonStyle = '',
   color = 'primary',
+  disabled = false,
   href = '/',
   icon = '/images/icon-send.svg',
   text = '',
 }) => {
   return (
-    <Link href={href} passHref>
-      <ActionItemLink color={color}>
-        {text && <strong>{text}</strong>}
-        <div className={buttonStyle}>
-          <Image alt={text ? text : 'icon'} height={14} src={icon} width={14} />
-        </div>
-      </ActionItemLink>
-    </Link>
+    <span className={disabled ? 'not-allowed' : ''}>
+      <Link href={href} passHref>
+        <ActionItemLink className={disabled ? 'disabled' : ''} color={color}>
+          {text && <strong>{text}</strong>}
+          <div className={buttonStyle}>
+            <Image alt={text ? text : 'icon'} height={14} src={icon} width={14} />
+          </div>
+        </ActionItemLink>
+      </Link>
+    </span>
   )
 }
