@@ -58,8 +58,8 @@ function App({ Component, pageProps }: AppProps) {
               <GlobalStyle />
               <SafeSuspense>
                 <GeneralContextProvider>
+                  <Toast />
                   <Layout>
-                    <Toast />
                     <Component {...pageProps} />
                   </Layout>
                 </GeneralContextProvider>
