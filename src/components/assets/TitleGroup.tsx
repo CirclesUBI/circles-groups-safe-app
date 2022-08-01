@@ -91,7 +91,7 @@ const Back = styled.button`
 `
 
 interface Props {
-  amountNumber?: number
+  amountNumber?: string
   text: string
   hasBackButton?: boolean
   buttonHref?: string
@@ -99,7 +99,7 @@ interface Props {
 }
 
 export const TitleGroup: React.FC<Props> = ({
-  amountNumber = '',
+  amountNumber,
   buttonHref = '',
   hasBackButton = false,
   information = 'Manage group',

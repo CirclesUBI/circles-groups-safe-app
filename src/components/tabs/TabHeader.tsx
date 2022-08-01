@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { useTab } from '@/src/providers/tabProvider'
+import { useGeneral } from '@/src/providers/generalProvider'
 
 const Tab = styled.button`
   background-color: transparent;
@@ -23,7 +23,7 @@ interface Props {
 }
 
 export const TabHeader: React.FC<Props> = ({ title }) => {
-  const { activeTab, setTab } = useTab()
+  const { activeTab, setTab } = useGeneral()
   const isActive = title === activeTab
   const handleActive = () => setTab(title)
   return (

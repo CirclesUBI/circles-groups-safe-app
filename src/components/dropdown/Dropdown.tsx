@@ -73,7 +73,6 @@ const Items = styled.div<{
   min-width: 240px;
   padding: ${({ theme }) => theme.general.space * 4}px ${({ theme }) => theme.general.space * 2}px;
   position: absolute;
-  white-space: nowrap;
   width: 100%;
 
   ${(props) => (props.dropdownPosition === DropdownPosition.left ? PositionLeftCSS : '')}
@@ -120,6 +119,7 @@ export const DropdownItemCSS = css<DropdownItemProps>`
     background-repeat: no-repeat;
     margin-right: 8px;
     transition: all 0.3s ease-in-out;
+    flex-shrink: 0;
   }
   &.isActive {
     background-color: ${({ theme }) => theme.dropdown.item.backgroundColorActive};

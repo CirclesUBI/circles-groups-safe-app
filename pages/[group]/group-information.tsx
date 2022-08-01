@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import styled from 'styled-components'
 
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
@@ -48,8 +49,9 @@ const ConfigurateGroup: NextPage = () => {
   const { group } = useGroupCurrencyTokensById(groupAddr)
 
   const { connected } = useSafeAppsSDK()
-  // const { owner } = useGroupOwner(group?.owner) // TODO: render username from CirclesAPI User
-  // const { groupBalance } = useGroupBalance(groupAddr) // TODO: hookup Group Balance with CRC convertion
+  const { safe } = useSafeAppsSDK()
+  const [currentUser] = useState(safe.safeAddress.toLowerCase())
+  const isOwner = group?.owner === currentUser
   return (
     <>
       <TitleGroup hasBackButton information="Group information" text={group?.name ?? ''} />
@@ -58,7 +60,13 @@ const ConfigurateGroup: NextPage = () => {
           <InformationPod bgColor="lightest" label="Symbol" text={group?.symbol ?? ''} />
         </Columns>
         <Columns columnsNumber={1}>
-          <InformationPod bgColor="lightest" label="Owner" text={group?.owner ?? ''} />
+          <InformationPod
+            bgColor="lightest"
+            groupId={groupAddr}
+            label="Owner"
+            owner={isOwner}
+            text={group?.owner ?? ''}
+          />
         </Columns>
         <Columns columnsNumber={1}>
           <InformationPod bgColor="lightest" label="Treasury" text={group?.treasury ?? ''} />
@@ -68,7 +76,12 @@ const ConfigurateGroup: NextPage = () => {
         </Columns>
         <Columns columnsNumber={2}>
           <InformationPod bgColor="light" label="Fee" text={group?.mintFeePerThousand ?? ''} />
-          <InformationPod bgColor="light" icon={<Crc />} label="Treasure" text="7.268" />
+          <InformationPod
+            bgColor="light"
+            icon={<Crc />}
+            label="Treasure"
+            text={group?.minted ?? '0'}
+          />
         </Columns>
 
         <Columns columnsNumber={1}>

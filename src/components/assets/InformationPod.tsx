@@ -84,6 +84,7 @@ interface Props {
   label?: string
   text: string
   bgColor?: string
+  groupId?: string
   information?: string
   owner?: boolean
   circles?: boolean
@@ -92,6 +93,7 @@ interface Props {
 
 export const InformationPod: React.FC<Props> = ({
   bgColor = 'lightest',
+  groupId = '',
   icon,
   information = '',
   label,
@@ -114,7 +116,7 @@ export const InformationPod: React.FC<Props> = ({
           <Value>{text}</Value>
         </Information>
         {owner && (
-          <Link href="/admin/group-configuration" passHref>
+          <Link href={`/admin/${groupId}/group-configuration`} passHref>
             <LinkCanEdit>
               <Image alt="Configuration" height={12} src="/images/icon-edit.svg" width={12} />
             </LinkCanEdit>
