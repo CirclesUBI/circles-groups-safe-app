@@ -2,6 +2,7 @@ import useSWR from 'swr'
 
 import { GROUP_CURRENCY_TOKEN_QUERY } from '@/src/queries/groupCurrencyToken'
 import { circlesToTC } from '@/src/utils/circleConversor'
+import formatNumber from '@/src/utils/formatNumber'
 import { graphqlFetcher } from '@/src/utils/graphqlFetcher'
 import {
   GroupCurrencyTokens,
@@ -32,7 +33,7 @@ const transformToGroupCurrencyToken = (
     treasury: group.treasury ?? '',
     hub: group.hub ?? '',
     mintFeePerThousand: group.mintFeePerThousand ?? '',
-    minted: circlesToTC(group.minted) ?? '0',
+    minted: formatNumber(circlesToTC(group.minted)) ?? '0',
     members: group.members,
   }
 }
@@ -62,5 +63,5 @@ export const useGroupCurrencyTokensByOwner = (owner: string) => {
     if (!owner) return []
     return fetchGroupCurrencyTokens({ where: { owner: owner.toLowerCase() } })
   })
-  return { groups: data, error, refetch: mutate, loading: !error && !data }
+  return { groups: data ?? [], error, refetch: mutate, loading: !error && !data }
 }

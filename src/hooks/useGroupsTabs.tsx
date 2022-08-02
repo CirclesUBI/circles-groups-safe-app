@@ -7,7 +7,7 @@ import { useGroupCurrencyTokens } from '@/src/hooks/subgraph/useGroupCurrencyTok
 import { useGroupsByMember } from '@/src/hooks/subgraph/useGroupsByMember'
 
 export default function GroupsTabs() {
-  const { safe } = useSafeAppsSDK()
+  const { connected, safe } = useSafeAppsSDK()
   const { groups } = useGroupCurrencyTokens()
   const { groupsByMember } = useGroupsByMember(safe.safeAddress)
   const Tabs = useMemo(
@@ -15,15 +15,15 @@ export default function GroupsTabs() {
       {
         title: 'My groups',
         header: 'Groups where i belong',
-        content: <GroupList groups={groupsByMember} />,
+        content: <GroupList canMint={connected} groups={groupsByMember} />,
       },
       {
         title: 'All groups',
         header: 'All existing Groups',
-        content: <GroupList groups={groups} />,
+        content: <GroupList canMint={connected} groups={groups} />,
       },
     ],
-    [groups, groupsByMember],
+    [connected, groups, groupsByMember],
   )
   return { Tabs }
 }

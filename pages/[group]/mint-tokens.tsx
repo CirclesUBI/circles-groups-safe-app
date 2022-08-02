@@ -64,7 +64,10 @@ const CreateGroup: NextPage = () => {
   const [notification, setNotification] = useState(false)
   const [mintAmount, setMintAmount] = useState<string>('')
 
-  const isMintAmountInvalid = stringToValidFloat(mintAmount) > stringToValidFloat(mintMaxAmount)
+  const isMintAmountGreaterThanMaxAmount =
+    stringToValidFloat(mintAmount) > stringToValidFloat(mintMaxAmount)
+  const isZero = stringToValidFloat(mintAmount) === 0
+  const isMintAmountInvalid = isMintAmountGreaterThanMaxAmount || isZero
 
   const feeNumber = stringToValidFloat(group?.mintFeePerThousand ?? '0')
 

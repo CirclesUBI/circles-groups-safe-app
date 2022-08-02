@@ -1,10 +1,6 @@
 import Link from 'next/link'
 import styled from 'styled-components'
 
-interface Props {
-  isAdminLayout: boolean
-}
-
 const Nav = styled.nav`
   display: flex;
   margin: 0 ${({ theme }) => theme.general.space * 2}px;
@@ -47,14 +43,21 @@ const LinkContent = styled.a`
   }
 `
 
-export const NavMenu: React.FC<Props> = ({ isAdminLayout }) => {
+interface Props {
+  isAdminLayout: boolean
+  canManageGroup: boolean
+}
+
+export const NavMenu: React.FC<Props> = ({ canManageGroup, isAdminLayout }) => {
   return (
-    <Nav>
+    <Nav className={canManageGroup ? '' : 'not-allowed'}>
       <Link href="/" passHref>
         <LinkContent className={isAdminLayout ? '' : 'active'}>Groups</LinkContent>
       </Link>
       <Link href="/admin/" passHref>
-        <LinkContent className={isAdminLayout ? 'active' : ''}>Manage group</LinkContent>
+        <LinkContent className={isAdminLayout ? 'active' : '' || canManageGroup ? '' : 'disabled'}>
+          Manage group
+        </LinkContent>
       </Link>
     </Nav>
   )

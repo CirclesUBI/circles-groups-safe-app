@@ -1,6 +1,7 @@
 import { ReactNode, useState } from 'react'
 import styled from 'styled-components'
 
+import { isAddress } from '@ethersproject/address'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Info } from '@/src/components/assets/Info'
@@ -78,9 +79,11 @@ interface Props {
   value?: string
   minLength?: number
   maxLength?: number
+  addressField?: boolean
 }
 
 export const Input: React.FC<Props> = ({
+  addressField = false,
   disabled = false,
   icon = '',
   information = '',
@@ -95,12 +98,18 @@ export const Input: React.FC<Props> = ({
   value = '',
 }) => {
   const [errors, setErrors] = useState(false)
-  function handleChange() {
-    // Just for testing. Final validation code missing
+  const [errorMessage, setErrorMessage] = useState('')
+  function handleChange(value: string) {
     if (!value && mandatory) {
+      setErrorMessage('This field is required')
       setErrors(true)
     } else {
-      setErrors(false)
+      if (addressField && !isAddress(value)) {
+        setErrorMessage('Not a valid address')
+        setErrors(true)
+      } else {
+        setErrors(false)
+      }
     }
   }
   return (
@@ -126,7 +135,7 @@ export const Input: React.FC<Props> = ({
           minLength={minLength}
           name={name ? name : label}
           onBlur={(e) => {
-            handleChange()
+            handleChange(e.target.value)
           }}
           onChange={(e) => {
             setValue && setValue(String(e.target.value))
@@ -146,7 +155,7 @@ export const Input: React.FC<Props> = ({
             key={name ? name : label}
             transition={{ duration: 0.2 }}
           >
-            This field is required
+            {errorMessage}
           </ErrorText>
         </AnimatePresence>
       )}

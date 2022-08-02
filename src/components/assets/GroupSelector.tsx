@@ -1,11 +1,13 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import { Dropdown, DropdownItem, DropdownPosition } from '@/src/components/dropdown/Dropdown'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { GroupCurrencyToken } from '@/src/hooks/subgraph/useGroupCurrencyToken'
+import { useGeneral } from '@/src/providers/generalProvider'
 
 const LinkGroup = styled(LinkButton)`
   line-height: normal;
@@ -56,13 +58,21 @@ type Props = {
 }
 
 export const GroupSelector: React.FC<Props> = ({ groups }) => {
+  const router = useRouter()
   const [isDropDownOpen, setDropDownIsOpen] = useState<boolean>(false)
+  const { activeCreatedGroup, switchCreatedGroup } = useGeneral()
+
+  const switchGroup = (groupIndex: number) => {
+    switchCreatedGroup(groupIndex), setDropDownIsOpen(false), router.push('/admin/')
+  }
   return (
     <Dropdown
       dropdownButtonContent={
         <SelectGroup>
           {/* @TODO: Fix me later. Show selected group */}
-          <SelectedGroup>Bootnode</SelectedGroup>
+          <SelectedGroup>
+            {activeCreatedGroup !== -1 ? groups[activeCreatedGroup].name : 'Select group'}
+          </SelectedGroup>
           <Icon>
             <Image alt="down" height={5} src="/images/chevron-down.svg" width={9} />
           </Icon>
@@ -75,9 +85,13 @@ export const GroupSelector: React.FC<Props> = ({ groups }) => {
           <h3>My created groups</h3>
           <ItemsList>
             {groups.map(({ name }, index) => (
-              <DropdownItem key={index} onClick={() => setDropDownIsOpen(false)}>
-                {/* @TODO: Fix me later. Add functionality to change groug when clicking  */}
-                {name}
+              <DropdownItem
+                key={index}
+                onClick={() => {
+                  switchGroup(index)
+                }}
+              >
+                <span>{name}</span>
               </DropdownItem>
             ))}
           </ItemsList>
