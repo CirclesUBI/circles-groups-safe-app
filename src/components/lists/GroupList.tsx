@@ -20,7 +20,7 @@ const List = styled.div`
   padding: ${({ theme }) => theme.general.space * 4}px 0 0;
 `
 
-const GroupInfo = styled.div`
+const GroupInfo = styled.header`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.general.space * 2}px;
@@ -63,9 +63,10 @@ const Skeleton = styled.div`
 
 interface Props {
   groups: Array<GroupCurrencyToken>
+  canMint: boolean
 }
 
-export const GroupList: React.FC<Props> = ({ groups }) => {
+export const GroupList: React.FC<Props> = ({ canMint, groups }) => {
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
@@ -108,6 +109,7 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
                 <GroupActions>
                   <ActionItem
                     color="primary"
+                    disabled={!canMint}
                     href={`${id}/mint-tokens`}
                     icon="/images/icon-send.svg"
                     text="Mint tokens"

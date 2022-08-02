@@ -69,7 +69,7 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
   }
   const { switchCreatedGroup, switchTab } = useGeneral()
 
-  const { safe, sdk } = useSafeAppsSDK()
+  const { connected, safe, sdk } = useSafeAppsSDK()
   const { circles } = useCirclesBalance(sdk)
 
   const { user } = useUserSafe(safe.safeAddress)
@@ -116,9 +116,8 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
           switchTab={switchTab}
           variants={variants}
         />
-
         <MyGroups>
-          {myCreatedGroups.length > 0 ? (
+          {connected && myCreatedGroups.length > 0 ? (
             <LinksListWrapper>
               <h4>{myCreatedGroups.length === 1 ? 'My created group' : 'My created groups'}</h4>
               <ListCreatedGroupsMenu
@@ -132,10 +131,12 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
               </Link>
             </LinksListWrapper>
           ) : (
-            <LinksListWrapper>
+            <LinksListWrapper className={!connected ? 'not-allowed' : ''}>
               <NoGroupMessage>You don't have any group created yet.</NoGroupMessage>
               <Link href="/admin/create-group" passHref>
-                <LinkButton onClick={() => onClose()}>Create new group</LinkButton>
+                <LinkButton className={!connected ? 'disabled' : ''} onClick={() => onClose()}>
+                  Create new group
+                </LinkButton>
               </Link>
             </LinksListWrapper>
           )}

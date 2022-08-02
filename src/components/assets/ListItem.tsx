@@ -14,10 +14,10 @@ const Li = styled.li`
     padding-bottom: ${({ theme }) => theme.general.space * 2}px;
   }
   &:not(.noColors) {
-    &:nth-child(3n + 2) > div > div:first-child {
+    &:nth-child(3n + 2) > header > div:first-child {
       background-color: ${({ theme }) => theme.colors.fifth};
     }
-    &:nth-child(3n + 3) > div > div:first-child {
+    &:nth-child(3n + 3) > header > div:first-child {
       background-color: ${({ theme }) => theme.colors.tertiary};
     }
   }

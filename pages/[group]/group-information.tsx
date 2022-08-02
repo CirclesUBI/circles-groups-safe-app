@@ -33,6 +33,9 @@ const ActionWrapper = styled.div`
 const ListWrapper = styled.div`
   margin-top: ${({ theme }) => theme.general.space * 2}px;
 `
+const UserListWrapper = styled.div`
+  margin: 0 ${({ theme }) => theme.general.space * -2}px;
+`
 
 const H2 = styled.h2`
   font-size: 2.8rem;
@@ -44,7 +47,8 @@ const ConfigurateGroup: NextPage = () => {
   const groupAddr = String(router.query?.group)
   const { groupMembers } = useGroupMembersByGroupId(groupAddr)
   const { group } = useGroupCurrencyTokensById(groupAddr)
-  const { safe } = useSafeAppsSDK()
+
+  const { connected, safe } = useSafeAppsSDK()
   const [currentUser] = useState(safe.safeAddress.toLowerCase())
   const isOwner = group?.owner === currentUser
   return (
@@ -82,13 +86,14 @@ const ConfigurateGroup: NextPage = () => {
         <Columns columnsNumber={1}>
           <ListWrapper>
             <H2>Group members</H2>
-            <UsersList users={groupMembers} />
+            <UserListWrapper>
+              <UsersList users={groupMembers} />
+            </UserListWrapper>
           </ListWrapper>
         </Columns>
-
-        <ActionWrapper>
+        <ActionWrapper className={!connected ? 'not-allowed' : ''}>
           <Link href={`/${groupAddr}/mint-tokens`} passHref>
-            <LinkButton>Mint Tokens</LinkButton>
+            <LinkButton className={!connected ? 'disabled' : ''}>Mint Tokens</LinkButton>
           </Link>
         </ActionWrapper>
       </Wrapper>
