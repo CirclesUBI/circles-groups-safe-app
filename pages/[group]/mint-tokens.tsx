@@ -41,6 +41,10 @@ const Icon = styled.div`
   pointer-events: none;
 `
 
+const SubTitleWrapper = styled.h3`
+  padding: 0 ${({ theme }) => theme.general.space * 2}px;
+`
+
 const CreateGroup: NextPage = () => {
   const router = useRouter()
   const groupAddress = String(router.query?.group ?? '')
@@ -77,6 +81,7 @@ const CreateGroup: NextPage = () => {
         </AnimatePresence>
       )}
       <Title hasBackButton text="Send circles to a group" />
+      <SubTitleWrapper>{groupAddress}</SubTitleWrapper>
       <FormWrapper>
         <TransferUserInformation
           amountText="Your total balance:"
