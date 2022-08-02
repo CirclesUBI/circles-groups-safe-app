@@ -48,8 +48,7 @@ const ConfigurateGroup: NextPage = () => {
   const { groupMembers } = useGroupMembersByGroupId(groupAddr)
   const { group } = useGroupCurrencyTokensById(groupAddr)
 
-  const { connected } = useSafeAppsSDK()
-  const { safe } = useSafeAppsSDK()
+  const { connected, safe } = useSafeAppsSDK()
   const [currentUser] = useState(safe.safeAddress.toLowerCase())
   const isOwner = group?.owner === currentUser
   return (

@@ -45,17 +45,17 @@ const LinkContent = styled.a`
 
 interface Props {
   isAdminLayout: boolean
-  disabled: boolean
+  canManageGroup: boolean
 }
 
-export const NavMenu: React.FC<Props> = ({ disabled, isAdminLayout }) => {
+export const NavMenu: React.FC<Props> = ({ canManageGroup, isAdminLayout }) => {
   return (
-    <Nav className={disabled ? 'not-allowed' : ''}>
+    <Nav className={canManageGroup ? '' : 'not-allowed'}>
       <Link href="/" passHref>
         <LinkContent className={isAdminLayout ? '' : 'active'}>Groups</LinkContent>
       </Link>
       <Link href="/admin/" passHref>
-        <LinkContent className={isAdminLayout ? 'active' : '' || disabled ? 'disabled' : ''}>
+        <LinkContent className={isAdminLayout ? 'active' : '' || canManageGroup ? '' : 'disabled'}>
           Manage group
         </LinkContent>
       </Link>

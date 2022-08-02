@@ -1,8 +1,6 @@
 import { useMemo, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 
-import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
-
 import { ActionItem } from '@/src/components/assets/ActionItem'
 import { FirstLetter } from '@/src/components/assets/FirstLetter'
 import { ListContainer } from '@/src/components/assets/ListContainer'
@@ -65,13 +63,13 @@ const Skeleton = styled.div`
 
 interface Props {
   groups: Array<GroupCurrencyToken>
+  canMint: boolean
 }
 
-export const GroupList: React.FC<Props> = ({ groups }) => {
+export const GroupList: React.FC<Props> = ({ canMint, groups }) => {
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
-  const { connected } = useSafeAppsSDK()
 
   const totalItemsNum = groups.length
 
@@ -111,7 +109,7 @@ export const GroupList: React.FC<Props> = ({ groups }) => {
                 <GroupActions>
                   <ActionItem
                     color="primary"
-                    disabled={!connected}
+                    disabled={!canMint}
                     href={`${id}/mint-tokens`}
                     icon="/images/icon-send.svg"
                     text="Mint tokens"

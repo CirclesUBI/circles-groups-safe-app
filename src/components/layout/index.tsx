@@ -79,7 +79,7 @@ export const Layout: React.FC = ({ children }) => {
   return (
     <Wrapper isAdminLayout={isAdminLayout}>
       <Header />
-      {showMenu && <NavMenu disabled={!connected} isAdminLayout={isAdminLayout} />}
+      {showMenu && <NavMenu canManageGroup={connected} isAdminLayout={isAdminLayout} />}
       <AnimatePresence>
         <InnerContainer
           animate="enter"
