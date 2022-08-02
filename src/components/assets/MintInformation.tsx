@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Crc } from '@/src/components/assets/Crc'
-import { stringToValidFloat } from '@/src/utils/formatNumber'
+import formatNumber from '@/src/utils/formatNumber'
 
 const Wrapper = styled.label`
   color: ${({ theme }) => theme.colors.primary};
@@ -64,20 +64,17 @@ const ValueResult = styled.strong`
 
 interface Props {
   fee: number
-  mintAmount: string
+  mintAmount: number
 }
 
 export const MintInformation: React.FC<Props> = ({ fee, mintAmount }) => {
   const dollarUSLocale = Intl.NumberFormat('en-US')
   // @TODO Change math count.
-  const feeValue = fee * 1
-  const tokensMaths =
-    stringToValidFloat(mintAmount) > 0
-      ? stringToValidFloat(mintAmount) - (stringToValidFloat(mintAmount) / 100) * feeValue
-      : 0
-  const tokens = dollarUSLocale.format(tokensMaths)
-
-  const mintAmountNumber = dollarUSLocale.format(stringToValidFloat(mintAmount))
+  const tempFee = fee / 10
+  const feeAmount = (mintAmount / 100) * tempFee // @TODO verify that should be divided by 1000
+  const receivingTokensNumericAmount = mintAmount - feeAmount
+  const receivingTokensAmount = formatNumber(receivingTokensNumericAmount)
+  const mintAmountNumber = formatNumber(mintAmount)
 
   return (
     <Wrapper
@@ -100,12 +97,12 @@ export const MintInformation: React.FC<Props> = ({ fee, mintAmount }) => {
         </Row>
         <Row>
           <Title>Fee</Title>
-          <Value>{feeValue}%</Value>
+          <Value>{tempFee}%</Value>
         </Row>
         <Row>
           <TextResult>Due to group fee charge you will receive</TextResult>
           <ValueResult>
-            <Crc /> {tokens}
+            <Crc /> {receivingTokensAmount}
           </ValueResult>
         </Row>
       </MintInfo>

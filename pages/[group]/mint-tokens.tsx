@@ -64,6 +64,8 @@ const CreateGroup: NextPage = () => {
   const [notification, setNotification] = useState(false)
   const [mintAmount, setMintAmount] = useState<string>('')
 
+  const mintAmountNumber = stringToValidFloat(mintAmount)
+
   const isMintAmountGreaterThanMaxAmount =
     stringToValidFloat(mintAmount) > stringToValidFloat(mintMaxAmount)
   const isZero = stringToValidFloat(mintAmount) === 0
@@ -116,16 +118,14 @@ const CreateGroup: NextPage = () => {
       </FormWrapper>
       <InfoWrapper>
         <AnimatePresence>
-          {stringToValidFloat(mintAmount) > 0 && (
-            <MintInformation fee={feeNumber} mintAmount={mintAmount} />
+          {mintAmountNumber > 0 && (
+            <MintInformation fee={feeNumber} mintAmount={mintAmountNumber} />
           )}
         </AnimatePresence>
       </InfoWrapper>
       <ActionWrapper>
         <ButtonSecondary
-          disabled={
-            !connected || loading || isMintAmountInvalid || stringToValidFloat(mintAmount) === 0
-          }
+          disabled={!connected || loading || isMintAmountInvalid || mintAmountNumber === 0}
           onClick={() => setNotification(true)}
         >
           Mint tokens
