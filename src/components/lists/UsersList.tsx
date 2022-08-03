@@ -112,26 +112,17 @@ export const UsersList: React.FC<Props> = ({
     resetNotification()
   }
 
-  // This searchUser refactor is ment to prevent members list to display empty when user clears SearchInput.
-  // Instead of that, searchResults is populated with initial members from Circles
   const searchUser = async (value: string) => {
     setQuery(value)
-    if (query === '') {
-      console.log('SETTING INITIALS')
-      setSearchResults(users)
-    } else {
-      const fetchedUsers = await getUsersByAddressOrUsername(value)
-      console.log('SETTING FETCHED')
-      setSearchResults(fetchedUsers)
-    }
+    const fetchedUsers = await getUsersByAddressOrUsername(value)
+    setSearchResults(fetchedUsers)
   }
 
-  // Also tried with useEffect but still not working as expected
-  // useEffect(() => {
-  //   if (query === '') {
-  //     setSearchResults(users)
-  //   }
-  // }, [query, users])
+  useEffect(() => {
+    if (query === '') {
+      setSearchResults(users)
+    }
+  }, [query, searchResults, users])
   return (
     <>
       {shouldShowAlert && action && (
