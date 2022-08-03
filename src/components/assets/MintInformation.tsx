@@ -68,12 +68,10 @@ interface Props {
 }
 
 export const MintInformation: React.FC<Props> = ({ fee, mintAmount }) => {
-  const dollarUSLocale = Intl.NumberFormat('en-US')
-  // @TODO Change math count.
   const tempFee = fee / 10
-  const feeAmount = (mintAmount / 100) * tempFee // @TODO verify that should be divided by 1000
+  const feeAmount = (mintAmount / 100) * tempFee
   const receivingTokensNumericAmount = mintAmount - feeAmount
-  const receivingTokensAmount = formatNumber(receivingTokensNumericAmount)
+  const receivingTokensAmount = formatNumber(receivingTokensNumericAmount, 3)
   const mintAmountNumber = formatNumber(mintAmount)
 
   return (
