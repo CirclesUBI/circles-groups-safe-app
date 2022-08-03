@@ -9,6 +9,7 @@ import { AnimatePresence } from 'framer-motion'
 import { AlertMessage } from '@/src/components/assets/AlertMessage'
 import { Crc } from '@/src/components/assets/Crc'
 import { Input } from '@/src/components/assets/Input'
+import { MintInformation } from '@/src/components/assets/MintInformation'
 import { Title } from '@/src/components/assets/Title'
 import { TransferUserInformation } from '@/src/components/assets/TransferUserInformation'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
@@ -22,13 +23,20 @@ const FormWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.general.space * 2}px;
-  margin-top: ${({ theme }) => theme.general.space * 4}px;
-  padding: 0 ${({ theme }) => theme.general.space * 2}px;
+  margin: ${({ theme }) => theme.general.space * 4}px 0 0;
+  padding: 0 ${({ theme }) => theme.general.space * 2}px 0;
+`
+const InfoWrapper = styled.div`
+  padding: ${({ theme }) => theme.general.space * 4}px ${({ theme }) => theme.general.space * 2}px 0;
 `
 const ActionWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-top: ${({ theme }) => theme.general.space * 4}px;
+  padding: 0 ${({ theme }) => theme.general.space * 2}px;
+  button {
+    width: 100%;
+  }
 `
 
 const Icon = styled.div`
@@ -55,12 +63,15 @@ const CreateGroup: NextPage = () => {
 
   const [notification, setNotification] = useState(false)
   const [mintAmount, setMintAmount] = useState<string>('')
-  const [note, setNote] = useState<string>('')
+
+  const mintAmountNumber = stringToValidFloat(mintAmount)
 
   const isMintAmountGreaterThanMaxAmount =
     stringToValidFloat(mintAmount) > stringToValidFloat(mintMaxAmount)
   const isZero = stringToValidFloat(mintAmount) === 0
   const isMintAmountInvalid = isMintAmountGreaterThanMaxAmount || isZero
+
+  const feeNumber = stringToValidFloat(group?.mintFeePerThousand ?? '0')
 
   return (
     <>
@@ -105,22 +116,22 @@ const CreateGroup: NextPage = () => {
           type="number"
           value={mintAmount}
         />
-        <Input
-          information="This is a message This is a message This is a message"
-          label="Add note"
-          mandatory
-          setValue={setNote}
-          value={note}
-        />
-        <ActionWrapper>
-          <ButtonSecondary
-            disabled={!connected || loading || isMintAmountInvalid}
-            onClick={() => setNotification(true)}
-          >
-            Mint tokens
-          </ButtonSecondary>
-        </ActionWrapper>
       </FormWrapper>
+      <InfoWrapper>
+        <AnimatePresence>
+          {mintAmountNumber > 0 && (
+            <MintInformation fee={feeNumber} mintAmount={mintAmountNumber} />
+          )}
+        </AnimatePresence>
+      </InfoWrapper>
+      <ActionWrapper>
+        <ButtonSecondary
+          disabled={!connected || loading || isMintAmountInvalid || mintAmountNumber === 0}
+          onClick={() => setNotification(true)}
+        >
+          Mint tokens
+        </ButtonSecondary>
+      </ActionWrapper>
     </>
   )
 }

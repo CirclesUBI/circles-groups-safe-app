@@ -140,6 +140,7 @@ export const Input: React.FC<Props> = ({
           onChange={(e) => {
             setValue && setValue(String(e.target.value))
           }}
+          onWheel={(e) => e.currentTarget.blur()}
           placeholder={placeholder}
           type={type}
           value={value}

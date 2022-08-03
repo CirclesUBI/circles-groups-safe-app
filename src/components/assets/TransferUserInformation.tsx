@@ -49,7 +49,7 @@ const InformationText = styled.span`
   p {
     display: flex;
     flex-direction: column;
-    justify-content: left;
+    justify-content: flex-start;
     @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
       flex-direction: row;
       gap: ${({ theme }) => theme.general.space}px;
