@@ -15,10 +15,10 @@ import { MenuIcon } from '@/src/components/assets/MenuIcon'
 import { User } from '@/src/components/assets/User'
 import { MainMenu } from '@/src/components/navigation/MainMenu'
 import { ButtonPrimary, LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { activity } from '@/src/constants/activity'
 import { chainsConfig } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
 import { useGroupCurrencyTokensByOwner } from '@/src/hooks/subgraph/useGroupCurrencyToken'
+import { useNotificationsByUser } from '@/src/hooks/subgraph/useNotifications'
 import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
 import { useUserSafe } from '@/src/hooks/useUserSafe'
 import { useGeneral } from '@/src/providers/generalProvider'
@@ -150,6 +150,14 @@ export const Header: React.FC = (props) => {
 
   const { activeCreatedGroup } = useGeneral()
 
+  const { notifications } = useNotificationsByUser(safe.safeAddress)
+  /**
+   * @TODOs
+   * - remember to update last seen variable
+   * - remember to fix activities messages
+   * - remember to add new events from groups (currently we are missing notifications)
+   */
+
   useEffect(() => {
     //Fix me later
     if (isOpen) window.document.body.style.overflow = 'hidden'
@@ -233,7 +241,7 @@ export const Header: React.FC = (props) => {
         </WrapperBox>
         <Link href="/activity-log" passHref>
           <ButtonLink>
-            <Alert alerts={activity.length} />
+            <Alert alerts={notifications.length} />
           </ButtonLink>
         </Link>
       </Wrapper>

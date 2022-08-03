@@ -6,7 +6,8 @@ import { ActivityType } from '@/src/components/assets/ActivityType'
 import { ListContainer } from '@/src/components/assets/ListContainer'
 import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
-import { activity } from '@/src/constants/activity'
+import { UserNotification } from '@/src/hooks/subgraph/useNotifications'
+import { ActivityMessage } from '@/src/utils/notifications'
 
 const List = styled.div`
   display: flex;
@@ -38,23 +39,26 @@ const NoActivityText = styled.h4`
   border-top: 1px solid #e0e0e0; ;
 `
 
-export const ActivityList: React.FC = () => {
+interface Props {
+  activities: ActivityMessage[]
+}
+
+export const ActivityList: React.FC<Props> = ({ activities }) => {
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
-
-  const filteredItemsNum = activity.length
+  const filteredItemsNum = activities.length
   const totalPages = Math.ceil(filteredItemsNum / itemsPerPage)
 
   return (
     <List>
       <ListContainer>
-        {activity.length > 0 ? (
-          activity.slice(0, page * itemsPerPage).map(({ date, text, type }, index) => (
+        {activities.length > 0 ? (
+          activities.slice(0, page * itemsPerPage).map(({ date, messageId }, index) => (
             <ListItem key={`activity_${index}`} unsetColors>
               <ActivityInfo>
-                <ActivityType
+                {/* <ActivityType
                   icon={
-                    type == 'information' ? (
+                    type === 'information' ? (
                       <Image
                         alt="Configuration"
                         height={20}
@@ -66,10 +70,10 @@ export const ActivityList: React.FC = () => {
                     )
                   }
                   type={type}
-                />
+                /> */}
                 <div>
-                  <h3>{text}</h3>
-                  <p>{date} </p>
+                  <h3>{messageId}</h3>
+                  <p>{date}</p>
                 </div>
               </ActivityInfo>
             </ListItem>
