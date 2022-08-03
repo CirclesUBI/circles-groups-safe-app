@@ -70,7 +70,7 @@ const HomeAdmin: NextPage = () => {
         <>
           <TitleGroup
             amountNumber={circles}
-            buttonHref="/admin/group-configuration"
+            buttonHref={`/admin/${groupId}/group-configuration`}
             text={group.name}
           />
           <ManageGroupMembers groupAddress={groupId} groupMembers={groupMembers} />
