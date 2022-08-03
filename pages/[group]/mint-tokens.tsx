@@ -97,6 +97,7 @@ const CreateGroup: NextPage = () => {
           photo={user?.avatarUrl}
         />
         <TransferUserInformation
+          address={groupAddress}
           amountText="Maximum amount:"
           amountValue={mintMaxAmount}
           label="Send to"

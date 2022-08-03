@@ -68,6 +68,7 @@ interface Props {
   bgColor?: string
   photo?: string
   label?: string
+  address?: string
 }
 
 const formatName = (text: string) => {
@@ -78,6 +79,7 @@ const formatName = (text: string) => {
 }
 
 export const TransferUserInformation: React.FC<Props> = ({
+  address,
   amountText,
   amountValue,
   bgColor = 'light',
@@ -103,6 +105,7 @@ export const TransferUserInformation: React.FC<Props> = ({
           </InformationImage>
           <InformationText>
             <h4>@{formatName(name)}</h4>
+            {address && <p>{address}</p>}
             <p>
               {amountText}{' '}
               <strong>

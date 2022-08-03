@@ -107,6 +107,7 @@ const ConfigurateGroup: NextPage = () => {
       <hr />
       <FormWrapper>
         <h4>Account information</h4>
+        <InformationPod bgColor="lightest" label="Token Address" text={group?.id ?? ''} />
         <InformationPod bgColor="lightest" label="Treasury" text={group?.treasury ?? ''} />
         <InformationPod bgColor="lightest" label="Hub" text={group?.hub ?? ''} />
         <InformationPod bgColor="lightest" label="Fee" text={group?.mintFeePerThousand ?? ''} />

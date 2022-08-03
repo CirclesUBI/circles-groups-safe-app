@@ -69,7 +69,7 @@ const ErrorText = styled(motion.small)`
 interface Props {
   disabled?: boolean
   label: string
-  mandatory: boolean
+  mandatory?: boolean
   name?: string
   placeholder?: string
   type?: string
@@ -88,7 +88,7 @@ export const Input: React.FC<Props> = ({
   icon = '',
   information = '',
   label = '',
-  mandatory,
+  mandatory = false,
   maxLength = 200,
   minLength = 2,
   name = '',

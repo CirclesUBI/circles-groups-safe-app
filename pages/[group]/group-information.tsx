@@ -56,6 +56,9 @@ const ConfigurateGroup: NextPage = () => {
       <TitleGroup hasBackButton information="Group information" text={group?.name ?? ''} />
       <Wrapper>
         <Columns columnsNumber={1}>
+          <InformationPod bgColor="lightest" label="Token Address" text={group?.id ?? ''} />
+        </Columns>
+        <Columns columnsNumber={1}>
           <InformationPod bgColor="lightest" label="Symbol" text={group?.symbol ?? ''} />
         </Columns>
         <Columns columnsNumber={1}>
