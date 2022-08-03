@@ -61,7 +61,6 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
   const [selectedTab, setSelectedTab] = useState(tabs[0])
   // @TODO: cached users to fasten the add/remove of users
   const [users, setUsers] = useState(groupMembers)
-  const { execute } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
   // @TODO: filter already groupMembers from allUsers
   const [allUsers, setAllUsers] = useState(circlesUsers)
   const { execute: execRemove } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
