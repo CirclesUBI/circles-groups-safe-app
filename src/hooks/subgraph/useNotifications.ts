@@ -6,10 +6,6 @@ import {
   Notifications,
   NotificationsVariables,
   Notifications_notifications,
-  Notifications_notifications_hubTransfer,
-  Notifications_notifications_ownership,
-  Notifications_notifications_transfer,
-  Notifications_notifications_trust,
 } from '@/types/subgraph/__generated__/Notifications'
 import {
   NotificationType,
@@ -17,117 +13,132 @@ import {
   OrderDirection,
 } from '@/types/subgraph/__generated__/globalTypes'
 
-export type UserNotificationTrustData = {
+export type EventTrustData = {
   user: string
   canSendTo: string
   limitPercentage: string
 }
 
-export type UserNotificationTransferData = {
+export type EventTransferData = {
   from: string
   to: string
   amount: string
 }
 
-export type UserNotificationOwnershipData = {
+export type EventOwnershipData = {
   adds?: string
   removes?: string
 }
 
-export type UserNotificationBase = {
+export type EventGroupCreationData = {
+  group: string
+  creator: string
+  name: string
+}
+
+export type EventGroupMintData = {
+  receiver: string
+  amount: string
+  mintFee: string
+  group: string
+}
+
+export type EventGroupMemberUpdateData = {
+  user: string
+  group: string
+}
+
+export type UserNotification = {
   id: string
   transactionHash: string
   safeAddress: string
   type: NotificationType
   time: number
+  trust?: EventTrustData
+  transfer?: EventTransferData
+  hubTransfer?: EventTransferData
+  ownership?: EventOwnershipData
+  groupCreation?: EventGroupCreationData
+  groupMint?: EventGroupMintData
+  groupAddMember?: EventGroupMemberUpdateData
+  groupRemoveMember?: EventGroupMemberUpdateData
 }
 
-export type UserNotificationTrust = UserNotificationBase & {
-  trust: UserNotificationTrustData
-}
-
-export type UserNotificationTransfer = UserNotificationBase & {
-  transfer: UserNotificationTransferData
-}
-
-export type UserNotificationHubTransfer = UserNotificationBase & {
-  hubTransfer: UserNotificationTransferData
-}
-
-export type UserNotificationOwnership = UserNotificationBase & {
-  ownership: UserNotificationOwnershipData
-}
-
-export type UserNotification =
-  | UserNotificationTrust
-  | UserNotificationTransfer
-  | UserNotificationHubTransfer
-  | UserNotificationOwnership
-
-const transformToTrust = (
-  trust: Notifications_notifications_trust | null,
-): UserNotificationTrustData => {
+const transformToTrust = (notification: Notifications_notifications): EventTrustData => {
   return {
-    user: trust?.user ?? '',
-    canSendTo: trust?.canSendTo ?? '',
-    limitPercentage: trust?.limitPercentage ?? '',
+    user: notification.trust?.user ?? '',
+    canSendTo: notification.trust?.canSendTo ?? '',
+    limitPercentage: notification.trust?.limitPercentage ?? '',
   }
 }
 
-const transformToTransfer = (
-  transfer: Notifications_notifications_transfer | Notifications_notifications_hubTransfer | null,
-): UserNotificationTransferData => {
+const transformToTransfer = (notification: Notifications_notifications): EventTransferData => {
   return {
-    from: transfer?.from ?? '',
-    to: transfer?.to ?? '',
-    amount: transfer?.amount ?? '',
+    from: notification.transfer?.from ?? '',
+    to: notification.transfer?.to ?? '',
+    amount: notification.transfer?.amount ?? '',
   }
 }
 
-const transformToOwnership = (
-  ownership: Notifications_notifications_ownership | null,
-): UserNotificationOwnershipData => {
+const transformToOwnership = (notification: Notifications_notifications): EventOwnershipData => {
   return {
-    adds: ownership?.adds ?? '',
-    removes: ownership?.adds ?? '',
+    adds: notification.ownership?.adds ?? '',
+    removes: notification.ownership?.adds ?? '',
   }
 }
 
+const transformGroupCreation = (
+  notification: Notifications_notifications,
+): EventGroupCreationData => {
+  return {
+    creator: notification.groupCreation?.creator ?? '',
+    group: notification.groupCreation?.group ?? '',
+    name: notification.groupCreation?.name ?? '',
+  }
+}
+const transformGroupMint = (notification: Notifications_notifications): EventGroupMintData => {
+  return {
+    receiver: notification.groupMint?.receiver ?? '',
+    amount: notification.groupMint?.amount ?? '',
+    mintFee: notification.groupMint?.mintFee ?? '',
+    group: notification.groupMint?.group ?? '',
+  }
+}
+const transformGroupMemberUpdate = (
+  notification: Notifications_notifications,
+): EventGroupMemberUpdateData => {
+  return {
+    group: notification.groupAddMember?.group ?? '',
+    user: notification.groupAddMember?.user ?? '',
+  }
+}
+
+// @TODO keep only group notifications
+const VALID_NOTIFICATION_TYPES = [
+  NotificationType.GROUP_CREATION,
+  NotificationType.GROUP_ADD_MEMBER,
+  NotificationType.GROUP_REMOVE_MEMBER,
+  NotificationType.GROUP_MINT,
+]
 const transformToUserNotification = (
   notification: Notifications_notifications,
 ): UserNotification | null => {
-  const _notification = {
+  if (!VALID_NOTIFICATION_TYPES.includes(notification.type)) return null
+  return {
     id: notification.id,
     transactionHash: notification.transactionHash,
     safeAddress: notification.safeAddress,
     type: notification.type,
-    time: parseInt(notification.time) * 1000,
+    time: parseInt(notification.time) * 1000, // transform to milliseconds
+    trust: transformToTrust(notification),
+    transfer: transformToTransfer(notification),
+    hubTransfer: transformToTransfer(notification),
+    ownership: transformToOwnership(notification),
+    groupCreation: transformGroupCreation(notification),
+    groupMint: transformGroupMint(notification),
+    groupAddMember: transformGroupMemberUpdate(notification),
+    groupRemoveMember: transformGroupMemberUpdate(notification),
   }
-  if (notification.type === NotificationType.TRUST) {
-    return {
-      ..._notification,
-      trust: transformToTrust(notification.trust),
-    } as UserNotificationTrust
-  }
-  if (notification.type === NotificationType.TRANSFER) {
-    return {
-      ..._notification,
-      transfer: transformToTransfer(notification.transfer),
-    } as UserNotificationTransfer
-  }
-  if (notification.type === NotificationType.HUB_TRANSFER) {
-    return {
-      ..._notification,
-      hubTransfer: transformToTransfer(notification.hubTransfer),
-    } as UserNotificationHubTransfer
-  }
-  if (notification.type === NotificationType.OWNERSHIP) {
-    return {
-      ..._notification,
-      ownership: transformToOwnership(notification.ownership),
-    } as UserNotificationOwnership
-  }
-  return null
 }
 
 export const fetchNotifications = async (safeAddress: string) => {
