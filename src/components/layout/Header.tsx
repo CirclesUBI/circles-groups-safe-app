@@ -23,6 +23,7 @@ import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
 import { useUserSafe } from '@/src/hooks/useUserSafe'
 import { useGeneral } from '@/src/providers/generalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { getLastSeen, getUnseenNotifications } from '@/src/utils/notifications'
 import { truncateStringInTheMiddle } from '@/src/utils/tools'
 
 const vbAddress = '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B'
@@ -151,12 +152,7 @@ export const Header: React.FC = (props) => {
   const { activeCreatedGroup } = useGeneral()
 
   const { notifications } = useNotificationsByUser(safe.safeAddress)
-  /**
-   * @TODOs
-   * - remember to update last seen variable
-   * - remember to fix activities messages
-   * - remember to add new events from groups (currently we are missing notifications)
-   */
+  const unseenNotifications = getUnseenNotifications(notifications)
 
   useEffect(() => {
     //Fix me later
@@ -241,7 +237,7 @@ export const Header: React.FC = (props) => {
         </WrapperBox>
         <Link href="/activity-log" passHref>
           <ButtonLink>
-            <Alert alerts={notifications.length} />
+            <Alert alerts={unseenNotifications.length} />
           </ButtonLink>
         </Link>
       </Wrapper>
