@@ -64,7 +64,7 @@ const Toast = () => (
   <Toaster
     position="bottom-right"
     toastOptions={{
-      duration: ms('3s'),
+      duration: ms('8s'),
     }}
   />
 )

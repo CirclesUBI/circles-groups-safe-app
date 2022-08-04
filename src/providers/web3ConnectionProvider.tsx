@@ -258,7 +258,7 @@ export default function Web3ConnectionProvider({ children }: Props) {
     const url = chainsConfig[appChainId]?.blockExplorerUrls[0]
     return (hash: string) => {
       const type = hash.length > 42 ? 'tx' : 'address'
-      return `${url}${type}/${hash}`
+      return `${url}/${type}/${hash}`
     }
   }, [appChainId])
 
