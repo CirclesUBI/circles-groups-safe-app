@@ -122,7 +122,7 @@ export const UsersList: React.FC<Props> = ({
       const fetchedUsers = await getUsersByAddressOrUsername(value)
       setSearchResults(fetchedUsers)
     }
-  }, 300)
+  }, 500)
   return (
     <>
       {shouldShowAlert && action && (
