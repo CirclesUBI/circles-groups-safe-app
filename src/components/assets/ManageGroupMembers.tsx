@@ -141,6 +141,7 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
             {selectedTab === 'Members' ? (
               <UsersList
                 action={'delete'}
+                memberList
                 onRemoveUser={removeUser}
                 shouldShowAlert
                 users={users}
