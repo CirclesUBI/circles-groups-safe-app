@@ -1,8 +1,8 @@
 import Image from 'next/image'
-import { useEffect, useMemo, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 
-import { isAddress } from '@ethersproject/address'
+import { debounce } from 'lodash'
 
 import { FirstLetter } from '../assets/FirstLetter'
 import { AddRemoveUserNotification, AddRemoveUsers } from '@/src/components/actions/AddRemoveUsers'
@@ -12,7 +12,7 @@ import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
 import { NoResultsText } from '@/src/components/assets/NoResultsText'
 import { SearchInput } from '@/src/components/assets/SearchInput'
-import { getUsers, getUsersByAddressOrUsername } from '@/src/utils/circlesGardenAPI'
+import { getUsersByAddressOrUsername } from '@/src/utils/circlesGardenAPI'
 
 const List = styled.div`
   display: flex;
@@ -112,17 +112,15 @@ export const UsersList: React.FC<Props> = ({
     resetNotification()
   }
 
-  const searchUser = async (value: string) => {
+  const searchUserHandler = debounce(async (value: string) => {
     setQuery(value)
-    const fetchedUsers = await getUsersByAddressOrUsername(value)
-    setSearchResults(fetchedUsers)
-  }
-
-  useEffect(() => {
-    if (query === '') {
+    if (!value) {
       setSearchResults(users)
+    } else {
+      const fetchedUsers = await getUsersByAddressOrUsername(value)
+      setSearchResults(fetchedUsers)
     }
-  }, [query, searchResults, users])
+  }, 300)
   return (
     <>
       {shouldShowAlert && action && (
@@ -134,7 +132,7 @@ export const UsersList: React.FC<Props> = ({
         />
       )}
       <List>
-        <SearchInput onChange={(e) => searchUser(e)} />
+        <SearchInput onChange={(e) => searchUserHandler(e)} />
         <ListContainer>
           {searchResults.length > 0 ? (
             searchResults
