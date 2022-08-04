@@ -7,23 +7,19 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Title } from '@/src/components/assets/Title'
 import { ActivityList } from '@/src/components/lists/ActivityList'
 import { useNotificationsByUser } from '@/src/hooks/subgraph/useNotifications'
-import { formatActivityMessage } from '@/src/utils/notifications'
+import { formatActivityMessage, updateLastSeen } from '@/src/utils/notifications'
 
 const ActivityLog: NextPage = () => {
   const { safe } = useSafeAppsSDK()
   const { notifications } = useNotificationsByUser(safe.safeAddress)
-  const activities = useMemo(
-    () =>
-      notifications.map((notification) => formatActivityMessage(notification, safe.safeAddress)),
-    [notifications, safe.safeAddress],
-  )
+  const activities = useMemo(() => notifications.map(formatActivityMessage), [notifications])
 
-  /**
-   * @TODOs
-   * - remember to update last seen variable
-   * - remember to fix activities messages
-   * - remember to add new events from groups (currently we are missing notifications)
-   */
+  useEffect(() => {
+    if (notifications.length > 0) {
+      const lastNotification = notifications[0].time
+      updateLastSeen(lastNotification)
+    }
+  }, [notifications])
 
   return (
     <>
