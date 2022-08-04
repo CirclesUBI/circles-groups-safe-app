@@ -8,6 +8,7 @@ import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
 import { UserNotification } from '@/src/hooks/subgraph/useNotifications'
 import { ActivityMessage } from '@/src/utils/notifications'
+import { NotificationType } from '@/types/subgraph/__generated__/globalTypes'
 
 const List = styled.div`
   display: flex;
@@ -53,12 +54,12 @@ export const ActivityList: React.FC<Props> = ({ activities }) => {
     <List>
       <ListContainer>
         {activities.length > 0 ? (
-          activities.slice(0, page * itemsPerPage).map(({ date, messageId }, index) => (
+          activities.slice(0, page * itemsPerPage).map(({ date, message, notification }, index) => (
             <ListItem key={`activity_${index}`} unsetColors>
               <ActivityInfo>
-                {/* <ActivityType
+                <ActivityType
                   icon={
-                    type === 'information' ? (
+                    notification.type !== NotificationType.GROUP_MINT ? (
                       <Image
                         alt="Configuration"
                         height={20}
@@ -69,10 +70,12 @@ export const ActivityList: React.FC<Props> = ({ activities }) => {
                       <Image alt="Mint" height={20} src="/images/icon-send.svg" width={20} />
                     )
                   }
-                  type={type}
-                /> */}
+                  type={
+                    notification.type !== NotificationType.GROUP_MINT ? 'information' : undefined
+                  }
+                />
                 <div>
-                  <h3>{messageId}</h3>
+                  <h3>{message}</h3>
                   <p>{date}</p>
                 </div>
               </ActivityInfo>
