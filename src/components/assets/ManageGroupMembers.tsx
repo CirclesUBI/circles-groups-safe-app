@@ -85,11 +85,15 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
   const removeUser = async (userAddress: string) => {
     try {
       const userToken = await getUserToken(userAddress)
-      await execRemove([userToken])
-
-      const newUsers = users.filter((user) => user.safeAddress !== userAddress)
-      setUsers(newUsers)
-      setMembersCount(membersCount - 1)
+      const onSuccess = () => {
+        const newUsers = users.filter((user) => user.safeAddress !== userAddress)
+        setUsers(newUsers)
+        setMembersCount(membersCount - 1)
+      }
+      const onError = () => {
+        throw new Error('Error removing member')
+      }
+      await execRemove([userToken], undefined, onSuccess, onError)
     } catch (err) {
       console.log(err)
     }
@@ -98,13 +102,17 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
   const addUser = async (userAddress: string) => {
     try {
       const userToken = await getUserToken(userAddress)
-      await execAdd([userToken])
-
-      const addedUser = allUsers.filter((user) => user.safeAddress == userAddress)
-      setUsers((users) => [...users, addedUser[0]])
-      const nonMemberUsers = allUsers.filter((user) => user.safeAddress !== userAddress)
-      setAllUsers(nonMemberUsers)
-      setMembersCount(membersCount + 1)
+      const onSuccess = () => {
+        const addedUser = allUsers.filter((user) => user.safeAddress == userAddress)
+        setUsers((users) => [...users, addedUser[0]])
+        const nonMemberUsers = allUsers.filter((user) => user.safeAddress !== userAddress)
+        setAllUsers(nonMemberUsers)
+        setMembersCount(membersCount + 1)
+      }
+      const onError = () => {
+        throw new Error('Error adding member')
+      }
+      await execAdd([userToken], undefined, onSuccess, onError)
     } catch (err) {
       console.log(err)
     }
