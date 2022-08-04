@@ -68,7 +68,7 @@ interface groupMember {
 
 interface Props {
   action?: ActionAddDelete
-  memberList?: boolean
+  membersList?: boolean
   users: groupMember[]
   shouldShowAlert?: boolean
   onRemoveUser?: (userAddress: string) => void
@@ -77,7 +77,7 @@ interface Props {
 
 export const UsersList: React.FC<Props> = ({
   action,
-  memberList = false,
+  membersList = false,
   onAddUser,
   onRemoveUser,
   shouldShowAlert = false,
@@ -134,7 +134,7 @@ export const UsersList: React.FC<Props> = ({
         />
       )}
       <List>
-        {(!memberList || searchResults.length > itemsPerPage) && (
+        {(!membersList || searchResults.length > itemsPerPage) && (
           <SearchInput onChange={(e) => searchUserHandler(e)} />
         )}
         <ListContainer>
