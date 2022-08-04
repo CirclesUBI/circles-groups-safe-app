@@ -125,6 +125,7 @@ export const ToastComponent = ({
         {message && <Text>{message}</Text>}
       </TextContainer>
     </InnerWrapper>
+    {/*<ButtonClose onClick={() => toast.dismiss(t.id)}>*/}
     <ButtonClose onClick={() => toast.remove(t.id)}>
       <Close />
     </ButtonClose>
