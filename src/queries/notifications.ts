@@ -31,6 +31,29 @@ export const NOTIFICATIONS = gql`
         adds
         removes
       }
+      groupCreation {
+        id
+        group
+        name
+        creator
+      }
+      groupAddMember {
+        id
+        user
+        group
+      }
+      groupRemoveMember {
+        id
+        user
+        group
+      }
+      groupMint {
+        id
+        amount
+        receiver
+        mintFee
+        group
+      }
     }
   }
 `
