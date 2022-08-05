@@ -6,7 +6,6 @@ import { ActivityType } from '@/src/components/assets/ActivityType'
 import { ListContainer } from '@/src/components/assets/ListContainer'
 import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
-import { UserNotification } from '@/src/hooks/subgraph/useNotifications'
 import { ActivityMessage } from '@/src/utils/notifications'
 import { NotificationType } from '@/types/subgraph/__generated__/globalTypes'
 
