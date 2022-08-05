@@ -14,15 +14,10 @@ import { Title } from '@/src/components/assets/Title'
 import { TransferUserInformation } from '@/src/components/assets/TransferUserInformation'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { genericSuspense } from '@/src/components/safeSuspense'
-import { notify } from '@/src/components/toast/Toast'
-import { FAILED_TYPE, SUCCESS_TYPE, WAITING_TYPE } from '@/src/components/toast/types'
 import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
 import { useGroupMintToken } from '@/src/hooks/useGroupMintToken'
 import { useUserSafe } from '@/src/hooks/useUserSafe'
 import { stringToValidFloat } from '@/src/utils/formatNumber'
-
-// REMOVE
-// REMOVE
 
 const FormWrapper = styled.div`
   display: flex;
@@ -135,11 +130,6 @@ const CreateGroup: NextPage = () => {
           onClick={() => setNotification(true)}
         >
           Mint tokens
-        </ButtonSecondary>
-        <ButtonSecondary
-          onClick={() => notify({ type: SUCCESS_TYPE, explorerUrl: 'txExplorerUrl' })}
-        >
-          Mint tokens2
         </ButtonSecondary>
       </ActionWrapper>
     </>
