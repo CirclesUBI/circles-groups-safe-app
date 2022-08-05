@@ -42,6 +42,32 @@ const Wrapper = styled.div`
       }
     }
   }
+  &.enter {
+    animation: 0.35s cubic-bezier(0.21, 1.02, 0.73, 1) 0s 1 normal forwards running in;
+  }
+  &.leave {
+    animation: 0.35s cubic-bezier(0.21, 1.02, 0.73, 1) 0s 1 normal forwards running out;
+  }
+  @keyframes in {
+    0% {
+      transform: translate3d(0, 200%, 0) scale(0.6);
+      opacity: 0.5;
+    }
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+      opacity: 1;
+    }
+  }
+  @keyframes out {
+    0% {
+      transform: translate3d(0, 0, -1px) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translate3d(0, 150%, -1px) scale(0.6);
+      opacity: 0;
+    }
+  }
 `
 
 const IconContainer = styled.div`
@@ -112,7 +138,7 @@ export const ToastComponent = ({
   title: string
   toastStyle: string
 }) => (
-  <Wrapper className={toastStyle}>
+  <Wrapper className={`${toastStyle} ${t.visible ? ' enter ' : ' leave '}`}>
     <IconContainer>{icon}</IconContainer>
     <InnerWrapper>
       <TextContainer>
@@ -125,7 +151,7 @@ export const ToastComponent = ({
         {message && <Text>{message}</Text>}
       </TextContainer>
     </InnerWrapper>
-    <ButtonClose onClick={() => toast.remove(t.id)}>
+    <ButtonClose onClick={() => toast.dismiss(t.id)}>
       <Close />
     </ButtonClose>
   </Wrapper>

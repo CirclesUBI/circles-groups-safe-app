@@ -12,7 +12,7 @@ import { createTransactionError } from '@/src/utils/TransactionError'
 const getGnosisExplorerUrl = (hash: string) => {
   const url = chainsConfig[Chains.gnosis]?.blockExplorerUrls[0]
   const type = hash.length > 42 ? 'tx' : 'address'
-  return `${url}${type}/${hash}`
+  return `${url}/${type}/${hash}`
 }
 
 export default function useSafeTransaction(sdk: SafeAppsSDK) {
