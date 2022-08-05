@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { isAddress } from '@ethersproject/address'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { Input } from '@/src/components/assets/Input'
 import { Title } from '@/src/components/assets/Title'
@@ -26,7 +27,24 @@ const FormWrapper = styled.div`
 const ActionWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: ${({ theme }) => theme.general.space * 4}px;
+  margin-top: ${({ theme }) => theme.general.space * 3}px;
+`
+
+const InformationText = styled(motion.small)`
+  font-size: 1.3rem;
+  display: block;
+  text-align: center;
+  margin-top: ${({ theme }) => theme.general.space * 2}px;
+  position: relative;
+  &:before {
+    content: '';
+    height: 1px;
+    max-width: 150px;
+    display: block;
+    margin: 0 auto ${({ theme }) => theme.general.space * 3}px;
+    background-color: ${({ theme }) => theme.colors.primary};
+    opacity: 0.2;
+  }
 `
 
 // @TODO Max available fee amount is 25.5. See Group Contract: uint8 _mintFeePerThousand (0..255)
@@ -38,7 +56,7 @@ const CreateGroup: NextPage = () => {
 
   const [groupName, setGroupName] = useState<string>('')
   const [groupSymbol, setGroupSymbol] = useState<string>('')
-  const [fee, setFee] = useState<string>('')
+  const [fee, setFee] = useState<string>('0')
   const [treasury, setTreasury] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -87,6 +105,7 @@ const CreateGroup: NextPage = () => {
 
   const isValidTreasury = treasury && isAddress(treasury)
   const isValidFee = _isValidFee(parseFloat(fee))
+  const isCompleted = groupName && groupSymbol && treasury && fee
   const isDisabled = !groupName || !groupSymbol || !isValidTreasury || !isValidFee || loading
 
   return (
@@ -120,7 +139,7 @@ const CreateGroup: NextPage = () => {
           <Input
             information="Cost of minting tokens to the group currency. Max available is 25.5"
             label="Fee (%)"
-            placeholder="0"
+            mandatory
             setValue={setValidFeeAmount}
             type="number"
             value={fee}
@@ -143,6 +162,19 @@ const CreateGroup: NextPage = () => {
             Create Group
           </ButtonSecondary>
         </ActionWrapper>
+        <AnimatePresence>
+          {!isCompleted && (
+            <InformationText
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -10, opacity: 0 }}
+              initial={{ y: -20, opacity: 0 }}
+              key={treasury}
+              transition={{ duration: 0.2 }}
+            >
+              *All required fields must be completed to create a new group
+            </InformationText>
+          )}
+        </AnimatePresence>
       </FormWrapper>
     </>
   )
