@@ -61,7 +61,6 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
   const [selectedTab, setSelectedTab] = useState(tabs[0])
   // @TODO: cached users to fasten the add/remove of users
   const [users, setUsers] = useState(groupMembers)
-  const { execute } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
   // @TODO: filter already groupMembers from allUsers
   const [allUsers, setAllUsers] = useState(circlesUsers)
   const { execute: execRemove } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
@@ -85,11 +84,12 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
   const removeUser = async (userAddress: string) => {
     try {
       const userToken = await getUserToken(userAddress)
-      await execRemove([userToken])
-
-      const newUsers = users.filter((user) => user.safeAddress !== userAddress)
-      setUsers(newUsers)
-      setMembersCount(membersCount - 1)
+      const onSuccess = () => {
+        const newUsers = users.filter((user) => user.safeAddress !== userAddress)
+        setUsers(newUsers)
+        setMembersCount(membersCount - 1)
+      }
+      await execRemove([userToken], undefined, onSuccess)
     } catch (err) {
       console.log(err)
     }
@@ -98,13 +98,14 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
   const addUser = async (userAddress: string) => {
     try {
       const userToken = await getUserToken(userAddress)
-      await execAdd([userToken])
-
-      const addedUser = allUsers.filter((user) => user.safeAddress == userAddress)
-      setUsers((users) => [...users, addedUser[0]])
-      const nonMemberUsers = allUsers.filter((user) => user.safeAddress !== userAddress)
-      setAllUsers(nonMemberUsers)
-      setMembersCount(membersCount + 1)
+      const onSuccess = () => {
+        const addedUser = allUsers.filter((user) => user.safeAddress == userAddress)
+        setUsers((users) => [...users, addedUser[0]])
+        const nonMemberUsers = allUsers.filter((user) => user.safeAddress !== userAddress)
+        setAllUsers(nonMemberUsers)
+        setMembersCount(membersCount + 1)
+      }
+      await execAdd([userToken], undefined, onSuccess)
     } catch (err) {
       console.log(err)
     }
@@ -142,6 +143,7 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
             {selectedTab === 'Members' ? (
               <UsersList
                 action={'delete'}
+                membersList
                 onRemoveUser={removeUser}
                 shouldShowAlert
                 users={users}

@@ -82,7 +82,7 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
          * Using this user will fix the issue when the path does not have a trusted user
          * to be able to call the mint method from the group
          */
-        const users = dests
+        const users = [userAddress].concat(dests)
         const collaterals = await transformPathToMintParams(groupAddress, users, provider)
         const tcMintAmount = toBN(String(tcToCircles(formattedMintAmount)))
         const amounts = [tcMintAmount.toString()]
