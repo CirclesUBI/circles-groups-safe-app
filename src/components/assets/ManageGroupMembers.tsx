@@ -90,10 +90,7 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
         setUsers(newUsers)
         setMembersCount(membersCount - 1)
       }
-      const onError = () => {
-        throw new Error('Error removing member')
-      }
-      await execRemove([userToken], undefined, onSuccess, onError)
+      await execRemove([userToken], undefined, onSuccess)
     } catch (err) {
       console.log(err)
     }
@@ -109,10 +106,7 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
         setAllUsers(nonMemberUsers)
         setMembersCount(membersCount + 1)
       }
-      const onError = () => {
-        throw new Error('Error adding member')
-      }
-      await execAdd([userToken], undefined, onSuccess, onError)
+      await execAdd([userToken], undefined, onSuccess)
     } catch (err) {
       console.log(err)
     }
