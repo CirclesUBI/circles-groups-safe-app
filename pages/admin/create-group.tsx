@@ -162,13 +162,12 @@ const CreateGroup: NextPage = () => {
             Create Group
           </ButtonSecondary>
         </ActionWrapper>
-        <AnimatePresence>
+        <AnimatePresence exitBeforeEnter>
           {!isCompleted && (
             <InformationText
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -10, opacity: 0 }}
               initial={{ y: -20, opacity: 0 }}
-              key={treasury}
               transition={{ duration: 0.2 }}
             >
               *All required fields must be completed to create a new group
