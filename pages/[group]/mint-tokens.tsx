@@ -53,7 +53,7 @@ const CreateGroup: NextPage = () => {
   const router = useRouter()
   const groupAddress = String(router.query?.group ?? '')
   const { connected, safe, sdk } = useSafeAppsSDK()
-  const { circles } = useCirclesBalance(sdk)
+  const { circles } = useCirclesBalance(safe.safeAddress, sdk)
   const { group, loading, mintMaxAmount, mintToken } = useGroupMintToken(
     safe.safeAddress,
     groupAddress,

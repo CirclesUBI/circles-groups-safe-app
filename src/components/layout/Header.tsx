@@ -142,7 +142,7 @@ export const Header: React.FC = (props) => {
   const [isOpen, toggleOpen] = useState(false)
 
   const { safe, sdk } = useSafeAppsSDK()
-  const { circles } = useCirclesBalance(sdk)
+  const { circles } = useCirclesBalance(safe.safeAddress, sdk)
 
   const { user } = useUserSafe(safe.safeAddress)
 
