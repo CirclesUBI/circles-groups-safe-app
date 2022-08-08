@@ -114,12 +114,22 @@ export const UsersList: React.FC<Props> = ({
     resetNotification()
   }
 
+  const filterMembers = (value: string): groupMember[] => {
+    return users.filter((user: { username: string }) => {
+      if (user.username.toLowerCase().includes(value.toLowerCase())) {
+        return user
+      }
+    })
+  }
+
   const searchUserHandler = debounce(async (value: string) => {
     setQuery(value)
     if (!value) {
       setSearchResults(users)
     } else {
-      const fetchedUsers = await getUsersByAddressOrUsername(value)
+      const fetchedUsers = membersList
+        ? filterMembers(value)
+        : await getUsersByAddressOrUsername(value)
       setSearchResults(fetchedUsers)
     }
   }, 500)
@@ -134,7 +144,7 @@ export const UsersList: React.FC<Props> = ({
         />
       )}
       <List>
-        {(!membersList || searchResults.length > itemsPerPage) && (
+        {(!membersList || query || searchResults.length > itemsPerPage) && (
           <SearchInput onChange={(e) => searchUserHandler(e)} />
         )}
         <ListContainer>
