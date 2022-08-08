@@ -60,7 +60,7 @@ const HomeAdmin: NextPage = () => {
   const groupId = group?.id
 
   const { sdk } = useSafeAppsSDK()
-  const { circles } = useCirclesBalance(sdk)
+  const { circles } = useCirclesBalance(safe.safeAddress, sdk)
   // @TODO it might not be necessary if we fetch the members info in the group hook
   const { groupMembers } = useGroupMembersByGroupId(groupId)
 
