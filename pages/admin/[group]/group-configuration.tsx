@@ -16,6 +16,7 @@ import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/But
 import { useGroupCurrencyTokenCall } from '@/src/hooks/contracts/useGroupCurrencyTokenCall'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useChangeOwner } from '@/src/hooks/useChangeOwner'
+import { stripGno } from '@/src/utils/stripGno'
 
 const FormWrapper = styled.div`
   display: flex;
@@ -89,6 +90,9 @@ const ConfigurateGroup: NextPage = () => {
             label="Owner"
             mandatory
             name="fullname"
+            pasteAction={(event) => {
+              stripGno(event, setOwner)
+            }}
             placeholder=""
             setValue={setOwner}
             type="text"

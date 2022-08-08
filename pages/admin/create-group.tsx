@@ -16,6 +16,7 @@ import { genericSuspense } from '@/src/components/safeSuspense'
 import { useCreateGroupTx } from '@/src/hooks/useCreateGroup'
 import { addresses } from '@/src/utils/addresses'
 import { fixedNumber } from '@/src/utils/formatNumber'
+import { stripGno } from '@/src/utils/stripGno'
 
 const FormWrapper = styled.div`
   display: flex;
@@ -151,6 +152,9 @@ const CreateGroup: NextPage = () => {
             information="Account (Safe address) where individual circles are stored and saved."
             label="Treasury"
             mandatory
+            pasteAction={(event) => {
+              stripGno(event, setTreasury)
+            }}
             placeholder="0x..."
             setValue={setTreasury}
             type="text"
