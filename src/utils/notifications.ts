@@ -75,9 +75,34 @@ export const formatActivityMessage = (notification: UserNotification): ActivityM
     message = `Unknown activity type: ${notification.type}`
   }
 
+  const date: Date = new Date(notification.time)
+
+  const day = date.getDay()
+  const month = date.toLocaleString('en-US', { month: 'long' })
+  const year = date.getFullYear()
+  const hours = date.getHours()
+  const minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes()
+  console.log('Hours = ' + date.getHours())
+  console.log('Minutes = ' + date.getMinutes())
+
+  const isToday = (someDate: Date) => {
+    const today = new Date()
+    if (today.toDateString() === someDate.toDateString()) {
+      return true
+    }
+    return false
+  }
+
+  let activityDate
+  if (isToday(date)) {
+    activityDate = hours + ':' + minutes
+  } else {
+    activityDate = day + ' ' + month + ', ' + year
+  }
+
   return {
     notification,
     message,
-    date: new Date(notification.time).toString(), // @TODO remember to format date correctly
+    date: activityDate,
   }
 }
