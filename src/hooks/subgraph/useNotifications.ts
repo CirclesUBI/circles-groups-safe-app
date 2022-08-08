@@ -83,7 +83,7 @@ const transformToTransfer = (notification: Notifications_notifications): EventTr
 const transformToOwnership = (notification: Notifications_notifications): EventOwnershipData => {
   return {
     adds: notification.ownership?.adds ?? '',
-    removes: notification.ownership?.adds ?? '',
+    removes: notification.ownership?.removes ?? '',
   }
 }
 

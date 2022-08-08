@@ -42,9 +42,6 @@ export const getUnseenNotifications = (notifications: UserNotification[]) => {
 }
 
 export type ActivityMessage = {
-  addressActor: string
-  addressOrigin: string
-  addressTarget: string
   message: string
   notification: UserNotification
   date: string
@@ -52,9 +49,6 @@ export type ActivityMessage = {
 
 // @TODO notification is not receiving the group name in all cases
 export const formatActivityMessage = (notification: UserNotification): ActivityMessage => {
-  const addressActor = ''
-  const addressOrigin = ''
-  const addressTarget = ''
   let message = ''
 
   if (notification.type === NotificationType.GROUP_CREATION && notification.groupCreation) {
@@ -70,7 +64,7 @@ export const formatActivityMessage = (notification: UserNotification): ActivityM
     notification.groupRemoveMember
   ) {
     const groupName = notification.groupRemoveMember.group
-    message = `You are not member of ${groupName} group anymore`
+    message = `You are no longer member of ${groupName} group`
   }
   if (notification.type === NotificationType.GROUP_MINT && notification.groupMint) {
     const groupName = notification.groupMint.group
@@ -82,9 +76,6 @@ export const formatActivityMessage = (notification: UserNotification): ActivityM
   }
 
   return {
-    addressActor: addressActor ?? '',
-    addressOrigin: addressOrigin ?? '',
-    addressTarget: addressTarget ?? '',
     notification,
     message,
     date: new Date(notification.time).toString(), // @TODO remember to format date correctly
