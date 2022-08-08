@@ -68,6 +68,7 @@ interface groupMember {
 
 interface Props {
   action?: ActionAddDelete
+  members?: groupMember[]
   membersList?: boolean
   users: groupMember[]
   shouldShowAlert?: boolean
@@ -77,6 +78,7 @@ interface Props {
 
 export const UsersList: React.FC<Props> = ({
   action,
+  members = [],
   membersList = false,
   onAddUser,
   onRemoveUser,
@@ -85,6 +87,7 @@ export const UsersList: React.FC<Props> = ({
 }) => {
   const [searchResults, setSearchResults] = useState(users)
   const [query, setQuery] = useState('')
+  const [noResultsText, setNoResultsText] = useState('There are no members on this group.')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
 
@@ -130,7 +133,27 @@ export const UsersList: React.FC<Props> = ({
       const fetchedUsers = membersList
         ? filterMembers(value)
         : await getUsersByAddressOrUsername(value)
-      setSearchResults(fetchedUsers)
+      if (fetchedUsers.length === 0) {
+        membersList
+          ? setNoResultsText(`User ${value} is not a Group member`)
+          : setNoResultsText(`We couldn't find a match for ${value}.`)
+        setSearchResults(fetchedUsers)
+      } else {
+        const removeGroupMembers = (fetchedUsers: groupMember[]): groupMember[] => {
+          const membersAddresses = members.map((member: groupMember) =>
+            member.safeAddress.toLowerCase(),
+          )
+          const filteredUsers = fetchedUsers.filter((user: { safeAddress: string }) => {
+            if (!membersAddresses.includes(user.safeAddress.toLowerCase())) {
+              return user
+            } else {
+              setNoResultsText(`The user ${value} is already a Group member`)
+            }
+          })
+          return filteredUsers
+        }
+        setSearchResults(removeGroupMembers(fetchedUsers))
+      }
     }
   }, 500)
   return (
@@ -182,8 +205,7 @@ export const UsersList: React.FC<Props> = ({
               ))
           ) : (
             <>
-              <NoResultsText query={query} text={'There are no members on this group.'} />
-              {/* TODO: refactor to display proper message when trying to add users as groupMembers */}
+              <NoResultsText text={noResultsText} />
             </>
           )}
         </ListContainer>

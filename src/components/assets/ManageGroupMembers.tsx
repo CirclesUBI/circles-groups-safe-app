@@ -61,7 +61,6 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
   const [selectedTab, setSelectedTab] = useState(tabs[0])
   // @TODO: cached users to fasten the add/remove of users
   const [users, setUsers] = useState(groupMembers)
-  // @TODO: filter already groupMembers from allUsers
   const [allUsers, setAllUsers] = useState(circlesUsers)
   const { execute: execRemove } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
   const { execute: execAdd } = useGroupCurrencyTokenTx(groupAddress, 'addMemberToken')
@@ -149,7 +148,13 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
                 users={users}
               />
             ) : (
-              <UsersList action={'add'} onAddUser={addUser} shouldShowAlert users={allUsers} />
+              <UsersList
+                action={'add'}
+                members={users}
+                onAddUser={addUser}
+                shouldShowAlert
+                users={allUsers}
+              />
             )}
           </motion.div>
         </AnimatePresence>

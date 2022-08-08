@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 
 import { ActionItem } from '@/src/components/assets/ActionItem'
@@ -68,6 +68,7 @@ interface Props {
 
 export const GroupList: React.FC<Props> = ({ canMint, groups }) => {
   const [query, setQuery] = useState('')
+  const [noResultsText, setNoResultsText] = useState('')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
 
@@ -84,6 +85,14 @@ export const GroupList: React.FC<Props> = ({ canMint, groups }) => {
   }, [groups, query])
 
   const totalPages = Math.ceil(filteredGroups.length / itemsPerPage)
+
+  useEffect(() => {
+    if (filteredGroups.length === 0) {
+      query
+        ? setNoResultsText(`We couldn't find a match for ${query}.`)
+        : setNoResultsText("You don't belong to any group yet.")
+    }
+  }, [filteredGroups, query])
 
   return (
     <>
@@ -125,7 +134,7 @@ export const GroupList: React.FC<Props> = ({ canMint, groups }) => {
               </ListItem>
             ))
           ) : (
-            <NoResultsText query={query} text={"You don't belong to any group yet."} />
+            <NoResultsText text={noResultsText} />
           )}
         </ListContainer>
         {page < totalPages && filteredGroups.length > itemsPerPage && (
