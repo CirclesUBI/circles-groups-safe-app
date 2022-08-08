@@ -6,7 +6,8 @@ import { ActivityType } from '@/src/components/assets/ActivityType'
 import { ListContainer } from '@/src/components/assets/ListContainer'
 import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
-import { activity } from '@/src/constants/activity'
+import { ActivityMessage } from '@/src/utils/notifications'
+import { NotificationType } from '@/types/subgraph/__generated__/globalTypes'
 
 const List = styled.div`
   display: flex;
@@ -38,23 +39,26 @@ const NoActivityText = styled.h4`
   border-top: 1px solid #e0e0e0; ;
 `
 
-export const ActivityList: React.FC = () => {
+interface Props {
+  activities: ActivityMessage[]
+}
+
+export const ActivityList: React.FC<Props> = ({ activities }) => {
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
-
-  const filteredItemsNum = activity.length
+  const filteredItemsNum = activities.length
   const totalPages = Math.ceil(filteredItemsNum / itemsPerPage)
 
   return (
     <List>
       <ListContainer>
-        {activity.length > 0 ? (
-          activity.slice(0, page * itemsPerPage).map(({ date, text, type }, index) => (
+        {activities.length > 0 ? (
+          activities.slice(0, page * itemsPerPage).map(({ date, message, notification }, index) => (
             <ListItem key={`activity_${index}`} unsetColors>
               <ActivityInfo>
                 <ActivityType
                   icon={
-                    type == 'information' ? (
+                    notification.type !== NotificationType.GROUP_MINT ? (
                       <Image
                         alt="Configuration"
                         height={20}
@@ -65,11 +69,13 @@ export const ActivityList: React.FC = () => {
                       <Image alt="Mint" height={20} src="/images/icon-send.svg" width={20} />
                     )
                   }
-                  type={type}
+                  type={
+                    notification.type !== NotificationType.GROUP_MINT ? 'information' : undefined
+                  }
                 />
                 <div>
-                  <h3>{text}</h3>
-                  <p>{date} </p>
+                  <h3>{message}</h3>
+                  <p>{date}</p>
                 </div>
               </ActivityInfo>
             </ListItem>
