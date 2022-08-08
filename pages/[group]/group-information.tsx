@@ -90,7 +90,7 @@ const ConfigurateGroup: NextPage = () => {
           <ListWrapper>
             <H2>Group members</H2>
             <UserListWrapper>
-              <UsersList users={groupMembers} />
+              <UsersList membersList users={groupMembers} />
             </UserListWrapper>
           </ListWrapper>
         </Columns>
