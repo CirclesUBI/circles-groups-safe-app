@@ -16,6 +16,7 @@ import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/But
 import { useGroupCurrencyTokenCall } from '@/src/hooks/contracts/useGroupCurrencyTokenCall'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useChangeOwner } from '@/src/hooks/useChangeOwner'
+import { stringToValidFloat } from '@/src/utils/formatNumber'
 
 const FormWrapper = styled.div`
   display: flex;
@@ -44,6 +45,8 @@ const ConfigurateGroup: NextPage = () => {
   const [owner, setOwner] = useState(group?.owner ?? '')
   const [groupOwner, refetchGroupOwner] = useGroupCurrencyTokenCall(groupAddr, 'owner', [])
   const isOwner = groupOwner && groupOwner.toLowerCase() === currentUser
+  const groupFee = stringToValidFloat(group?.mintFeePerThousand ?? '0') / 10
+  const groupFeeText = groupFee + '%'
 
   const isDisabledSaveButton =
     owner.toLowerCase() === group?.owner || !owner || !isAddress(owner) || !isOwner
@@ -110,7 +113,7 @@ const ConfigurateGroup: NextPage = () => {
         <InformationPod bgColor="lightest" label="Token Address" text={group?.id ?? ''} />
         <InformationPod bgColor="lightest" label="Treasury" text={group?.treasury ?? ''} />
         <InformationPod bgColor="lightest" label="Hub" text={group?.hub ?? ''} />
-        <InformationPod bgColor="lightest" label="Fee" text={group?.mintFeePerThousand ?? ''} />
+        <InformationPod bgColor="lightest" label="Fee" text={groupFeeText ?? ''} />
       </FormWrapper>
     </>
   )
