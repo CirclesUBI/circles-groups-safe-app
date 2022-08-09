@@ -45,18 +45,22 @@ export type ActivityMessage = {
   message: string
   notification: UserNotification
   date: string
+  groupId?: string
 }
 
 // @TODO notification is not receiving the group name in all cases
 export const formatActivityMessage = (notification: UserNotification): ActivityMessage => {
   let message = ''
+  let groupId
 
   if (notification.type === NotificationType.GROUP_CREATION && notification.groupCreation) {
     const groupName = notification.groupCreation.name
+    groupId = notification.groupCreation.group
     message = `You have created the ${groupName} group`
   }
   if (notification.type === NotificationType.GROUP_ADD_MEMBER && notification.groupAddMember) {
     const groupName = notification.groupAddMember.group
+    groupId = notification.groupAddMember.group
     message = `You are now member of ${groupName} group`
   }
   if (
@@ -64,11 +68,13 @@ export const formatActivityMessage = (notification: UserNotification): ActivityM
     notification.groupRemoveMember
   ) {
     const groupName = notification.groupRemoveMember.group
+    groupId = notification.groupRemoveMember.group
     message = `You are no longer member of ${groupName} group`
   }
   if (notification.type === NotificationType.GROUP_MINT && notification.groupMint) {
     const groupName = notification.groupMint.group
     const tc = formatNumber(circlesToTC(notification.groupMint.amount))
+    groupId = notification.groupMint.group
     message = `You have minted ${tc} CRC on ${groupName} group`
   }
   if (!message) {
@@ -82,8 +88,6 @@ export const formatActivityMessage = (notification: UserNotification): ActivityM
   const year = date.getFullYear()
   const hours = date.getHours()
   const minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes()
-  console.log('Hours = ' + date.getHours())
-  console.log('Minutes = ' + date.getMinutes())
 
   const isToday = (someDate: Date) => {
     const today = new Date()
@@ -104,5 +108,6 @@ export const formatActivityMessage = (notification: UserNotification): ActivityM
     notification,
     message,
     date: activityDate,
+    groupId,
   }
 }
