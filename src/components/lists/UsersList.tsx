@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { debounce } from 'lodash'
@@ -123,6 +123,11 @@ export const UsersList: React.FC<Props> = ({
       setSearchResults(fetchedUsers)
     }
   }, 500)
+
+  useEffect(() => {
+    setSearchResults(users)
+  }, [users])
+
   return (
     <>
       {shouldShowAlert && action && (

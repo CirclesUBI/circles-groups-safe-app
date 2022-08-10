@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 import { UsersList } from '@/src/components/lists/UsersList'
 import { useGroupCurrencyTokenTx } from '@/src/hooks/contracts/useGroupCurrencyTokenTx'
+import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
 import { useAllUsers } from '@/src/hooks/subgraph/useUsers'
 import { useWeb3Connected } from '@/src/providers/web3ConnectionProvider'
 import hubCall from '@/src/utils/contracts/hubCall'
@@ -40,22 +41,16 @@ const Tab = styled.button`
 const Section = styled.section`
   margin-top: ${({ theme }) => theme.general.space * 6}px;
 `
-interface groupMember {
-  id: number
-  username: string
-  safeAddress: string
-  avatarUrl?: string
-}
-
 interface Props {
   groupAddress: string
-  groupMembers: groupMember[]
 }
 
-export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers }) => {
+export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
   // @TODO we might need to delete this
   const { isAppConnected, web3Provider } = useWeb3Connected()
   const { circlesUsers } = useAllUsers()
+  // @TODO as we are using groupMembers in this component we can get rid of the users array!
+  const { groupMembers } = useGroupMembersByGroupId(groupAddress)
 
   const tabs = ['Members', 'Add members']
   const [selectedTab, setSelectedTab] = useState(tabs[0])
@@ -113,7 +108,6 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
 
   useEffect(() => {
     setUsers(groupMembers)
-    setMembersCount(groupMembers.length)
   }, [groupMembers])
 
   return (
@@ -125,7 +119,7 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
               <Tab key={`tab_${index}`} onClick={() => setSelectedTab(el)}>
                 <span className={selectedTab == el ? 'active' : 'inactive'}>
                   <>
-                    {el} {el === 'Members' && '(' + groupMembers.length + ')'}
+                    {el} {el === 'Members' && '(' + users.length + ')'}
                   </>
                 </span>
               </Tab>
