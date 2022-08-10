@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { debounce } from 'lodash'
@@ -118,10 +118,8 @@ export const UsersList: React.FC<Props> = ({
   }
 
   const filterMembers = (value: string): groupMember[] => {
-    return users.filter((user: { username: string }) => {
-      if (user.username.toLowerCase().includes(value.toLowerCase())) {
-        return user
-      }
+    return users.filter(({ username }) => {
+      return username.toLowerCase().includes(value.toLowerCase())
     })
   }
 
@@ -143,13 +141,14 @@ export const UsersList: React.FC<Props> = ({
           const membersAddresses = members.map((member: groupMember) =>
             member.safeAddress.toLowerCase(),
           )
-          const filteredUsers = fetchedUsers.filter((user: { safeAddress: string }) => {
-            if (!membersAddresses.includes(user.safeAddress.toLowerCase())) {
-              return user
-            } else {
-              setNoResultsText(`The user ${value} is already a Group member`)
-            }
+          const filteredUsers = fetchedUsers.filter(({ safeAddress }) => {
+            return !membersAddresses.includes(safeAddress.toLowerCase())
           })
+          if (
+            fetchedUsers.some((user) => membersAddresses.includes(user.safeAddress.toLowerCase()))
+          ) {
+            setNoResultsText(`The user ${value} is already a Group member`)
+          }
           return filteredUsers
         }
         setSearchResults(removeGroupMembers(fetchedUsers))
