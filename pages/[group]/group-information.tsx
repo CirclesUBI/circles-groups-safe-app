@@ -52,8 +52,7 @@ const ConfigurateGroup: NextPage = () => {
   const { connected, safe } = useSafeAppsSDK()
   const [currentUser] = useState(safe.safeAddress.toLowerCase())
   const isOwner = group?.owner === currentUser
-  const groupFee = stringToValidFloat(group?.mintFeePerThousand ?? '0') / 10
-  const groupFeeText = groupFee + '%'
+  const groupFeeText = `${group?.mintFeePerThousand ?? 0}%`
   return (
     <>
       <TitleGroup hasBackButton information="Group information" text={group?.name ?? ''} />

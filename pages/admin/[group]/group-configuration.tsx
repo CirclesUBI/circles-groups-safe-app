@@ -16,7 +16,6 @@ import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/But
 import { useGroupCurrencyTokenCall } from '@/src/hooks/contracts/useGroupCurrencyTokenCall'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useChangeOwner } from '@/src/hooks/useChangeOwner'
-import { stringToValidFloat } from '@/src/utils/formatNumber'
 
 const FormWrapper = styled.div`
   display: flex;
@@ -45,8 +44,7 @@ const ConfigurateGroup: NextPage = () => {
   const [owner, setOwner] = useState(group?.owner ?? '')
   const [groupOwner, refetchGroupOwner] = useGroupCurrencyTokenCall(groupAddr, 'owner', [])
   const isOwner = groupOwner && groupOwner.toLowerCase() === currentUser
-  const groupFee = stringToValidFloat(group?.mintFeePerThousand ?? '0') / 10
-  const groupFeeText = groupFee + '%'
+  const groupFeeText = `${group?.mintFeePerThousand ?? 0}%`
 
   const isDisabledSaveButton =
     owner.toLowerCase() === group?.owner || !owner || !isAddress(owner) || !isOwner
