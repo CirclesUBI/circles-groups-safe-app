@@ -2,6 +2,7 @@ import { UserNotification } from '../hooks/subgraph/useNotifications'
 import { circlesToTC } from './circleConversor'
 import formatNumber from './formatNumber'
 import { getItem, hasItem, isAvailable, removeItem, setItem } from './storage'
+import { dateFormat } from '@/src/utils/dateFormat'
 import { NotificationType } from '@/types/subgraph/__generated__/globalTypes'
 
 const LAST_SEEN_NAME = 'lastSeen'
@@ -83,31 +84,10 @@ export const formatActivityMessage = (notification: UserNotification): ActivityM
 
   const date: Date = new Date(notification.time)
 
-  const day = date.getDay()
-  const month = date.toLocaleString('en-US', { month: 'long' })
-  const year = date.getFullYear()
-  const hours = date.getHours()
-  const minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes()
-
-  const isToday = (someDate: Date) => {
-    const today = new Date()
-    if (today.toDateString() === someDate.toDateString()) {
-      return true
-    }
-    return false
-  }
-
-  let activityDate
-  if (isToday(date)) {
-    activityDate = hours + ':' + minutes
-  } else {
-    activityDate = day + ' ' + month + ', ' + year
-  }
-
   return {
     notification,
     message,
-    date: activityDate,
+    date: dateFormat(date),
     groupId,
   }
 }
