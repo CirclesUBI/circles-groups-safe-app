@@ -69,7 +69,6 @@ export const GroupSelector: React.FC<Props> = ({ groups }) => {
     <Dropdown
       dropdownButtonContent={
         <SelectGroup>
-          {/* @TODO: Fix me later. Show selected group */}
           <SelectedGroup>
             {activeCreatedGroup !== -1 ? groups[activeCreatedGroup].name : 'Select group'}
           </SelectedGroup>
@@ -84,16 +83,18 @@ export const GroupSelector: React.FC<Props> = ({ groups }) => {
         <>
           <h3>My created groups</h3>
           <ItemsList>
-            {groups.map(({ name }, index) => (
-              <DropdownItem
-                key={index}
-                onClick={() => {
-                  switchGroup(index)
-                }}
-              >
-                <span>{name}</span>
-              </DropdownItem>
-            ))}
+            {groups
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map(({ name }, index) => (
+                <DropdownItem
+                  key={index}
+                  onClick={() => {
+                    switchGroup(index)
+                  }}
+                >
+                  <span>{name}</span>
+                </DropdownItem>
+              ))}
           </ItemsList>
           <Link href="/admin/create-group" passHref>
             <CreateLink onClick={() => setDropDownIsOpen(false)}>Create a group</CreateLink>

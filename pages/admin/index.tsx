@@ -79,11 +79,13 @@ const HomeAdmin: NextPage = () => {
         <>
           <h4>Select a group</h4>
           <GroupList>
-            {groups.map(({ name }, index) => (
-              <GroupItem key={index} onClick={() => switchCreatedGroup(index)}>
-                <span>{name}</span>
-              </GroupItem>
-            ))}
+            {groups
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map(({ name }, index) => (
+                <GroupItem key={index} onClick={() => switchCreatedGroup(index)}>
+                  <span>{name}</span>
+                </GroupItem>
+              ))}
           </GroupList>
         </>
       ) : (

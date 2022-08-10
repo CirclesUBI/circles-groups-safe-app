@@ -15,7 +15,7 @@ export default function GroupsTabs() {
       {
         title: 'My groups',
         header: 'Groups where i belong',
-        content: <GroupList canMint={connected} groups={groupsByMember} />,
+        content: <GroupList canMint={connected} groups={groupsByMember} sortAlphabetically />,
       },
       {
         title: 'All groups',

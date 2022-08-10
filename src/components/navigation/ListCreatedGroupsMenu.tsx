@@ -41,17 +41,19 @@ export const ListCreatedGroupsMenu: React.FC<Props> = ({
   return (
     <Wrapper as={motion.div} variants={variants}>
       <AnimatePresence>
-        {groupsList.map(({ name }, index) => (
-          <div key={`links_${index}`}>
-            <ItemMainMenu
-              closeMenu={() => {
-                onClose(), onClick(index)
-              }}
-              href="/admin/"
-              title={name}
-            />
-          </div>
-        ))}
+        {groupsList
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map(({ name }, index) => (
+            <div key={`links_${index}`}>
+              <ItemMainMenu
+                closeMenu={() => {
+                  onClose(), onClick(index)
+                }}
+                href="/admin/"
+                title={name}
+              />
+            </div>
+          ))}
       </AnimatePresence>
     </Wrapper>
   )
