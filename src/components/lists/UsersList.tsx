@@ -69,7 +69,7 @@ interface groupMember {
 interface Props {
   action?: ActionAddDelete
   members?: groupMember[]
-  membersList?: boolean
+  isMemberList?: boolean
   users: groupMember[]
   shouldShowAlert?: boolean
   onRemoveUser?: (userAddress: string) => void
@@ -79,7 +79,7 @@ interface Props {
 export const UsersList: React.FC<Props> = ({
   action,
   members = [],
-  membersList = false,
+  isMemberList = false,
   onAddUser,
   onRemoveUser,
   shouldShowAlert = false,
@@ -117,41 +117,45 @@ export const UsersList: React.FC<Props> = ({
     resetNotification()
   }
 
-  const filterMembers = (value: string): groupMember[] => {
+  const filterUsers = (value: string): groupMember[] => {
     return users.filter(({ username }) => {
       return username.toLowerCase().includes(value.toLowerCase())
     })
   }
+
+  const membersAddresses = members.map((member: groupMember) => member.safeAddress.toLowerCase())
 
   const searchUserHandler = debounce(async (value: string) => {
     setQuery(value)
     if (!value) {
       setSearchResults(users)
     } else {
-      const fetchedUsers = membersList
-        ? filterMembers(value)
-        : await getUsersByAddressOrUsername(value)
-      if (fetchedUsers.length === 0) {
-        membersList
-          ? setNoResultsText(`User ${value} is not a Group member`)
-          : setNoResultsText(`We couldn't find a match for ${value}.`)
-        setSearchResults(fetchedUsers)
+      // We are distinging whether the component is used for Group Members
+      // Or we are looking for Users from Circles API to add as new Group Members
+      // Filtering through Group Members will check members passed by property
+      // Filtering through Users will fetch Circles API endpoint within getUsersByAddressOrUsername()
+      if (isMemberList) {
+        const doesExistMember = users.some(({ username }) =>
+          username.toLowerCase().includes(value.toLowerCase()),
+        )
+        if (!doesExistMember) {
+          setNoResultsText(`User ${value} is not a Group member`)
+        }
+        setSearchResults(filterUsers(value))
       } else {
-        const removeGroupMembers = (fetchedUsers: groupMember[]): groupMember[] => {
-          const membersAddresses = members.map((member: groupMember) =>
-            member.safeAddress.toLowerCase(),
-          )
-          const filteredUsers = fetchedUsers.filter(({ safeAddress }) => {
+        const fetchedUsers = await getUsersByAddressOrUsername(value)
+        if (fetchedUsers.length === 0) {
+          setNoResultsText(`We couldn't find a match for ${value}.`)
+          setSearchResults(fetchedUsers)
+        } else {
+          const notMemberUsers = fetchedUsers.filter(({ safeAddress }) => {
             return !membersAddresses.includes(safeAddress.toLowerCase())
           })
-          if (
-            fetchedUsers.some((user) => membersAddresses.includes(user.safeAddress.toLowerCase()))
-          ) {
+          if (notMemberUsers.length === 0) {
             setNoResultsText(`The user ${value} is already a Group member`)
           }
-          return filteredUsers
+          setSearchResults(notMemberUsers)
         }
-        setSearchResults(removeGroupMembers(fetchedUsers))
       }
     }
   }, 500)
@@ -166,7 +170,7 @@ export const UsersList: React.FC<Props> = ({
         />
       )}
       <List>
-        {(!membersList || query || searchResults.length > itemsPerPage) && (
+        {(!isMemberList || query || searchResults.length > itemsPerPage) && (
           <SearchInput onChange={(e) => searchUserHandler(e)} />
         )}
         <ListContainer>
