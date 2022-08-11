@@ -1,8 +1,11 @@
 import gql from 'graphql-tag'
 
 export const GROUP_CURRENCY_TOKEN_QUERY = gql`
-  query GroupCurrencyTokens($where: GroupCurrencyToken_filter) {
-    groupCurrencyTokens(where: $where) {
+  query GroupCurrencyTokens(
+    $where: GroupCurrencyToken_filter
+    $orderBy: GroupCurrencyToken_orderBy
+  ) {
+    groupCurrencyTokens(where: $where, orderBy: $orderBy) {
       id
       name
       symbol

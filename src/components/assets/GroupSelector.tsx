@@ -69,7 +69,6 @@ export const GroupSelector: React.FC<Props> = ({ groups }) => {
     <Dropdown
       dropdownButtonContent={
         <SelectGroup>
-          {/* @TODO: Fix me later. Show selected group */}
           <SelectedGroup>
             {activeCreatedGroup !== -1 ? groups[activeCreatedGroup].name : 'Select group'}
           </SelectedGroup>
