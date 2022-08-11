@@ -3,25 +3,21 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import styled from 'styled-components'
 
-import { BigNumber } from '@ethersproject/bignumber'
+import { isAddress } from '@ethersproject/address'
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
-import {
-  BaseTransaction,
-  SendTransactionRequestParams,
-  SendTransactionsParams,
-  SendTransactionsResponse,
-} from '@gnosis.pm/safe-apps-sdk'
-import Wei from '@synthetixio/wei'
+import { SendTransactionRequestParams } from '@gnosis.pm/safe-apps-sdk'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { Input } from '@/src/components/assets/Input'
 import { Title } from '@/src/components/assets/Title'
 import { Columns } from '@/src/components/layout/Columns'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
-import { useCreateGroupTx } from '@/src/hooks/useCreateGroup'
+import { genericSuspense } from '@/src/components/safeSuspense'
 import useSafeTransaction from '@/src/hooks/useSafeTransaction'
 import { useWeb3Connected } from '@/src/providers/web3ConnectionProvider'
 import { addresses } from '@/src/utils/addresses'
 import encodeGroupCurrencyTokenFactoryTransaction from '@/src/utils/contracts/encodeGroupCurrencyTokenFactoryTransaction'
+import { fixedNumber } from '@/src/utils/formatNumber'
 
 const FormWrapper = styled.div`
   display: flex;
@@ -33,8 +29,28 @@ const FormWrapper = styled.div`
 const ActionWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-top: ${({ theme }) => theme.general.space * 4}px;
+  margin-top: ${({ theme }) => theme.general.space * 3}px;
 `
+
+const InformationText = styled(motion.small)`
+  font-size: 1.3rem;
+  display: block;
+  text-align: center;
+  margin-top: ${({ theme }) => theme.general.space * 2}px;
+  position: relative;
+  &:before {
+    content: '';
+    height: 1px;
+    max-width: 150px;
+    display: block;
+    margin: 0 auto ${({ theme }) => theme.general.space * 3}px;
+    background-color: ${({ theme }) => theme.colors.primary};
+    opacity: 0.2;
+  }
+`
+
+// @TODO Max available fee amount is 25.5. See Group Contract: uint8 _mintFeePerThousand (0..255)
+const GROUP_MAX_FEE = 25.5
 
 const CreateGroup: NextPage = () => {
   const { safe, sdk } = useSafeAppsSDK()
@@ -51,7 +67,11 @@ const CreateGroup: NextPage = () => {
   const router = useRouter()
 
   const onSuccess = () => {
+    setLoading(false)
     router.push('/')
+  }
+  const onError = () => {
+    setLoading(false)
   }
   const createGroup = async () => {
     setLoading(true)
@@ -59,6 +79,7 @@ const CreateGroup: NextPage = () => {
     const createGroupOptions: SendTransactionRequestParams = {
       safeTxGas: 0,
     }
+    const feeAmount = String(parseFloat(fee || '0') * 10)
     const createGroupTx = await encodeGroupCurrencyTokenFactoryTransaction(
       web3Provider,
       'createGroupCurrencyToken',
@@ -66,15 +87,32 @@ const CreateGroup: NextPage = () => {
         addresses.gnosis.HUB.address, // @TODO Should work for other networks, not just gnosis
         treasury,
         safe.safeAddress,
-        BigNumber.from(fee || '0'),
+        feeAmount,
         groupName,
         groupSymbol,
       ],
     )
-    await execute({ txs: [createGroupTx], params: createGroupOptions }, onSuccess)
-    console.log('post encoding')
-    setLoading(false)
+    await execute({ txs: [createGroupTx], params: createGroupOptions }, onSuccess, onError)
   }
+
+  const _isValidFee = (_fee: number) => _fee >= 0 && _fee <= GROUP_MAX_FEE
+
+  const setValidFeeAmount = (feeAmount: string) => {
+    if (feeAmount) {
+      const newFee = parseFloat(feeAmount)
+      if (_isValidFee(newFee)) {
+        const fixedFee = fixedNumber(newFee, 1)
+        setFee(String(fixedFee))
+      }
+    } else {
+      setFee('')
+    }
+  }
+
+  const isValidTreasury = treasury && isAddress(treasury)
+  const isValidFee = _isValidFee(parseFloat(fee))
+  const isCompleted = groupName && groupSymbol && treasury && fee
+  const isDisabled = !groupName || !groupSymbol || !isValidTreasury || !isValidFee || loading
 
   return (
     <>
@@ -87,7 +125,7 @@ const CreateGroup: NextPage = () => {
             maxLength={30}
             minLength={4}
             name="fullname"
-            placeholder="Test"
+            placeholder="Group Name..."
             setValue={setGroupName}
             type="text"
             value={groupName}
@@ -95,39 +133,55 @@ const CreateGroup: NextPage = () => {
         </Columns>
         <Columns columnsNumber={2}>
           <Input
-            information="Group token Symbol"
+            information="Group Token Symbol"
             label="Symbol"
             mandatory
+            maxLength={10}
+            placeholder="CRC..."
             setValue={setGroupSymbol}
             type="text"
             value={groupSymbol}
           />
           <Input
-            information="Cost of minting tokens to the group currency."
-            label="Fee"
+            information="Cost of minting tokens to the group currency. Max available is 25.5"
+            label="Fee (%)"
             mandatory
-            setValue={setFee}
+            setValue={setValidFeeAmount}
             type="number"
             value={fee}
           />
         </Columns>
         <Columns columnsNumber={1}>
           <Input
+            addressField
             information="Account (Safe address) where individual circles are stored and saved."
             label="Treasury"
             mandatory
+            placeholder="0x..."
             setValue={setTreasury}
             type="text"
             value={treasury}
           />
         </Columns>
         <ActionWrapper>
-          <ButtonSecondary disabled={loading} onClick={createGroup}>
+          <ButtonSecondary disabled={isDisabled} onClick={createGroup}>
             Create Group
           </ButtonSecondary>
         </ActionWrapper>
+        <AnimatePresence exitBeforeEnter>
+          {!isCompleted && (
+            <InformationText
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -10, opacity: 0 }}
+              initial={{ y: -20, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              *All required fields must be completed to create a new group
+            </InformationText>
+          )}
+        </AnimatePresence>
       </FormWrapper>
     </>
   )
 }
-export default CreateGroup
+export default genericSuspense(CreateGroup)

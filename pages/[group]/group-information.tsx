@@ -1,7 +1,10 @@
 import type { NextPage } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import styled from 'styled-components'
+
+import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 
 import { Crc } from '@/src/components/assets/Crc'
 import { InformationPod } from '@/src/components/assets/InformationPod'
@@ -9,8 +12,10 @@ import { TitleGroup } from '@/src/components/assets/TitleGroup'
 import { Columns } from '@/src/components/layout/Columns'
 import { UsersList } from '@/src/components/lists/UsersList'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
+import { genericSuspense } from '@/src/components/safeSuspense'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
+import { stringToValidFloat } from '@/src/utils/formatNumber'
 
 const Wrapper = styled.div`
   display: flex;
@@ -29,6 +34,9 @@ const ActionWrapper = styled.div`
 const ListWrapper = styled.div`
   margin-top: ${({ theme }) => theme.general.space * 2}px;
 `
+const UserListWrapper = styled.div`
+  margin: 0 ${({ theme }) => theme.general.space * -2}px;
+`
 
 const H2 = styled.h2`
   font-size: 2.8rem;
@@ -40,17 +48,29 @@ const ConfigurateGroup: NextPage = () => {
   const groupAddr = String(router.query?.group)
   const { groupMembers } = useGroupMembersByGroupId(groupAddr)
   const { group } = useGroupCurrencyTokensById(groupAddr)
-  // const { owner } = useGroupOwner(group?.owner) // TODO: render username from CirclesAPI User
-  // const { groupBalance } = useGroupBalance(groupAddr) // TODO: hookup Group Balance with CRC convertion
+
+  const { connected, safe } = useSafeAppsSDK()
+  const [currentUser] = useState(safe.safeAddress.toLowerCase())
+  const isOwner = group?.owner === currentUser
+  const groupFeeText = `${group?.mintFeePerThousand ?? 0}%`
   return (
     <>
       <TitleGroup hasBackButton information="Group information" text={group?.name ?? ''} />
       <Wrapper>
         <Columns columnsNumber={1}>
+          <InformationPod bgColor="lightest" label="Token Address" text={group?.id ?? ''} />
+        </Columns>
+        <Columns columnsNumber={1}>
           <InformationPod bgColor="lightest" label="Symbol" text={group?.symbol ?? ''} />
         </Columns>
         <Columns columnsNumber={1}>
-          <InformationPod bgColor="lightest" label="Owner" text={group?.owner ?? ''} />
+          <InformationPod
+            bgColor="lightest"
+            groupId={groupAddr}
+            label="Owner"
+            owner={isOwner}
+            text={group?.owner ?? ''}
+          />
         </Columns>
         <Columns columnsNumber={1}>
           <InformationPod bgColor="lightest" label="Treasury" text={group?.treasury ?? ''} />
@@ -59,24 +79,30 @@ const ConfigurateGroup: NextPage = () => {
           <InformationPod bgColor="lightest" label="Hub" text={group?.hub ?? ''} />
         </Columns>
         <Columns columnsNumber={2}>
-          <InformationPod bgColor="light" label="Fee" text={group?.mintFeePerThousand ?? ''} />
-          <InformationPod bgColor="light" icon={<Crc />} label="Treasure" text="7.268" />
+          <InformationPod bgColor="light" label="Fee" text={groupFeeText ?? ''} />
+          <InformationPod
+            bgColor="light"
+            icon={<Crc />}
+            label="Treasure"
+            text={group?.minted ?? '0'}
+          />
         </Columns>
 
         <Columns columnsNumber={1}>
           <ListWrapper>
             <H2>Group members</H2>
-            <UsersList users={groupMembers} />
+            <UserListWrapper>
+              <UsersList isMemberList users={groupMembers} />
+            </UserListWrapper>
           </ListWrapper>
         </Columns>
-
-        <ActionWrapper>
+        <ActionWrapper className={!connected ? 'not-allowed' : ''}>
           <Link href={`/${groupAddr}/mint-tokens`} passHref>
-            <LinkButton>Mint Tokens</LinkButton>
+            <LinkButton className={!connected ? 'disabled' : ''}>Mint Tokens</LinkButton>
           </Link>
         </ActionWrapper>
       </Wrapper>
     </>
   )
 }
-export default ConfigurateGroup
+export default genericSuspense(ConfigurateGroup)

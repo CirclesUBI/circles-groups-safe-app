@@ -4,7 +4,7 @@ import styled from 'styled-components'
 const Wrapper = styled.div<{ typeActivity: string }>`
   align-items: center;
   background-color: ${(props) =>
-    props.typeActivity == 'information'
+    props.typeActivity === 'information'
       ? ({ theme }) => theme.colors.tertiary
       : ({ theme }) => theme.colors.fourth};
   border-radius: 50%;
@@ -22,7 +22,7 @@ const Wrapper = styled.div<{ typeActivity: string }>`
 
 interface Props {
   icon: ReactNode
-  type?: string
+  type?: 'information'
 }
 
 export const ActivityType: React.FC<Props> = ({ icon, type = '' }) => {

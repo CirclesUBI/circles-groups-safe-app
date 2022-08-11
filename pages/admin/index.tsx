@@ -1,4 +1,5 @@
 import type { NextPage } from 'next'
+import styled from 'styled-components'
 
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 
@@ -6,22 +7,86 @@ import { ManageGroupMembers } from '@/src/components/assets/ManageGroupMembers'
 import { NoGroupCreated } from '@/src/components/assets/NoGroupCreated'
 import { Title } from '@/src/components/assets/Title'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
+import { genericSuspense } from '@/src/components/safeSuspense'
 import { useGroupCurrencyTokensByOwner } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
+import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
+import { useGeneral } from '@/src/providers/generalProvider'
+
+const GroupList = styled.ul`
+  margin: ${({ theme }) => theme.general.space * 4}px 0 ${({ theme }) => theme.general.space}px;
+  padding: 0;
+`
+
+const GroupItem = styled.li`
+  align-items: center;
+  background-color: ${({ theme }) => theme.dropdown.item.backgroundColor};
+  color: ${({ theme }) => theme.colors.primary};
+  cursor: pointer;
+  display: flex;
+  font-size: 1.8rem;
+  font-weight: 400;
+  justify-content: space-between;
+  padding: ${({ theme }) => theme.general.space * 3}px 0;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+  user-select: none;
+  &:after {
+    content: '';
+    width: 6px;
+    height: 10px;
+    background-image: url(/images/chevron-right.svg);
+    background-repeat: no-repeat;
+    margin-right: 8px;
+    transition: all 0.3s ease-in-out;
+    flex-shrink: 0;
+  }
+  &:not(:last-child) {
+    border-bottom: 1px solid ${({ theme }) => theme.dropdown.item.borderColor};
+  }
+  &:hover {
+    color: ${({ theme }) => theme.colors.fourth};
+    &:after {
+      margin-right: 0;
+    }
+  }
+`
 
 const HomeAdmin: NextPage = () => {
   const { safe } = useSafeAppsSDK()
   const { groups } = useGroupCurrencyTokensByOwner(safe.safeAddress)
-  // @TODO we will select the first group in the list
-  const group = groups?.[0]
+  const { activeCreatedGroup, switchCreatedGroup } = useGeneral()
+  const group = groups?.[activeCreatedGroup]
   const groupId = group?.id
+
+  const { sdk } = useSafeAppsSDK()
+  const { circles } = useCirclesBalance(safe.safeAddress, sdk)
   // @TODO it might not be necessary if we fetch the members info in the group hook
   const { groupMembers } = useGroupMembersByGroupId(groupId)
-  const groupMembersCount = groupMembers?.length ?? 0
 
   return (
     <>
-      {!groupId ? (
+      {groupId && activeCreatedGroup >= 0 ? (
+        <>
+          <TitleGroup
+            amountNumber={circles}
+            buttonHref={`/admin/${groupId}/group-configuration`}
+            text={group.name}
+          />
+          <ManageGroupMembers groupAddress={groupId} groupMembers={groupMembers} />
+        </>
+      ) : activeCreatedGroup === -1 && groups.length > 0 ? (
+        <>
+          <h4>Select a group</h4>
+          <GroupList>
+            {groups.map(({ name }, index) => (
+              <GroupItem key={index} onClick={() => switchCreatedGroup(index)}>
+                <span>{name}</span>
+              </GroupItem>
+            ))}
+          </GroupList>
+        </>
+      ) : (
         <>
           <Title
             buttonHref="/admin/create-group"
@@ -35,21 +100,8 @@ const HomeAdmin: NextPage = () => {
             text="You don't have any group created yet."
           />
         </>
-      ) : (
-        <>
-          <TitleGroup
-            amountNumber={7.268}
-            buttonHref="/admin/group-configuration"
-            text="Bootnode"
-          />
-          <ManageGroupMembers
-            groupAddress={groupId}
-            groupMembers={groupMembers}
-            groupMembersCount={groupMembersCount}
-          />
-        </>
       )}
     </>
   )
 }
-export default HomeAdmin
+export default genericSuspense(HomeAdmin)

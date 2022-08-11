@@ -15,13 +15,15 @@ import { MenuIcon } from '@/src/components/assets/MenuIcon'
 import { User } from '@/src/components/assets/User'
 import { MainMenu } from '@/src/components/navigation/MainMenu'
 import { ButtonPrimary, LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
-import { activity } from '@/src/constants/activity'
 import { chainsConfig } from '@/src/constants/chains'
 import { ZERO_BN } from '@/src/constants/misc'
-import { useGroupsByMember } from '@/src/hooks/subgraph/useGroupsByMember'
+import { useGroupCurrencyTokensByOwner } from '@/src/hooks/subgraph/useGroupCurrencyToken'
+import { useNotificationsByUser } from '@/src/hooks/subgraph/useNotifications'
 import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
 import { useUserSafe } from '@/src/hooks/useUserSafe'
+import { useGeneral } from '@/src/providers/generalProvider'
 import { useWeb3Connection } from '@/src/providers/web3ConnectionProvider'
+import { getLastSeen, getUnseenNotifications } from '@/src/utils/notifications'
 import { truncateStringInTheMiddle } from '@/src/utils/tools'
 
 const vbAddress = '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B'
@@ -98,6 +100,12 @@ const LinkGroup = styled(LinkButton)`
   background-color: ${({ theme }) => theme.colors.fourth};
   border-color: ${({ theme }) => theme.colors.fourth};
   padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
+  max-width: 170px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: block;
 `
 
 const UserWrapper = styled.div`
@@ -135,12 +143,16 @@ export const Header: React.FC = (props) => {
   const [isOpen, toggleOpen] = useState(false)
 
   const { safe, sdk } = useSafeAppsSDK()
-  const { circles } = useCirclesBalance(sdk)
+  const { circles } = useCirclesBalance(safe.safeAddress, sdk)
 
   const { user } = useUserSafe(safe.safeAddress)
 
-  // @TODO: Reeplace with list of user created groups
-  const { groupsByMember } = useGroupsByMember(safe.safeAddress)
+  const { groups: myCreatedGroups } = useGroupCurrencyTokensByOwner(safe.safeAddress)
+
+  const { activeCreatedGroup } = useGeneral()
+
+  const { notifications } = useNotificationsByUser(safe.safeAddress)
+  const unseenNotifications = getUnseenNotifications(notifications)
 
   useEffect(() => {
     //Fix me later
@@ -176,7 +188,6 @@ export const Header: React.FC = (props) => {
   }, [isAppConnected, isWalletConnected, readOnlyAppProvider, web3Provider, address])
 
   const [currentChain, setCurrentChain] = useState(chainOptions[0].name)
-
   return (
     <>
       <Wrapper as="header" {...props}>
@@ -207,13 +218,13 @@ export const Header: React.FC = (props) => {
                 <UserWrapper>
                   <User headerStyle userTokens={circles} username={user?.username} />
                 </UserWrapper>
-                {groupsByMember.length > 1 && <GroupSelector groups={groupsByMember} />}
-                {groupsByMember.length == 1 && (
+                {myCreatedGroups.length > 1 && <GroupSelector groups={myCreatedGroups} />}
+                {myCreatedGroups.length === 1 && (
                   <Link href="/admin" passHref>
-                    <LinkGroup>{groupsByMember[0].name}</LinkGroup>
+                    <LinkGroup>{myCreatedGroups[activeCreatedGroup].name}</LinkGroup>
                   </Link>
                 )}
-                {groupsByMember.length == 0 && (
+                {myCreatedGroups.length === 0 && (
                   <Link href="/admin/create-group" passHref>
                     <LinkGroup>Create group</LinkGroup>
                   </Link>
@@ -226,7 +237,7 @@ export const Header: React.FC = (props) => {
         </WrapperBox>
         <Link href="/activity-log" passHref>
           <ButtonLink>
-            <Alert alerts={activity.length} />
+            <Alert alerts={unseenNotifications.length} />
           </ButtonLink>
         </Link>
       </Wrapper>

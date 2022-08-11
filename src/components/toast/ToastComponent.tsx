@@ -19,11 +19,54 @@ const Wrapper = styled.div`
   box-shadow: ${({ theme: { toast } }) => toast.boxShadow};
   position: relative;
   z-index: 1000;
+  a {
+    font-size: 1.3rem;
+    color: ${({ theme: { colors } }) => colors.white};
+    &:hover {
+      color: ${({ theme: { colors } }) => colors.secondary};
+    }
+  }
   &.failed {
     background-color: ${({ theme }) => theme.colors.error};
+    a {
+      &:hover {
+        color: ${({ theme: { colors } }) => colors.black};
+      }
+    }
   }
   &.success {
     background-color: ${({ theme }) => theme.colors.success};
+    a {
+      &:hover {
+        color: ${({ theme: { colors } }) => colors.black};
+      }
+    }
+  }
+  &.enter {
+    animation: 0.35s cubic-bezier(0.21, 1.02, 0.73, 1) 0s 1 normal forwards running in;
+  }
+  &.leave {
+    animation: 0.35s cubic-bezier(0.21, 1.02, 0.73, 1) 0s 1 normal forwards running out;
+  }
+  @keyframes in {
+    0% {
+      transform: translate3d(0, 200%, 0) scale(0.6);
+      opacity: 0.5;
+    }
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+      opacity: 1;
+    }
+  }
+  @keyframes out {
+    0% {
+      transform: translate3d(0, 0, -1px) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translate3d(0, 150%, -1px) scale(0.6);
+      opacity: 0;
+    }
   }
 `
 
@@ -67,11 +110,6 @@ const Title = styled.h4`
   color: ${({ theme }) => theme.colors.white};
 `
 
-const Link = styled.a`
-  font-size: 1.2rem;
-  color: ${({ theme: { colors } }) => colors.textColorLight};
-`
-
 const Text = styled.p`
   font-size: 1.3rem;
   font-weight: 400;
@@ -100,20 +138,20 @@ export const ToastComponent = ({
   title: string
   toastStyle: string
 }) => (
-  <Wrapper className={toastStyle}>
+  <Wrapper className={`${toastStyle} ${t.visible ? ' enter ' : ' leave '}`}>
     <IconContainer>{icon}</IconContainer>
     <InnerWrapper>
       <TextContainer>
         <Title>{title}</Title>
         {link && (
-          <Link href={link.url} rel="noreferrer" target="_blank">
+          <a href={link.url} rel="noreferrer" target="_blank">
             {link.text}
-          </Link>
+          </a>
         )}
         {message && <Text>{message}</Text>}
       </TextContainer>
     </InnerWrapper>
-    <ButtonClose onClick={() => toast.remove(t.id)}>
+    <ButtonClose onClick={() => toast.dismiss(t.id)}>
       <Close />
     </ButtonClose>
   </Wrapper>
