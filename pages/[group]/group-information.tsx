@@ -15,6 +15,7 @@ import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
+import { stringToValidFloat } from '@/src/utils/formatNumber'
 
 const Wrapper = styled.div`
   display: flex;
@@ -51,6 +52,7 @@ const ConfigurateGroup: NextPage = () => {
   const { connected, safe } = useSafeAppsSDK()
   const [currentUser] = useState(safe.safeAddress.toLowerCase())
   const isOwner = group?.owner === currentUser
+  const groupFeeText = `${group?.mintFeePerThousand ?? 0}%`
   return (
     <>
       <TitleGroup hasBackButton information="Group information" text={group?.name ?? ''} />
@@ -77,7 +79,7 @@ const ConfigurateGroup: NextPage = () => {
           <InformationPod bgColor="lightest" label="Hub" text={group?.hub ?? ''} />
         </Columns>
         <Columns columnsNumber={2}>
-          <InformationPod bgColor="light" label="Fee" text={group?.mintFeePerThousand ?? ''} />
+          <InformationPod bgColor="light" label="Fee" text={groupFeeText ?? ''} />
           <InformationPod
             bgColor="light"
             icon={<Crc />}
@@ -90,7 +92,7 @@ const ConfigurateGroup: NextPage = () => {
           <ListWrapper>
             <H2>Group members</H2>
             <UserListWrapper>
-              <UsersList users={groupMembers} />
+              <UsersList isMemberList users={groupMembers} />
             </UserListWrapper>
           </ListWrapper>
         </Columns>
