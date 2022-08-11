@@ -159,6 +159,11 @@ export const UsersList: React.FC<Props> = ({
       }
     }
   }, 500)
+
+  useEffect(() => {
+    setSearchResults(users)
+  }, [users])
+
   return (
     <>
       {shouldShowAlert && action && (
