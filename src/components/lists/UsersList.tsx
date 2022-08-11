@@ -12,7 +12,7 @@ import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
 import { NoResultsText } from '@/src/components/assets/NoResultsText'
 import { SearchInput } from '@/src/components/assets/SearchInput'
-import { getUsersByAddressOrUsername } from '@/src/utils/circlesGardenAPI'
+import { CirclesGardenUser, getUsersByAddressOrUsername } from '@/src/utils/circlesGardenAPI'
 
 const List = styled.div`
   display: flex;
@@ -59,39 +59,28 @@ const GroupActions = styled.div`
   }
 `
 
-interface groupMember {
-  id: number
-  username: string
-  safeAddress: string
-  avatarUrl?: string
-}
-
 interface Props {
   action?: ActionAddDelete
-  members?: groupMember[]
-  isMemberList?: boolean
-  users: groupMember[]
+  users: CirclesGardenUser[]
   shouldShowAlert?: boolean
   onRemoveUser?: (userAddress: string) => void
   onAddUser?: (userAddress: string) => void
+  onSearch?: (query: string) => void
 }
 
 export const UsersList: React.FC<Props> = ({
   action,
-  members = [],
-  isMemberList = false,
   onAddUser,
   onRemoveUser,
+  onSearch,
   shouldShowAlert = false,
   users,
 }) => {
-  const [searchResults, setSearchResults] = useState(users)
-  const [query, setQuery] = useState('')
   const [noResultsText, setNoResultsText] = useState('There are no members on this group.')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
 
-  const totalPages = Math.ceil(searchResults.length / itemsPerPage)
+  const totalPages = Math.ceil(users.length / itemsPerPage)
 
   const [notification, setNotification] = useState<AddRemoveUserNotification>({
     opened: false,
@@ -117,52 +106,13 @@ export const UsersList: React.FC<Props> = ({
     resetNotification()
   }
 
-  const filterUsers = (value: string): groupMember[] => {
-    return users.filter(({ username }) => {
-      return username.toLowerCase().includes(value.toLowerCase())
-    })
-  }
-
-  const membersAddresses = members.map((member: groupMember) => member.safeAddress.toLowerCase())
-
   const searchUserHandler = debounce(async (value: string) => {
-    setQuery(value)
-    if (!value) {
-      setSearchResults(users)
-    } else {
-      // We are distinging whether the component is used for Group Members
-      // Or we are looking for Users from Circles API to add as new Group Members
-      // Filtering through Group Members will check members passed by property
-      // Filtering through Users will fetch Circles API endpoint within getUsersByAddressOrUsername()
-      if (isMemberList) {
-        const doesExistMember = users.some(({ username }) =>
-          username.toLowerCase().includes(value.toLowerCase()),
-        )
-        if (!doesExistMember) {
-          setNoResultsText(`User ${value} is not a Group member`)
-        }
-        setSearchResults(filterUsers(value))
-      } else {
-        const fetchedUsers = await getUsersByAddressOrUsername(value)
-        if (fetchedUsers.length === 0) {
-          setNoResultsText(`We couldn't find a match for ${value}.`)
-          setSearchResults(fetchedUsers)
-        } else {
-          const notMemberUsers = fetchedUsers.filter(({ safeAddress }) => {
-            return !membersAddresses.includes(safeAddress.toLowerCase())
-          })
-          if (notMemberUsers.length === 0) {
-            setNoResultsText(`The user ${value} is already a Group member`)
-          }
-          setSearchResults(notMemberUsers)
-        }
-      }
+    if (onSearch) {
+      onSearch(value)
     }
   }, 500)
 
-  useEffect(() => {
-    setSearchResults(users)
-  }, [users])
+  console.log({ users })
 
   return (
     <>
@@ -175,12 +125,10 @@ export const UsersList: React.FC<Props> = ({
         />
       )}
       <List>
-        {(!isMemberList || query || searchResults.length > itemsPerPage) && (
-          <SearchInput onChange={(e) => searchUserHandler(e)} />
-        )}
+        {onSearch && <SearchInput onChange={(e) => searchUserHandler(e)} />}
         <ListContainer>
-          {searchResults.length > 0 ? (
-            searchResults
+          {users.length > 0 ? (
+            users
               .slice(0, page * itemsPerPage)
               .map(({ avatarUrl, id, safeAddress, username }, index) => (
                 <ListItem custom={index} key={`user_${id}`}>
@@ -217,7 +165,7 @@ export const UsersList: React.FC<Props> = ({
             </>
           )}
         </ListContainer>
-        {page < totalPages && searchResults.length > itemsPerPage && (
+        {page < totalPages && users.length > itemsPerPage && (
           <>
             <LoadMoreButton moreResults={() => setPage((prev) => prev + 1)} />
           </>

@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
 const Search = styled.div`
@@ -36,7 +35,6 @@ interface Props {
 }
 
 export const SearchInput: React.FC<Props> = ({ onChange }) => {
-  const router = useRouter()
   return (
     <Search>
       <input
