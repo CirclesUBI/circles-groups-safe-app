@@ -60,9 +60,7 @@ const HomeAdmin: NextPage = () => {
   const groupId = group?.id
 
   const { sdk } = useSafeAppsSDK()
-  const { circles } = useCirclesBalance(sdk)
-  // @TODO it might not be necessary if we fetch the members info in the group hook
-  const { groupMembers } = useGroupMembersByGroupId(groupId)
+  const { circles } = useCirclesBalance(safe.safeAddress, sdk)
 
   return (
     <>
@@ -73,7 +71,7 @@ const HomeAdmin: NextPage = () => {
             buttonHref={`/admin/${groupId}/group-configuration`}
             text={group.name}
           />
-          <ManageGroupMembers groupAddress={groupId} groupMembers={groupMembers} />
+          <ManageGroupMembers groupAddress={groupId} />
         </>
       ) : activeCreatedGroup === -1 && groups.length > 0 ? (
         <>

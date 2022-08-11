@@ -70,7 +70,7 @@ export const MainMenu: React.FC<Props> = ({ onClose }) => {
   const { switchCreatedGroup, switchTab } = useGeneral()
 
   const { connected, safe, sdk } = useSafeAppsSDK()
-  const { circles } = useCirclesBalance(sdk)
+  const { circles } = useCirclesBalance(safe.safeAddress, sdk)
 
   const { user } = useUserSafe(safe.safeAddress)
 

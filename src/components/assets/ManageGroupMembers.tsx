@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 import { UsersList } from '@/src/components/lists/UsersList'
 import { useGroupCurrencyTokenTx } from '@/src/hooks/contracts/useGroupCurrencyTokenTx'
+import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
 import { useAllUsers } from '@/src/hooks/subgraph/useUsers'
 import { useWeb3Connected } from '@/src/providers/web3ConnectionProvider'
 import hubCall from '@/src/utils/contracts/hubCall'
@@ -40,32 +41,24 @@ const Tab = styled.button`
 const Section = styled.section`
   margin-top: ${({ theme }) => theme.general.space * 6}px;
 `
-interface groupMember {
-  id: number
-  username: string
-  safeAddress: string
-  avatarUrl?: string
-}
-
 interface Props {
   groupAddress: string
-  groupMembers: groupMember[]
 }
 
-export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers }) => {
+export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
   // @TODO we might need to delete this
   const { isAppConnected, web3Provider } = useWeb3Connected()
   const { circlesUsers } = useAllUsers()
+  // @TODO as we are using groupMembers in this component we can get rid of the users array!
+  const { groupMembers } = useGroupMembersByGroupId(groupAddress)
 
   const tabs = ['Members', 'Add members']
   const [selectedTab, setSelectedTab] = useState(tabs[0])
   // @TODO: cached users to fasten the add/remove of users
   const [users, setUsers] = useState(groupMembers)
-  // @TODO: filter already groupMembers from allUsers
   const [allUsers, setAllUsers] = useState(circlesUsers)
   const { execute: execRemove } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
   const { execute: execAdd } = useGroupCurrencyTokenTx(groupAddress, 'addMemberToken')
-  const [membersCount, setMembersCount] = useState(groupMembers.length)
 
   const getUserToken = async (userAddress: string) => {
     if (!isAppConnected) {
@@ -87,7 +80,6 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
       const onSuccess = () => {
         const newUsers = users.filter((user) => user.safeAddress !== userAddress)
         setUsers(newUsers)
-        setMembersCount(membersCount - 1)
       }
       await execRemove([userToken], undefined, onSuccess)
     } catch (err) {
@@ -99,11 +91,16 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
     try {
       const userToken = await getUserToken(userAddress)
       const onSuccess = () => {
-        const addedUser = allUsers.filter((user) => user.safeAddress == userAddress)
-        setUsers((users) => [...users, addedUser[0]])
-        const nonMemberUsers = allUsers.filter((user) => user.safeAddress !== userAddress)
+        const addedUser = allUsers.find(
+          (user) => user.safeAddress.toLowerCase() === userAddress.toLowerCase(),
+        )
+        if (addedUser) {
+          setUsers([...users, addedUser])
+        }
+        const nonMemberUsers = allUsers.filter(
+          (user) => user.safeAddress.toLowerCase() !== userAddress.toLowerCase(),
+        )
         setAllUsers(nonMemberUsers)
-        setMembersCount(membersCount + 1)
       }
       await execAdd([userToken], undefined, onSuccess)
     } catch (err) {
@@ -113,7 +110,6 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
 
   useEffect(() => {
     setUsers(groupMembers)
-    setMembersCount(groupMembers.length)
   }, [groupMembers])
 
   return (
@@ -125,7 +121,7 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
               <Tab key={`tab_${index}`} onClick={() => setSelectedTab(el)}>
                 <span className={selectedTab == el ? 'active' : 'inactive'}>
                   <>
-                    {el} {el === 'Members' && '(' + groupMembers.length + ')'}
+                    {el} {el === 'Members' && '(' + users.length + ')'}
                   </>
                 </span>
               </Tab>
@@ -143,13 +139,19 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
             {selectedTab === 'Members' ? (
               <UsersList
                 action={'delete'}
-                membersList
+                isMemberList
                 onRemoveUser={removeUser}
                 shouldShowAlert
                 users={users}
               />
             ) : (
-              <UsersList action={'add'} onAddUser={addUser} shouldShowAlert users={allUsers} />
+              <UsersList
+                action={'add'}
+                members={users}
+                onAddUser={addUser}
+                shouldShowAlert
+                users={allUsers}
+              />
             )}
           </motion.div>
         </AnimatePresence>
