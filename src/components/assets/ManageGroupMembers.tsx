@@ -59,7 +59,6 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
   const [allUsers, setAllUsers] = useState(circlesUsers)
   const { execute: execRemove } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
   const { execute: execAdd } = useGroupCurrencyTokenTx(groupAddress, 'addMemberToken')
-  const [membersCount, setMembersCount] = useState(groupMembers.length)
 
   const getUserToken = async (userAddress: string) => {
     if (!isAppConnected) {
@@ -81,7 +80,6 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
       const onSuccess = () => {
         const newUsers = users.filter((user) => user.safeAddress !== userAddress)
         setUsers(newUsers)
-        setMembersCount(membersCount - 1)
       }
       await execRemove([userToken], undefined, onSuccess)
     } catch (err) {
@@ -103,7 +101,6 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
           (user) => user.safeAddress.toLowerCase() !== userAddress.toLowerCase(),
         )
         setAllUsers(nonMemberUsers)
-        setMembersCount(membersCount + 1)
       }
       await execAdd([userToken], undefined, onSuccess)
     } catch (err) {
