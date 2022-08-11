@@ -2,7 +2,7 @@ import { UserNotification } from '../hooks/subgraph/useNotifications'
 import { circlesToTC } from './circleConversor'
 import formatNumber from './formatNumber'
 import { getItem, hasItem, isAvailable, removeItem, setItem } from './storage'
-import { dateFormat } from '@/src/utils/dateFormat'
+import { dateFormat } from '@/src/utils/date'
 import { NotificationType } from '@/types/subgraph/__generated__/globalTypes'
 
 const LAST_SEEN_NAME = 'lastSeen'
