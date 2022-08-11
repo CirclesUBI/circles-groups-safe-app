@@ -118,8 +118,11 @@ export const UsersList: React.FC<Props> = ({
   }
 
   const filterUsers = (value: string): groupMember[] => {
-    return users.filter(({ username }) => {
-      return username.toLowerCase().includes(value.toLowerCase())
+    return users.filter(({ safeAddress, username }) => {
+      return (
+        username.toLowerCase().includes(value.toLowerCase()) ||
+        safeAddress.toLowerCase().includes(value.toLowerCase())
+      )
     })
   }
 
