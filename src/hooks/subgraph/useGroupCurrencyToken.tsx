@@ -9,6 +9,7 @@ import {
   GroupCurrencyTokensVariables,
   GroupCurrencyTokens_groupCurrencyTokens,
 } from '@/types/subgraph/__generated__/GroupCurrencyTokens'
+import { GroupCurrencyToken_orderBy } from '@/types/subgraph/__generated__/globalTypes'
 
 export type GroupCurrencyToken = {
   id: string
@@ -38,11 +39,14 @@ const transformToGroupCurrencyToken = (
   }
 }
 
-export const fetchGroupCurrencyTokens = async (where?: GroupCurrencyTokensVariables) => {
+export const fetchGroupCurrencyTokens = async (variables?: GroupCurrencyTokensVariables) => {
   const { groupCurrencyTokens } = await graphqlFetcher<
     GroupCurrencyTokens,
     GroupCurrencyTokensVariables
-  >(GROUP_CURRENCY_TOKEN_QUERY, where)
+  >(GROUP_CURRENCY_TOKEN_QUERY, {
+    where: variables?.where,
+    orderBy: GroupCurrencyToken_orderBy.name,
+  })
   return groupCurrencyTokens.map(transformToGroupCurrencyToken)
 }
 
