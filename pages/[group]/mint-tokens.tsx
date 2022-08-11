@@ -14,6 +14,7 @@ import { Title } from '@/src/components/assets/Title'
 import { TransferUserInformation } from '@/src/components/assets/TransferUserInformation'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { genericSuspense } from '@/src/components/safeSuspense'
+import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
 import { useGroupMintToken } from '@/src/hooks/useGroupMintToken'
 import { useUserSafe } from '@/src/hooks/useUserSafe'
@@ -71,7 +72,7 @@ const CreateGroup: NextPage = () => {
   const isZero = stringToValidFloat(mintAmount) === 0
   const isMintAmountInvalid = isMintAmountGreaterThanMaxAmount || isZero
 
-  const feeNumber = stringToValidFloat(group?.mintFeePerThousand ?? '0')
+  const feeNumber = group?.mintFeePerThousand ?? 0
 
   return (
     <>

@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 import { Crc } from '@/src/components/assets/Crc'
 import formatNumber from '@/src/utils/formatNumber'
@@ -68,8 +68,7 @@ interface Props {
 }
 
 export const MintInformation: React.FC<Props> = ({ fee, mintAmount }) => {
-  const tempFee = fee / 10
-  const feeAmount = (mintAmount / 100) * tempFee
+  const feeAmount = (mintAmount / 100) * fee
   const receivingTokensNumericAmount = mintAmount - feeAmount
   const receivingTokensAmount = formatNumber(receivingTokensNumericAmount, 3)
   const mintAmountNumber = formatNumber(mintAmount)
@@ -95,7 +94,7 @@ export const MintInformation: React.FC<Props> = ({ fee, mintAmount }) => {
         </Row>
         <Row>
           <Title>Fee</Title>
-          <Value>{tempFee}%</Value>
+          <Value>{fee}%</Value>
         </Row>
         <Row>
           <TextResult>Due to group fee charge you will receive</TextResult>
