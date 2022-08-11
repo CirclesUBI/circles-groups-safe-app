@@ -8,6 +8,7 @@ const Ul = styled.ul`
   gap: ${({ theme }) => theme.general.space * 2}px;
   margin: 0;
   padding: 0;
+  overflow: hidden;
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
     gap: ${({ theme }) => theme.general.space * 3}px;
   }

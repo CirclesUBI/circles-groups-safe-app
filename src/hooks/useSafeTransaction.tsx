@@ -4,18 +4,37 @@ import { BaseTransaction, SendTransactionsResponse } from '@gnosis.pm/safe-apps-
 import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk/dist/src/sdk'
 import { toast } from 'react-hot-toast'
 
-import { Chains, chainsConfig } from '../constants/chains'
+import { getGnosisExplorerUrl } from '../web3/explorerUrls'
 import { notify } from '@/src/components/toast/Toast'
 import { FAILED_TYPE, SUCCESS_TYPE, WAITING_TYPE } from '@/src/components/toast/types'
 import { createTransactionError } from '@/src/utils/TransactionError'
 
-const getGnosisExplorerUrl = (hash: string) => {
-  const url = chainsConfig[Chains.gnosis]?.blockExplorerUrls[0]
-  const type = hash.length > 42 ? 'tx' : 'address'
-  return `${url}/${type}/${hash}`
-}
-
 export default function useSafeTransaction(sdk: SafeAppsSDK) {
+  /**
+   * @todo this is a really BAD approach to handle confirmations:
+   * a better way would be using a library which allow to wait for X time before
+   * recalling a function
+   */
+  const waitForConfirmations = useCallback(
+    async (safeTxHash: string) => {
+      let attempts = 0
+      let finished = false
+      let txHash = ''
+      if (!sdk) return txHash
+
+      while (!finished || attempts < 15) {
+        const txDetails = await sdk.txs.getBySafeTxHash(safeTxHash)
+        finished = txDetails && txDetails.txStatus !== 'AWAITING_EXECUTION'
+        if (txDetails.txHash) {
+          txHash = txDetails.txHash
+        }
+        attempts += 1
+      }
+      return txHash
+    },
+    [sdk],
+  )
+
   const execute = useCallback(
     async (txs: BaseTransaction[], onSuccess?: () => void, onError?: () => void) => {
       if (!sdk) {
@@ -28,18 +47,20 @@ export default function useSafeTransaction(sdk: SafeAppsSDK) {
       let txExplorerUrl
       try {
         console.info('Please sign the transaction.')
-        notify({ type: WAITING_TYPE, explorerUrl: 'waiting for approval' })
         txResponse = await sdk.txs.send({
           txs,
         })
-        txHash = txResponse.safeTxHash
+        const safeTxHash = txResponse.safeTxHash
+        notify({ type: WAITING_TYPE, message: 'waiting for approval' })
+        txHash = await waitForConfirmations(safeTxHash)
         txExplorerUrl = getGnosisExplorerUrl(txHash)
+
         notify({ type: SUCCESS_TYPE, explorerUrl: txExplorerUrl })
-        toast.dismiss()
         if (onSuccess) onSuccess()
         return txResponse.safeTxHash
       } catch (e: any) {
         toast.dismiss()
+        console.log({ e })
 
         const error = createTransactionError(e)
         if (error.code === 4001) {
@@ -54,7 +75,7 @@ export default function useSafeTransaction(sdk: SafeAppsSDK) {
         return null
       }
     },
-    [sdk],
+    [sdk, waitForConfirmations],
   )
 
   return useMemo(() => {

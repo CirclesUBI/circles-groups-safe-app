@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import { debounce } from 'lodash'
@@ -68,7 +68,8 @@ interface groupMember {
 
 interface Props {
   action?: ActionAddDelete
-  membersList?: boolean
+  members?: groupMember[]
+  isMemberList?: boolean
   users: groupMember[]
   shouldShowAlert?: boolean
   onRemoveUser?: (userAddress: string) => void
@@ -77,7 +78,8 @@ interface Props {
 
 export const UsersList: React.FC<Props> = ({
   action,
-  membersList = false,
+  members = [],
+  isMemberList = false,
   onAddUser,
   onRemoveUser,
   shouldShowAlert = false,
@@ -85,6 +87,7 @@ export const UsersList: React.FC<Props> = ({
 }) => {
   const [searchResults, setSearchResults] = useState(users)
   const [query, setQuery] = useState('')
+  const [noResultsText, setNoResultsText] = useState('There are no members on this group.')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
 
@@ -114,15 +117,56 @@ export const UsersList: React.FC<Props> = ({
     resetNotification()
   }
 
+  const filterUsers = (value: string): groupMember[] => {
+    return users.filter(({ safeAddress, username }) => {
+      return (
+        username.toLowerCase().includes(value.toLowerCase()) ||
+        safeAddress.toLowerCase().includes(value.toLowerCase())
+      )
+    })
+  }
+
+  const membersAddresses = members.map((member: groupMember) => member.safeAddress.toLowerCase())
+
   const searchUserHandler = debounce(async (value: string) => {
     setQuery(value)
     if (!value) {
       setSearchResults(users)
     } else {
-      const fetchedUsers = await getUsersByAddressOrUsername(value)
-      setSearchResults(fetchedUsers)
+      // We are distinging whether the component is used for Group Members
+      // Or we are looking for Users from Circles API to add as new Group Members
+      // Filtering through Group Members will check members passed by property
+      // Filtering through Users will fetch Circles API endpoint within getUsersByAddressOrUsername()
+      if (isMemberList) {
+        const doesExistMember = users.some(({ username }) =>
+          username.toLowerCase().includes(value.toLowerCase()),
+        )
+        if (!doesExistMember) {
+          setNoResultsText(`User ${value} is not a Group member`)
+        }
+        setSearchResults(filterUsers(value))
+      } else {
+        const fetchedUsers = await getUsersByAddressOrUsername(value)
+        if (fetchedUsers.length === 0) {
+          setNoResultsText(`We couldn't find a match for ${value}.`)
+          setSearchResults(fetchedUsers)
+        } else {
+          const notMemberUsers = fetchedUsers.filter(({ safeAddress }) => {
+            return !membersAddresses.includes(safeAddress.toLowerCase())
+          })
+          if (notMemberUsers.length === 0) {
+            setNoResultsText(`The user ${value} is already a Group member`)
+          }
+          setSearchResults(notMemberUsers)
+        }
+      }
     }
   }, 500)
+
+  useEffect(() => {
+    setSearchResults(users)
+  }, [users])
+
   return (
     <>
       {shouldShowAlert && action && (
@@ -134,7 +178,7 @@ export const UsersList: React.FC<Props> = ({
         />
       )}
       <List>
-        {(!membersList || searchResults.length > itemsPerPage) && (
+        {(!isMemberList || query || searchResults.length > itemsPerPage) && (
           <SearchInput onChange={(e) => searchUserHandler(e)} />
         )}
         <ListContainer>
@@ -172,8 +216,7 @@ export const UsersList: React.FC<Props> = ({
               ))
           ) : (
             <>
-              <NoResultsText query={query} text={'There are no members on this group.'} />
-              {/* TODO: refactor to display proper message when trying to add users as groupMembers */}
+              <NoResultsText text={noResultsText} />
             </>
           )}
         </ListContainer>

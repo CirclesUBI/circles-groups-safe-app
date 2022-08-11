@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { ListContainer } from '@/src/components/assets/ListContainer'
@@ -22,6 +22,7 @@ interface Props {
 
 export const GroupList: React.FC<Props> = ({ canMint, groups }) => {
   const [query, setQuery] = useState('')
+  const [noResultsText, setNoResultsText] = useState('There are no Groups yet')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
 
@@ -38,6 +39,14 @@ export const GroupList: React.FC<Props> = ({ canMint, groups }) => {
   }, [groups, query])
 
   const totalPages = Math.ceil(filteredGroups.length / itemsPerPage)
+
+  useEffect(() => {
+    if (filteredGroups.length === 0 && groups.length !== 0) {
+      query
+        ? setNoResultsText(`We couldn't find a match for ${query}.`)
+        : setNoResultsText("You don't belong to any group yet.")
+    }
+  }, [filteredGroups, groups, query])
 
   return (
     <>
@@ -58,7 +67,7 @@ export const GroupList: React.FC<Props> = ({ canMint, groups }) => {
                 />
               ))
           ) : (
-            <NoResultsText query={query} text={"You don't belong to any group yet."} />
+            <NoResultsText text={noResultsText} />
           )}
         </ListContainer>
         {page < totalPages && filteredGroups.length > itemsPerPage && (

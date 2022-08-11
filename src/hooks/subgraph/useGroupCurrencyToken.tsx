@@ -2,7 +2,7 @@ import useSWR from 'swr'
 
 import { GROUP_CURRENCY_TOKEN_QUERY } from '@/src/queries/groupCurrencyToken'
 import { circlesToTC } from '@/src/utils/circleConversor'
-import formatNumber from '@/src/utils/formatNumber'
+import formatNumber, { stringToValidFloat } from '@/src/utils/formatNumber'
 import { graphqlFetcher } from '@/src/utils/graphqlFetcher'
 import {
   GroupCurrencyTokens,
@@ -18,7 +18,7 @@ export type GroupCurrencyToken = {
   owner: string
   treasury: string
   hub: string
-  mintFeePerThousand: string
+  mintFeePerThousand: number
   minted: string
   members: Array<any> // TODO define Member's Group type
 }
@@ -33,7 +33,7 @@ const transformToGroupCurrencyToken = (
     owner: group.owner ?? '',
     treasury: group.treasury ?? '',
     hub: group.hub ?? '',
-    mintFeePerThousand: group.mintFeePerThousand ?? '',
+    mintFeePerThousand: stringToValidFloat(group.mintFeePerThousand ?? '') / 10,
     minted: formatNumber(circlesToTC(group.minted)) ?? '0',
     members: group.members,
   }
