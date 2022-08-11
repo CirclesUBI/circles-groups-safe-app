@@ -7,6 +7,7 @@ import { UsersList } from '@/src/components/lists/UsersList'
 import { useGroupCurrencyTokenTx } from '@/src/hooks/contracts/useGroupCurrencyTokenTx'
 import { useAllUsers } from '@/src/hooks/subgraph/useUsers'
 import { useWeb3Connected } from '@/src/providers/web3ConnectionProvider'
+import { CirclesGardenUser } from '@/src/utils/circlesGardenAPI'
 import hubCall from '@/src/utils/contracts/hubCall'
 
 const Nav = styled.nav`
@@ -40,12 +41,8 @@ const Tab = styled.button`
 const Section = styled.section`
   margin-top: ${({ theme }) => theme.general.space * 6}px;
 `
-interface groupMember {
-  id: number
-  username: string
-  safeAddress: string
-  avatarUrl?: string
-}
+
+type groupMember = CirclesGardenUser
 
 interface Props {
   groupAddress: string
@@ -61,7 +58,6 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
   const [selectedTab, setSelectedTab] = useState(tabs[0])
   // @TODO: cached users to fasten the add/remove of users
   const [users, setUsers] = useState(groupMembers)
-  // @TODO: filter already groupMembers from allUsers
   const [allUsers, setAllUsers] = useState(circlesUsers)
   const { execute: execRemove } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
   const { execute: execAdd } = useGroupCurrencyTokenTx(groupAddress, 'addMemberToken')
@@ -99,9 +95,15 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
     try {
       const userToken = await getUserToken(userAddress)
       const onSuccess = () => {
-        const addedUser = allUsers.filter((user) => user.safeAddress == userAddress)
-        setUsers((users) => [...users, addedUser[0]])
-        const nonMemberUsers = allUsers.filter((user) => user.safeAddress !== userAddress)
+        const addedUser = allUsers.find(
+          (user) => user.safeAddress.toLowerCase() === userAddress.toLowerCase(),
+        )
+        if (addedUser) {
+          setUsers([...users, addedUser])
+        }
+        const nonMemberUsers = allUsers.filter(
+          (user) => user.safeAddress.toLowerCase() !== userAddress.toLowerCase(),
+        )
         setAllUsers(nonMemberUsers)
         setMembersCount(membersCount + 1)
       }
@@ -143,13 +145,19 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
             {selectedTab === 'Members' ? (
               <UsersList
                 action={'delete'}
-                membersList
+                isMemberList
                 onRemoveUser={removeUser}
                 shouldShowAlert
                 users={users}
               />
             ) : (
-              <UsersList action={'add'} onAddUser={addUser} shouldShowAlert users={allUsers} />
+              <UsersList
+                action={'add'}
+                members={users}
+                onAddUser={addUser}
+                shouldShowAlert
+                users={allUsers}
+              />
             )}
           </motion.div>
         </AnimatePresence>
