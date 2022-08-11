@@ -18,10 +18,9 @@ const List = styled.div`
 interface Props {
   groups: Array<GroupCurrencyToken>
   canMint: boolean
-  sortAlphabetically?: boolean
 }
 
-export const GroupList: React.FC<Props> = ({ canMint, groups, sortAlphabetically = false }) => {
+export const GroupList: React.FC<Props> = ({ canMint, groups }) => {
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
@@ -46,34 +45,18 @@ export const GroupList: React.FC<Props> = ({ canMint, groups, sortAlphabetically
         {totalItemsNum > itemsPerPage && <SearchInput onChange={(e) => setQuery(e)} />}
         <ListContainer>
           {filteredGroups.length > 0 ? (
-            sortAlphabetically ? (
-              filteredGroups
-                .sort((a, b) => a.name.localeCompare(b.name))
-                .slice(0, page * itemsPerPage)
-                .map(({ id, members, name }, index) => (
-                  <ListItemContent
-                    canMint={canMint}
-                    groupId={id}
-                    groupIndex={index}
-                    groupName={name}
-                    key={index}
-                    numberMembers={members.length}
-                  />
-                ))
-            ) : (
-              filteredGroups
-                .slice(0, page * itemsPerPage)
-                .map(({ id, members, name }, index) => (
-                  <ListItemContent
-                    canMint={canMint}
-                    groupId={id}
-                    groupIndex={index}
-                    groupName={name}
-                    key={index}
-                    numberMembers={members.length}
-                  />
-                ))
-            )
+            filteredGroups
+              .slice(0, page * itemsPerPage)
+              .map(({ id, members, name }, index) => (
+                <ListItemContent
+                  canMint={canMint}
+                  groupId={id}
+                  groupIndex={index}
+                  groupName={name}
+                  key={index}
+                  numberMembers={members.length}
+                />
+              ))
           ) : (
             <NoResultsText query={query} text={"You don't belong to any group yet."} />
           )}
