@@ -1,13 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { UsersList } from '@/src/components/lists/UsersList'
-import { MIN_ADDRESS_MATCH } from '@/src/constants/misc'
 import { useGroupCurrencyTokenTx } from '@/src/hooks/contracts/useGroupCurrencyTokenTx'
 import {
-  useGroupMembersByGroupId,
+  matchesGroupMember,
   useGroupMembersByGroupIdSearch,
 } from '@/src/hooks/subgraph/useGroupMembers'
 import { useSearchUsers } from '@/src/hooks/subgraph/useUsers'
@@ -127,24 +126,12 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
    * - useEffect or useMemo, there are some cases where we need to sync
    */
 
-  console.log('....... manage groups information')
-  console.log({ usersQuery })
-  console.log({ membersQuery })
-  console.log({ users })
-  console.log({ members })
-
   let NO_RESULTS_USERS_QUERY = 'There are no users!'
   if (users.length === 0) {
     NO_RESULTS_USERS_QUERY = `We couldn't find a match for ${usersQuery}.`
   } else {
     // @todo should be similar to usersWithoutMembers.length === 0 shall query be a full match?
-    const existMember = allGroupMembers.some(({ safeAddress, username }) => {
-      const doesIncludeUsername = username.toLowerCase().includes(usersQuery.toLowerCase())
-      const doesIncludeSafeAddress =
-        usersQuery.length > MIN_ADDRESS_MATCH &&
-        safeAddress.toLowerCase().includes(usersQuery.toLowerCase())
-      return doesIncludeUsername || doesIncludeSafeAddress
-    })
+    const existMember = allGroupMembers.some((member) => matchesGroupMember(member, usersQuery))
     if (existMember) {
       NO_RESULTS_USERS_QUERY = `The user ${usersQuery} is already a group member`
     }
@@ -181,6 +168,7 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
                 noResultText={NO_RESULTS_MEMBERS_QUERY}
                 onRemoveUser={removeUser}
                 onSearch={searchGroupMembers}
+                query={membersQuery}
                 shouldShowAlert
                 users={members}
               />
@@ -190,6 +178,7 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
                 noResultText={NO_RESULTS_USERS_QUERY}
                 onAddUser={addUser}
                 onSearch={searchUsers}
+                query={usersQuery}
                 shouldShowAlert
                 users={usersWithoutMembers}
               />

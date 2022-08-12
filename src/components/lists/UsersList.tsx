@@ -1,8 +1,6 @@
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
-
-import { debounce } from 'lodash'
 
 import { FirstLetter } from '../assets/FirstLetter'
 import { AddRemoveUserNotification, AddRemoveUsers } from '@/src/components/actions/AddRemoveUsers'
@@ -12,7 +10,7 @@ import { ListItem } from '@/src/components/assets/ListItem'
 import { LoadMoreButton } from '@/src/components/assets/LoadMoreButton'
 import { NoResultsText } from '@/src/components/assets/NoResultsText'
 import { SearchInput } from '@/src/components/assets/SearchInput'
-import { CirclesGardenUser, getUsersByAddressOrUsername } from '@/src/utils/circlesGardenAPI'
+import { CirclesGardenUser } from '@/src/utils/circlesGardenAPI'
 
 const List = styled.div`
   display: flex;
@@ -67,6 +65,7 @@ interface Props {
   onAddUser?: (userAddress: string) => void
   onSearch?: (query: string) => void
   noResultText?: string
+  query?: string
 }
 
 export const UsersList: React.FC<Props> = ({
@@ -75,6 +74,7 @@ export const UsersList: React.FC<Props> = ({
   onAddUser,
   onRemoveUser,
   onSearch,
+  query,
   shouldShowAlert = false,
   users,
 }) => {
@@ -108,11 +108,11 @@ export const UsersList: React.FC<Props> = ({
     resetNotification()
   }
 
-  const searchUserHandler = debounce((value: string) => {
+  const searchUserHandler = (value: string) => {
     if (onSearch) {
       onSearch(value)
     }
-  }, 500)
+  }
 
   /**
    * @todo add query value in this list so we can show (and maintain) the value from the input
@@ -129,7 +129,7 @@ export const UsersList: React.FC<Props> = ({
         />
       )}
       <List>
-        {onSearch && <SearchInput onChange={(e) => searchUserHandler(e)} />}
+        {onSearch && <SearchInput onChange={(e) => searchUserHandler(e)} value={query} />}
         <ListContainer>
           {users.length > 0 ? (
             users

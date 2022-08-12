@@ -36,3 +36,4 @@ export const CIRCLES_GARDEN_API = process.env.NEXT_PUBLIC_REACT_APP_CIRCLES_GARD
 export const PATHFINDER_API = process.env.NEXT_PUBLIC_REACT_APP_PATHFINDER_API || ''
 
 export const MIN_ADDRESS_MATCH = 5
+export const DEBOUNCE_TIME = 500

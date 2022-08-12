@@ -1,14 +1,12 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import { getAddress } from '@ethersproject/address'
+import { debounce } from 'lodash'
 import useSWR from 'swr'
 
+import { DEBOUNCE_TIME } from '@/src/constants/misc'
 import { USERS } from '@/src/queries/users'
-import {
-  CirclesGardenUser,
-  getUsers,
-  getUsersByAddressOrUsername,
-} from '@/src/utils/circlesGardenAPI'
+import { getUsers, getUsersByAddressOrUsername } from '@/src/utils/circlesGardenAPI'
 import { graphqlFetcher } from '@/src/utils/graphqlFetcher'
 import { Users, UsersVariables, Users_users } from '@/types/subgraph/__generated__/Users'
 import { Safe_filter } from '@/types/subgraph/__generated__/globalTypes'
@@ -42,20 +40,29 @@ export const useSearchUsers = () => {
   const [loading, setLoading] = useState(false)
   const [query, setQuery] = useState('')
 
+  // @todo debounce is used as an inline function that's why we use useMemo instead of useCallback
+  const debouncedSearch = useMemo(
+    () =>
+      debounce(async (_query: string) => {
+        if (!_query) {
+          setUsers(circlesUsers)
+        } else {
+          // @TODO should check that is a safe address? eg: gno:0x...
+          const newSearchUsers = await getUsersByAddressOrUsername(_query)
+          setUsers(newSearchUsers)
+        }
+      }, DEBOUNCE_TIME),
+    [circlesUsers],
+  )
+
   const search = useCallback(
     async (_query: string) => {
       setLoading(true)
-      if (!_query) {
-        setUsers(circlesUsers)
-      } else {
-        // @TODO should check that is a safe address? eg: gno:0x...
-        const newSearchUsers = await getUsersByAddressOrUsername(_query)
-        setUsers(newSearchUsers)
-      }
-      setLoading(false)
       setQuery(_query)
+      await debouncedSearch(_query)
+      setLoading(false)
     },
-    [circlesUsers],
+    [debouncedSearch],
   )
   return {
     search,
