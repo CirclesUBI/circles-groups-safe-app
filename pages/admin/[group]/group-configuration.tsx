@@ -16,7 +16,7 @@ import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/But
 import { useGroupCurrencyTokenCall } from '@/src/hooks/contracts/useGroupCurrencyTokenCall'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useChangeOwner } from '@/src/hooks/useChangeOwner'
-import { stripGno } from '@/src/utils/stripGno'
+import { validNetwork } from '@/src/utils/validNetwork'
 
 const FormWrapper = styled.div`
   display: flex;
@@ -48,7 +48,10 @@ const ConfigurateGroup: NextPage = () => {
   const groupFeeText = `${group?.mintFeePerThousand ?? 0}%`
 
   const isDisabledSaveButton =
-    owner.toLowerCase() === group?.owner || !owner || !isAddress(owner) || !isOwner
+    validNetwork(owner).toLowerCase() === group?.owner ||
+    !owner ||
+    !isAddress(validNetwork(owner)) ||
+    !isOwner
 
   const onSuccess = async () => {
     await refetchGroupOwner()
@@ -56,7 +59,7 @@ const ConfigurateGroup: NextPage = () => {
   const saveConfiguration = async () => {
     try {
       setLoading(true)
-      await execute([owner], undefined, onSuccess)
+      await execute([validNetwork(owner)], undefined, onSuccess)
     } catch (err) {
       console.log({ err })
     } finally {
@@ -87,13 +90,10 @@ const ConfigurateGroup: NextPage = () => {
         <Columns columnsNumber={1}>
           <Input
             addressField
-            information="This is a message"
+            information="Change the Group Owner"
             label="Owner"
             mandatory
             name="fullname"
-            pasteAction={(event) => {
-              stripGno(event, setOwner)
-            }}
             placeholder=""
             setValue={setOwner}
             type="text"

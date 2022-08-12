@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 import { Info } from '@/src/components/assets/Info'
 import { Tooltip } from '@/src/components/assets/Tooltip'
+import { validNetwork } from '@/src/utils/validNetwork'
 
 const Wrapper = styled.label`
   color: ${({ theme }) => theme.colors.primary};
@@ -80,10 +81,6 @@ interface Props {
   minLength?: number
   maxLength?: number
   addressField?: boolean
-  pasteAction?: (e: {
-    preventDefault: () => void
-    clipboardData: { getData: (arg0: string) => any }
-  }) => void
 }
 
 export const Input: React.FC<Props> = ({
@@ -96,7 +93,6 @@ export const Input: React.FC<Props> = ({
   maxLength = 200,
   minLength = 2,
   name = '',
-  pasteAction,
   placeholder = '',
   setValue,
   type = 'text',
@@ -109,7 +105,7 @@ export const Input: React.FC<Props> = ({
       setErrorMessage('This field is required')
       setErrors(true)
     } else {
-      if (addressField && !isAddress(value)) {
+      if (addressField && !isAddress(validNetwork(value))) {
         setErrorMessage('Not a valid address')
         setErrors(true)
       } else {
@@ -145,7 +141,6 @@ export const Input: React.FC<Props> = ({
           onChange={(e) => {
             setValue && setValue(String(e.target.value))
           }}
-          onPaste={pasteAction}
           onWheel={(e) => e.currentTarget.blur()}
           placeholder={placeholder}
           type={type}
