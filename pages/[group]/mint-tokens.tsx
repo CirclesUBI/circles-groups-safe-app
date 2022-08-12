@@ -110,7 +110,7 @@ const CreateGroup: NextPage = () => {
               <Crc />
             </Icon>
           }
-          information="This is a message This is a message This is a message"
+          information="Amount of individual tokens to be sent to this group Treasury"
           label="Enter amount"
           mandatory
           setValue={setMintAmount}
