@@ -66,17 +66,19 @@ interface Props {
   onRemoveUser?: (userAddress: string) => void
   onAddUser?: (userAddress: string) => void
   onSearch?: (query: string) => void
+  noResultText?: string
 }
 
 export const UsersList: React.FC<Props> = ({
   action,
+  noResultText,
   onAddUser,
   onRemoveUser,
   onSearch,
   shouldShowAlert = false,
   users,
 }) => {
-  const [noResultsText, setNoResultsText] = useState('There are no members on this group.')
+  const noResultsText = noResultText ?? 'No results'
   const [page, setPage] = useState(1)
   const itemsPerPage = 5
 
@@ -106,13 +108,15 @@ export const UsersList: React.FC<Props> = ({
     resetNotification()
   }
 
-  const searchUserHandler = debounce(async (value: string) => {
+  const searchUserHandler = debounce((value: string) => {
     if (onSearch) {
       onSearch(value)
     }
   }, 500)
 
-  console.log({ users })
+  /**
+   * @todo add query value in this list so we can show (and maintain) the value from the input
+   */
 
   return (
     <>
