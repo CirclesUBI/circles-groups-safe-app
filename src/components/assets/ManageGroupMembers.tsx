@@ -4,6 +4,8 @@ import styled from 'styled-components'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { UsersList } from '@/src/components/lists/UsersList'
+import { allUsers } from '@/src/constants/allUsers'
+import { MIN_SEARCH_NUMBER } from '@/src/constants/misc'
 import { useGroupCurrencyTokenTx } from '@/src/hooks/contracts/useGroupCurrencyTokenTx'
 import {
   matchesGroupMember,
@@ -168,7 +170,9 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
                 action={'delete'}
                 noResultText={NO_RESULTS_MEMBERS_QUERY}
                 onRemoveUser={removeUser}
-                onSearch={searchGroupMembers}
+                onSearch={
+                  allGroupMembers.length > MIN_SEARCH_NUMBER ? searchGroupMembers : undefined
+                }
                 query={membersQuery}
                 shouldShowAlert
                 users={members}
