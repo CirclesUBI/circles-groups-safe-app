@@ -102,28 +102,41 @@ export const useGroupMembersByGroupIdSearch = (groupAddress: string) => {
     [cacheMembers],
   )
 
-  const addGroupMember = (user: CirclesGardenUser) => {
-    setCacheMembers([...cacheMembers, user])
-    setMembers([...members, user])
-    // @todo we should wait for X time after add (confirmations)
-    setTimeout(() => {
-      refetch()
-    }, CONFIRMATION_TIME)
-  }
-  const removeGroupMember = (user: CirclesGardenUser) => {
-    const newCacheMembers = cacheMembers.filter(
-      (member) => member.safeAddress.toLowerCase() !== user.safeAddress.toLowerCase(),
-    )
-    const newMembers = members.filter(
-      (member) => member.safeAddress.toLowerCase() !== user.safeAddress.toLowerCase(),
-    )
-    setCacheMembers(newCacheMembers)
-    setMembers(newMembers)
-    // @todo we should wait for X time after add (confirmations)
-    setTimeout(() => {
-      refetch()
-    }, CONFIRMATION_TIME)
-  }
+  const addGroupMember = useCallback(
+    (user: CirclesGardenUser) => {
+      const filteredCacheMembers = cacheMembers.filter(
+        ({ safeAddress }) => safeAddress.toLowerCase() !== user.safeAddress.toLowerCase(),
+      )
+      setCacheMembers([...filteredCacheMembers, user])
+      const filteredMembers = members.filter(
+        ({ safeAddress }) => safeAddress.toLowerCase() !== user.safeAddress.toLowerCase(),
+      )
+      setMembers([...filteredMembers, user])
+      // @todo we should wait for X time after add (confirmations)
+      setTimeout(() => {
+        refetch()
+      }, CONFIRMATION_TIME)
+    },
+    [refetch, cacheMembers, members],
+  )
+
+  const removeGroupMember = useCallback(
+    (user: CirclesGardenUser) => {
+      const newCacheMembers = cacheMembers.filter(
+        (member) => member.safeAddress.toLowerCase() !== user.safeAddress.toLowerCase(),
+      )
+      const newMembers = members.filter(
+        (member) => member.safeAddress.toLowerCase() !== user.safeAddress.toLowerCase(),
+      )
+      setCacheMembers(newCacheMembers)
+      setMembers(newMembers)
+      // @todo we should wait for X time after add (confirmations)
+      setTimeout(() => {
+        refetch()
+      }, CONFIRMATION_TIME)
+    },
+    [refetch, cacheMembers, members],
+  )
 
   useEffect(() => {
     setCacheMembers(groupMembers)
