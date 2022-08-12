@@ -114,10 +114,6 @@ export const UsersList: React.FC<Props> = ({
     }
   }
 
-  /**
-   * @todo add query value in this list so we can show (and maintain) the value from the input
-   */
-
   return (
     <>
       {shouldShowAlert && action && (

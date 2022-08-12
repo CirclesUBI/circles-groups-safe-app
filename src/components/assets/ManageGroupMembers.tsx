@@ -121,16 +121,17 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
   )
 
   /**
-   * @todo still need to think about
-   * - error message per each case: when searching and when there is no result
-   * - useEffect or useMemo, there are some cases where we need to sync
+   * @todo A couple of minor things
+   * - no results text handling could be in a different file
+   * - usersWithoutMembers could be in a useMemo
+   * - existMember could be done differently (if users > 0 and usersWithoutMembers = 0)
+   * - member search might need to match the entire query instead of including?
    */
 
   let NO_RESULTS_USERS_QUERY = 'There are no users!'
   if (users.length === 0) {
     NO_RESULTS_USERS_QUERY = `We couldn't find a match for ${usersQuery}.`
   } else {
-    // @todo should be similar to usersWithoutMembers.length === 0 shall query be a full match?
     const existMember = allGroupMembers.some((member) => matchesGroupMember(member, usersQuery))
     if (existMember) {
       NO_RESULTS_USERS_QUERY = `The user ${usersQuery} is already a group member`

@@ -47,7 +47,6 @@ export const useSearchUsers = () => {
         if (!_query) {
           setUsers(circlesUsers)
         } else {
-          // @TODO should check that is a safe address? eg: gno:0x...
           const newSearchUsers = await getUsersByAddressOrUsername(_query)
           setUsers(newSearchUsers)
         }
