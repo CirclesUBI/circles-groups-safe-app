@@ -94,7 +94,7 @@ export const useGroupMembersByGroupIdSearch = (groupAddress: string) => {
   const addGroupMember = (user: CirclesGardenUser) => {
     setMembers([...members, user])
     // @todo we should wait for X time after add (confirmations)
-    // refetch()
+    refetch()
   }
   const removeGroupMember = (user: CirclesGardenUser) => {
     const newMembers = members.filter(
@@ -102,7 +102,7 @@ export const useGroupMembersByGroupIdSearch = (groupAddress: string) => {
     )
     setMembers(newMembers)
     // @todo we should wait for X time after add (confirmations)
-    // refetch()
+    refetch()
   }
   return {
     search,
