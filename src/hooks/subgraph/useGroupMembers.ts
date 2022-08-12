@@ -1,3 +1,5 @@
+import { useCallback, useState } from 'react'
+
 import { getAddress } from '@ethersproject/address'
 import useSWR from 'swr'
 
@@ -56,4 +58,50 @@ export const useGroupMemberById = (safeId?: string, groupId?: string) => {
   })
   const member = data && data[0]
   return { member, error, refetch: mutate }
+}
+
+export const useGroupMembersByGroupIdSearch = (groupAddress: string) => {
+  const { groupMembers } = useGroupMembersByGroupId(groupAddress)
+  const [members, setMembers] = useState(groupMembers)
+  const [loading, setLoading] = useState(false)
+  const [query, setQuery] = useState('')
+
+  const search = useCallback(
+    async (_query: string) => {
+      setLoading(true)
+      if (!_query) {
+        setMembers(groupMembers)
+      } else {
+        // @TODO should check that is a safe address? eg: gno:0x...
+        const newMembersList = groupMembers.filter((member) =>
+          member.username.toLowerCase().includes(_query.toLowerCase()),
+        )
+        setMembers(newMembersList)
+      }
+      setLoading(false)
+      setQuery(_query)
+    },
+    [groupMembers],
+  )
+
+  const addGroupMember = (user: CirclesGardenUser) => {
+    setMembers([...members, user])
+    // @todo should refetch groupMembers
+  }
+  const removeGroupMember = (user: CirclesGardenUser) => {
+    const newMembers = members.filter(
+      (member) => member.safeAddress.toLowerCase() !== user.safeAddress.toLowerCase(),
+    )
+    setMembers(newMembers)
+    // @todo should refetch groupMembers
+  }
+  return {
+    search,
+    loading,
+    members,
+    query,
+    addGroupMember,
+    removeGroupMember,
+    allGroupMembers: groupMembers,
+  }
 }
