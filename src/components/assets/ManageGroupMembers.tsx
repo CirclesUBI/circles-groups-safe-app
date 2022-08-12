@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { UsersList } from '@/src/components/lists/UsersList'
 import { useGroupCurrencyTokenTx } from '@/src/hooks/contracts/useGroupCurrencyTokenTx'
-import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
+import {
+  useGroupMembersByGroupId,
+  useGroupMembersByGroupIdSearch,
+} from '@/src/hooks/subgraph/useGroupMembers'
 import { useSearchUsers } from '@/src/hooks/subgraph/useUsers'
 import { useWeb3Connected } from '@/src/providers/web3ConnectionProvider'
 import hubCall from '@/src/utils/contracts/hubCall'
@@ -48,14 +51,20 @@ interface Props {
 export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
   // @TODO we might need to delete this
   const { isAppConnected, web3Provider } = useWeb3Connected()
-  const { search, users } = useSearchUsers()
+  const { query: usersQuery, search: searchUsers, users } = useSearchUsers()
   // @TODO as we are using groupMembers in this component we can get rid of the users array!
-  const { groupMembers } = useGroupMembersByGroupId(groupAddress)
+  const {
+    addGroupMember,
+    allGroupMembers,
+    members,
+    query: membersQuery,
+    removeGroupMember,
+    search: searchGroupMembers,
+  } = useGroupMembersByGroupIdSearch(groupAddress)
 
   const tabs = ['Members', 'Add members']
   const [selectedTab, setSelectedTab] = useState(tabs[0])
 
-  const [members, setMembers] = useState(groupMembers)
   const { execute: execRemove } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
   const { execute: execAdd } = useGroupCurrencyTokenTx(groupAddress, 'addMemberToken')
 
@@ -77,10 +86,12 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
     try {
       const userToken = await getUserToken(userAddress)
       const onSuccess = () => {
-        const newMembers = members.filter(
-          (member) => member.safeAddress.toLowerCase() !== userAddress.toLowerCase(),
+        const user = users.find(
+          (user) => user.safeAddress.toLowerCase() === userAddress.toLowerCase(),
         )
-        setMembers(newMembers)
+        if (user) {
+          removeGroupMember(user)
+        }
       }
       await execRemove([userToken], undefined, onSuccess)
     } catch (err) {
@@ -96,7 +107,7 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
           (user) => user.safeAddress.toLowerCase() === userAddress.toLowerCase(),
         )
         if (user) {
-          setMembers([...members, user])
+          addGroupMember(user)
         }
       }
       await execAdd([userToken], undefined, onSuccess)
@@ -105,11 +116,7 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
     }
   }
 
-  useEffect(() => {
-    setMembers(groupMembers)
-  }, [groupMembers])
-
-  const memberAddressesLowerCase = members.map((member) => member.safeAddress.toLowerCase())
+  const memberAddressesLowerCase = allGroupMembers.map((member) => member.safeAddress.toLowerCase())
   const usersWithoutMembers = users.filter(
     (user) => !memberAddressesLowerCase.includes(user.safeAddress.toLowerCase()),
   )
@@ -120,6 +127,19 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
    * - useEffect or useMemo, there are some cases where we need to sync
    */
 
+  console.log('....... manage groups information')
+  console.log({ usersQuery })
+  console.log({ membersQuery })
+  console.log({ users })
+  console.log({ members })
+
+  let NO_RESULTS_USERS_QUERY = 'There are no users!'
+  if (users.length === 0) NO_RESULTS_USERS_QUERY = `We couldn't find a match for ${usersQuery}.`
+  // @todo it should check that there is a group member with that name, instead of checking length
+  if (usersWithoutMembers.length === 0)
+    NO_RESULTS_USERS_QUERY = `The user ${usersQuery} is already a group member`
+  const NO_RESULTS_MEMBERS_QUERY = `The user ${membersQuery} is not a member of the group.`
+
   return (
     <>
       <Section>
@@ -129,7 +149,7 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
               <Tab key={`tab_${index}`} onClick={() => setSelectedTab(el)}>
                 <span className={selectedTab == el ? 'active' : 'inactive'}>
                   <>
-                    {el} {el === 'Members' && '(' + members.length + ')'}
+                    {el} {el === 'Members' && '(' + allGroupMembers.length + ')'}
                   </>
                 </span>
               </Tab>
@@ -147,17 +167,18 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
             {selectedTab === 'Members' ? (
               <UsersList
                 action={'delete'}
+                noResultText={NO_RESULTS_MEMBERS_QUERY}
                 onRemoveUser={removeUser}
-                // @TODO members could have a search?
-                // onSearch={onMemberSearch}
+                onSearch={searchGroupMembers}
                 shouldShowAlert
                 users={members}
               />
             ) : (
               <UsersList
                 action={'add'}
+                noResultText={NO_RESULTS_USERS_QUERY}
                 onAddUser={addUser}
-                onSearch={search}
+                onSearch={searchUsers}
                 shouldShowAlert
                 users={usersWithoutMembers}
               />
