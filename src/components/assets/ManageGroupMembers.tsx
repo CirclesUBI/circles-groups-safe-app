@@ -87,11 +87,11 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
     try {
       const userToken = await getUserToken(userAddress)
       const onSuccess = () => {
-        const user = users.find(
+        const member = members.find(
           (user) => user.safeAddress.toLowerCase() === userAddress.toLowerCase(),
         )
-        if (user) {
-          removeGroupMember(user)
+        if (member) {
+          removeGroupMember(member)
         }
       }
       await execRemove([userToken], undefined, onSuccess)
