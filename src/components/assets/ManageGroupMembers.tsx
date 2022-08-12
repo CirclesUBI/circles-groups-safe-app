@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { UsersList } from '@/src/components/lists/UsersList'
+import { MIN_ADDRESS_MATCH } from '@/src/constants/misc'
 import { useGroupCurrencyTokenTx } from '@/src/hooks/contracts/useGroupCurrencyTokenTx'
 import {
   useGroupMembersByGroupId,
@@ -52,7 +53,6 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
   // @TODO we might need to delete this
   const { isAppConnected, web3Provider } = useWeb3Connected()
   const { query: usersQuery, search: searchUsers, users } = useSearchUsers()
-  // @TODO as we are using groupMembers in this component we can get rid of the users array!
   const {
     addGroupMember,
     allGroupMembers,
@@ -134,10 +134,21 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
   console.log({ members })
 
   let NO_RESULTS_USERS_QUERY = 'There are no users!'
-  if (users.length === 0) NO_RESULTS_USERS_QUERY = `We couldn't find a match for ${usersQuery}.`
-  // @todo it should check that there is a group member with that name, instead of checking length
-  if (usersWithoutMembers.length === 0)
-    NO_RESULTS_USERS_QUERY = `The user ${usersQuery} is already a group member`
+  if (users.length === 0) {
+    NO_RESULTS_USERS_QUERY = `We couldn't find a match for ${usersQuery}.`
+  } else {
+    // @todo should be similar to usersWithoutMembers.length === 0 shall query be a full match?
+    const existMember = allGroupMembers.some(({ safeAddress, username }) => {
+      const doesIncludeUsername = username.toLowerCase().includes(usersQuery.toLowerCase())
+      const doesIncludeSafeAddress =
+        usersQuery.length > MIN_ADDRESS_MATCH &&
+        safeAddress.toLowerCase().includes(usersQuery.toLowerCase())
+      return doesIncludeUsername || doesIncludeSafeAddress
+    })
+    if (existMember) {
+      NO_RESULTS_USERS_QUERY = `The user ${usersQuery} is already a group member`
+    }
+  }
   const NO_RESULTS_MEMBERS_QUERY = `The user ${membersQuery} is not a member of the group.`
 
   return (

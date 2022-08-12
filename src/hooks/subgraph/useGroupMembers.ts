@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react'
 import { getAddress } from '@ethersproject/address'
 import useSWR from 'swr'
 
+import { MIN_ADDRESS_MATCH } from '@/src/constants/misc'
 import { GROUP_MEMBERS } from '@/src/queries/groupMembers'
 import { CirclesGardenUser, getUsers } from '@/src/utils/circlesGardenAPI'
 import { graphqlFetcher } from '@/src/utils/graphqlFetcher'
@@ -61,7 +62,7 @@ export const useGroupMemberById = (safeId?: string, groupId?: string) => {
 }
 
 export const useGroupMembersByGroupIdSearch = (groupAddress: string) => {
-  const { groupMembers } = useGroupMembersByGroupId(groupAddress)
+  const { groupMembers, refetch } = useGroupMembersByGroupId(groupAddress)
   const [members, setMembers] = useState(groupMembers)
   const [loading, setLoading] = useState(false)
   const [query, setQuery] = useState('')
@@ -72,10 +73,14 @@ export const useGroupMembersByGroupIdSearch = (groupAddress: string) => {
       if (!_query) {
         setMembers(groupMembers)
       } else {
-        // @TODO should check that is a safe address? eg: gno:0x...
-        const newMembersList = groupMembers.filter((member) =>
-          member.username.toLowerCase().includes(_query.toLowerCase()),
-        )
+        const newMembersList = groupMembers.filter((member) => {
+          const doesIncludeUsername = member.username.toLowerCase().includes(_query.toLowerCase())
+          // @todo lets put a minimum of size to contain in the address
+          const doesIncludeSafeAddress =
+            _query.length > MIN_ADDRESS_MATCH &&
+            member.safeAddress.toLowerCase().includes(_query.toLowerCase())
+          return doesIncludeUsername || doesIncludeSafeAddress
+        })
         setMembers(newMembersList)
       }
       setLoading(false)
@@ -86,14 +91,16 @@ export const useGroupMembersByGroupIdSearch = (groupAddress: string) => {
 
   const addGroupMember = (user: CirclesGardenUser) => {
     setMembers([...members, user])
-    // @todo should refetch groupMembers
+    // @todo we should wait for X time after add (confirmations)
+    // refetch()
   }
   const removeGroupMember = (user: CirclesGardenUser) => {
     const newMembers = members.filter(
       (member) => member.safeAddress.toLowerCase() !== user.safeAddress.toLowerCase(),
     )
     setMembers(newMembers)
-    // @todo should refetch groupMembers
+    // @todo we should wait for X time after add (confirmations)
+    // refetch()
   }
   return {
     search,
