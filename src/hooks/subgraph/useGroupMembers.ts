@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { getAddress } from '@ethersproject/address'
 import useSWR from 'swr'
@@ -104,6 +104,11 @@ export const useGroupMembersByGroupIdSearch = (groupAddress: string) => {
     // @todo we should wait for X time after add (confirmations)
     refetch()
   }
+
+  useEffect(() => {
+    setMembers(groupMembers)
+  }, [groupMembers])
+
   return {
     search,
     loading,
