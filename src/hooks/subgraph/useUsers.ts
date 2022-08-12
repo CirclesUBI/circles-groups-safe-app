@@ -40,18 +40,20 @@ export const useSearchUsers = () => {
   const { circlesUsers } = useAllUsers()
   const [users, setUsers] = useState(circlesUsers)
   const [loading, setLoading] = useState(false)
+  const [query, setQuery] = useState('')
 
   const search = useCallback(
-    async (query: string) => {
+    async (_query: string) => {
       setLoading(true)
-      if (!query) {
+      if (!_query) {
         setUsers(circlesUsers)
       } else {
         // @TODO should check that is a safe address? eg: gno:0x...
-        const newSearchUsers = await getUsersByAddressOrUsername(query)
+        const newSearchUsers = await getUsersByAddressOrUsername(_query)
         setUsers(newSearchUsers)
       }
       setLoading(false)
+      setQuery(_query)
     },
     [circlesUsers],
   )
@@ -59,5 +61,7 @@ export const useSearchUsers = () => {
     search,
     loading,
     users,
+    query,
+    allUsers: circlesUsers,
   }
 }
