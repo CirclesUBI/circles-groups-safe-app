@@ -47,6 +47,7 @@ const ConfigurateGroup: NextPage = () => {
   const isOwner = groupOwner && groupOwner.toLowerCase() === currentUser
   const groupFeeText = `${group?.mintFeePerThousand ?? 0}%`
 
+  // @TODO Improve validation
   const isDisabledSaveButton =
     validNetwork(owner).toLowerCase() === group?.owner ||
     !owner ||
