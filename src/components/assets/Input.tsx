@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 import { Info } from '@/src/components/assets/Info'
 import { Tooltip } from '@/src/components/assets/Tooltip'
+import { validNetwork } from '@/src/utils/validNetwork'
 
 const Wrapper = styled.label`
   color: ${({ theme }) => theme.colors.primary};
@@ -104,7 +105,7 @@ export const Input: React.FC<Props> = ({
       setErrorMessage('This field is required')
       setErrors(true)
     } else {
-      if (addressField && !isAddress(value)) {
+      if (addressField && !isAddress(validNetwork(value))) {
         setErrorMessage('Not a valid address')
         setErrors(true)
       } else {
