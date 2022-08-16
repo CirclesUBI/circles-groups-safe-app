@@ -1,6 +1,9 @@
+import { useCallback, useEffect, useState } from 'react'
+
 import { getAddress } from '@ethersproject/address'
 import useSWR from 'swr'
 
+import { CONFIRMATION_TIME, MIN_ADDRESS_MATCH } from '@/src/constants/misc'
 import { GROUP_MEMBERS } from '@/src/queries/groupMembers'
 import { CirclesGardenUser, getUsers } from '@/src/utils/circlesGardenAPI'
 import { graphqlFetcher } from '@/src/utils/graphqlFetcher'
@@ -56,4 +59,97 @@ export const useGroupMemberById = (safeId?: string, groupId?: string) => {
   })
   const member = data && data[0]
   return { member, error, refetch: mutate }
+}
+
+export const matchesGroupMember = (member: CirclesGardenUser, query: string) => {
+  const doesIncludeUsername = member.username.toLowerCase().includes(query.toLowerCase())
+  // @todo lets put a minimum of size to contain in the address
+  const doesIncludeSafeAddress =
+    query.length > MIN_ADDRESS_MATCH &&
+    member.safeAddress.toLowerCase().includes(query.toLowerCase())
+  return doesIncludeUsername || doesIncludeSafeAddress
+}
+
+/**
+ * @todo we use an intermediate state for the group members because:
+ * - we need to sync the new data (after add/remove) of the member
+ * - with the SG which takes some time to update
+ * - so we still call the refetch function after a couple of seconds
+ * - to update the related data
+ * - we should get rid of this intermediate cache ASAP if we can find
+ * - a way to sync the SG data
+ */
+export const useGroupMembersByGroupIdSearch = (groupAddress: string) => {
+  const { groupMembers, refetch } = useGroupMembersByGroupId(groupAddress)
+  // @todo intermediate cache
+  const [cacheMembers, setCacheMembers] = useState(groupMembers)
+  const [members, setMembers] = useState(cacheMembers)
+  const [loading, setLoading] = useState(false)
+  const [query, setQuery] = useState('')
+
+  const search = useCallback(
+    async (_query: string) => {
+      setLoading(true)
+      if (!_query) {
+        setMembers(cacheMembers)
+      } else {
+        const filteredMembers = cacheMembers.filter((member) => matchesGroupMember(member, _query))
+        setMembers(filteredMembers)
+      }
+      setLoading(false)
+      setQuery(_query)
+    },
+    [cacheMembers],
+  )
+
+  const addGroupMember = useCallback(
+    (user: CirclesGardenUser) => {
+      const filteredCacheMembers = cacheMembers.filter(
+        ({ safeAddress }) => safeAddress.toLowerCase() !== user.safeAddress.toLowerCase(),
+      )
+      setCacheMembers([...filteredCacheMembers, user])
+      const filteredMembers = members.filter(
+        ({ safeAddress }) => safeAddress.toLowerCase() !== user.safeAddress.toLowerCase(),
+      )
+      setMembers([...filteredMembers, user])
+      // @todo we should wait for X time after add (confirmations)
+      setTimeout(() => {
+        refetch()
+      }, CONFIRMATION_TIME)
+    },
+    [refetch, cacheMembers, members],
+  )
+
+  const removeGroupMember = useCallback(
+    (user: CirclesGardenUser) => {
+      const newCacheMembers = cacheMembers.filter(
+        (member) => member.safeAddress.toLowerCase() !== user.safeAddress.toLowerCase(),
+      )
+      const newMembers = members.filter(
+        (member) => member.safeAddress.toLowerCase() !== user.safeAddress.toLowerCase(),
+      )
+      setCacheMembers(newCacheMembers)
+      setMembers(newMembers)
+      // @todo we should wait for X time after add (confirmations)
+      setTimeout(() => {
+        refetch()
+      }, CONFIRMATION_TIME)
+    },
+    [refetch, cacheMembers, members],
+  )
+
+  useEffect(() => {
+    setCacheMembers(groupMembers)
+    setMembers(groupMembers)
+  }, [groupMembers])
+
+  return {
+    search,
+    loading,
+    members,
+    query,
+    addGroupMember,
+    removeGroupMember,
+    allGroupMembers: cacheMembers,
+  }
 }

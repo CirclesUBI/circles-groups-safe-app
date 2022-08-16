@@ -7,6 +7,8 @@ import { Popup } from '@/src/components/assets/Popup'
 import { UsersList } from '@/src/components/lists/UsersList'
 import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
 
+const NO_RESULTS_TEXT = 'There are no members on this group.'
+
 const MembersButton = styled.button`
   background-color: transparent;
   border: none;
@@ -47,7 +49,7 @@ export const MembersListButton: React.FC<Props> = ({ groupId, groupName, numberM
             subtitle="group users"
             title={groupName}
           >
-            <UsersList users={groupMembers} />
+            <UsersList noResultText={NO_RESULTS_TEXT} users={groupMembers} />
           </Popup>
         )}
       </AnimatePresence>
