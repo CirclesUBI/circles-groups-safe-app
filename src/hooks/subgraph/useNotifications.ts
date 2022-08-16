@@ -31,21 +31,23 @@ export type EventOwnershipData = {
 }
 
 export type EventGroupCreationData = {
-  group: string
-  creator: string
-  name: string
+  groupAddress: string
+  groupName: string
+  creatorAddress: string
 }
 
 export type EventGroupMintData = {
   receiver: string
   amount: string
   mintFee: string
-  group: string
+  groupAddress: string
+  groupName: string
 }
 
 export type EventGroupMemberUpdateData = {
-  user: string
-  group: string
+  userAddress: string
+  groupAddress: string
+  groupName: string
 }
 
 export type UserNotification = {
@@ -91,9 +93,9 @@ const transformGroupCreation = (
   notification: Notifications_notifications,
 ): EventGroupCreationData => {
   return {
-    creator: notification.groupCreation?.creator ?? '',
-    group: notification.groupCreation?.group ?? '',
-    name: notification.groupCreation?.name ?? '',
+    creatorAddress: notification.groupCreation?.creator ?? '',
+    groupAddress: notification.groupCreation?.group?.id ?? '',
+    groupName: notification.groupCreation?.group?.name ?? '',
   }
 }
 const transformGroupMint = (notification: Notifications_notifications): EventGroupMintData => {
@@ -101,15 +103,17 @@ const transformGroupMint = (notification: Notifications_notifications): EventGro
     receiver: notification.groupMint?.receiver ?? '',
     amount: notification.groupMint?.amount ?? '',
     mintFee: notification.groupMint?.mintFee ?? '',
-    group: notification.groupMint?.group ?? '',
+    groupAddress: notification.groupMint?.group?.id ?? '',
+    groupName: notification.groupMint?.group?.name ?? '',
   }
 }
 const transformGroupMemberUpdate = (
   notification: Notifications_notifications,
 ): EventGroupMemberUpdateData => {
   return {
-    group: notification.groupAddMember?.group ?? '',
-    user: notification.groupAddMember?.user ?? '',
+    groupAddress: notification.groupAddMember?.group?.id ?? '',
+    groupName: notification.groupAddMember?.group?.name ?? '',
+    userAddress: notification.groupAddMember?.user?.id ?? '',
   }
 }
 
@@ -147,6 +151,7 @@ export const fetchNotifications = async (safeAddress: string) => {
     {
       where: {
         safe: safeAddress.toLowerCase(),
+        type_in: VALID_NOTIFICATION_TYPES, // @todo: we only show notifications related to groups
       },
       orderBy: Notification_orderBy.time,
       orderDirection: OrderDirection.desc,
