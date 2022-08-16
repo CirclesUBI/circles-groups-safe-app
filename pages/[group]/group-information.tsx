@@ -15,7 +15,8 @@ import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
-import { stringToValidFloat } from '@/src/utils/formatNumber'
+
+const NO_RESULTS_TEXT = 'There are no members on this group.'
 
 const Wrapper = styled.div`
   display: flex;
@@ -92,7 +93,7 @@ const ConfigurateGroup: NextPage = () => {
           <ListWrapper>
             <H2>Group members</H2>
             <UserListWrapper>
-              <UsersList users={groupMembers} />
+              <UsersList noResultText={NO_RESULTS_TEXT} users={groupMembers} />
             </UserListWrapper>
           </ListWrapper>
         </Columns>

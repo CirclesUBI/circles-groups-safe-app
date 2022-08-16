@@ -130,7 +130,7 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
    * - member search might need to match the entire query instead of including?
    */
 
-  let NO_RESULTS_USERS_QUERY = 'There are no users!'
+  let NO_RESULTS_USERS_QUERY = 'There are no users.'
   if (users.length === 0) {
     NO_RESULTS_USERS_QUERY = `We couldn't find a match for ${usersQuery}.`
   } else {
@@ -139,7 +139,10 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
       NO_RESULTS_USERS_QUERY = `The user ${usersQuery} is already a group member`
     }
   }
-  const NO_RESULTS_MEMBERS_QUERY = `The user ${membersQuery} is not a member of the group.`
+  let NO_RESULTS_MEMBERS_QUERY = 'There are no members on this group.'
+  if (membersQuery) {
+    NO_RESULTS_MEMBERS_QUERY = `The user ${membersQuery} is not a group member.`
+  }
 
   return (
     <>
