@@ -20,6 +20,7 @@ import {
   AllowedMintingUser,
   useGroupCurrencyTokensById,
 } from '@/src/hooks/subgraph/useGroupCurrencyToken'
+import { useAllowedMintingUser } from '@/src/hooks/useAllowedMintingUser'
 import { useChangeOwner } from '@/src/hooks/useChangeOwner'
 import { validNetwork } from '@/src/utils/validNetwork'
 
@@ -54,10 +55,12 @@ const ConfigurateGroup: NextPage = () => {
   const isOwner = groupOwner && groupOwner.toLowerCase() === currentUser
   const groupFeeText = `${group?.mintFeePerThousand ?? 0}%`
 
-  const currentAllowedMintingUser = group?.allowedMintingUser
-  const [allowedMintingUser, setAllowedMintingUser] = useState<AllowedMintingUser>(
-    group?.allowedMintingUser ?? AllowedMintingUser.all,
-  )
+  const {
+    allowedMintingUser,
+    isDisabledUpdateAllowedMinting,
+    saveAllowedUserConfiguration,
+    setAllowedMintingUser,
+  } = useAllowedMintingUser(groupAddr)
 
   // @TODO Improve validation
   const isDisabledSaveButton =
@@ -87,7 +90,6 @@ const ConfigurateGroup: NextPage = () => {
 
   const CHANGE_OWNER_NOTIFICATION_TEXT = `Are you sure you want to change Group Owner to ${owner}?`
   const CHANGE_MINT_SETTINGS_NOTIFICATION_TEXT = `Are you sure you want to change group mint settings to ${allowedMintingUser}?`
-  const isDisabledSaveMintButton = currentAllowedMintingUser === allowedMintingUser
 
   return (
     <>
@@ -108,6 +110,7 @@ const ConfigurateGroup: NextPage = () => {
           <AlertMessage
             confirmAction={() => {
               setAllowedUserNotification(false)
+              saveAllowedUserConfiguration()
             }}
             onCloseAlert={() => setAllowedUserNotification(false)}
             text={CHANGE_MINT_SETTINGS_NOTIFICATION_TEXT}
@@ -163,7 +166,7 @@ const ConfigurateGroup: NextPage = () => {
         </Columns>
         <ActionWrapper>
           <ButtonPrimary
-            disabled={isDisabledSaveMintButton || loading}
+            disabled={isDisabledUpdateAllowedMinting}
             onClick={() => setAllowedUserNotification(true)}
           >
             Save Mint Configuration
