@@ -6,6 +6,8 @@ import {
   Notifications,
   NotificationsVariables,
   Notifications_notifications,
+  Notifications_notifications_groupAddMember,
+  Notifications_notifications_groupRemoveMember,
 } from '@/types/subgraph/__generated__/Notifications'
 import {
   NotificationType,
@@ -108,12 +110,15 @@ const transformGroupMint = (notification: Notifications_notifications): EventGro
   }
 }
 const transformGroupMemberUpdate = (
-  notification: Notifications_notifications,
+  memberUpdate:
+    | Notifications_notifications_groupAddMember
+    | Notifications_notifications_groupRemoveMember
+    | null,
 ): EventGroupMemberUpdateData => {
   return {
-    groupAddress: notification.groupAddMember?.group?.id ?? '',
-    groupName: notification.groupAddMember?.group?.name ?? '',
-    userAddress: notification.groupAddMember?.user?.id ?? '',
+    groupAddress: memberUpdate?.group?.id ?? '',
+    groupName: memberUpdate?.group?.name ?? '',
+    userAddress: memberUpdate?.user?.id ?? '',
   }
 }
 
@@ -140,8 +145,8 @@ const transformToUserNotification = (
     ownership: transformToOwnership(notification),
     groupCreation: transformGroupCreation(notification),
     groupMint: transformGroupMint(notification),
-    groupAddMember: transformGroupMemberUpdate(notification),
-    groupRemoveMember: transformGroupMemberUpdate(notification),
+    groupAddMember: transformGroupMemberUpdate(notification.groupAddMember),
+    groupRemoveMember: transformGroupMemberUpdate(notification.groupRemoveMember),
   }
 }
 
