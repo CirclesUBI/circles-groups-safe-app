@@ -44,7 +44,10 @@ export const MembersListButton: React.FC<Props> = ({ groupId, groupName, numberM
     }
   }, [isPopupOpen])
 
-  const NO_RESULTS_MEMBERS_QUERY = `The user ${membersQuery} is not a member of the group.`
+  let NO_RESULTS_MEMBERS_QUERY = 'There are no members on this group.'
+  if (membersQuery) {
+    NO_RESULTS_MEMBERS_QUERY = `The user ${membersQuery} is not a group member.`
+  }
   return (
     <>
       <AnimatePresence>

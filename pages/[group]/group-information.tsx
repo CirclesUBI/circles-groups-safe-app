@@ -15,12 +15,7 @@ import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { MIN_SEARCH_NUMBER } from '@/src/constants/misc'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
-import {
-  useGroupMembersByGroupId,
-  useGroupMembersByGroupIdSearch,
-} from '@/src/hooks/subgraph/useGroupMembers'
-
-const NO_RESULTS_TEXT = 'There are no members on this group.'
+import { useGroupMembersByGroupIdSearch } from '@/src/hooks/subgraph/useGroupMembers'
 
 const Wrapper = styled.div`
   display: flex;
@@ -63,7 +58,10 @@ const ConfigurateGroup: NextPage = () => {
   const [currentUser] = useState(safe.safeAddress.toLowerCase())
   const isOwner = group?.owner === currentUser
   const groupFeeText = `${group?.mintFeePerThousand ?? 0}%`
-  const NO_RESULTS_MEMBERS_QUERY = `The user ${membersQuery} is not a member of the group.`
+  let NO_RESULTS_MEMBERS_QUERY = 'There are no members on this group.'
+  if (membersQuery) {
+    NO_RESULTS_MEMBERS_QUERY = `The user ${membersQuery} is not a group member.`
+  }
   return (
     <>
       <TitleGroup hasBackButton information="Group information" text={group?.name ?? ''} />
