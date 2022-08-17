@@ -21,6 +21,20 @@ export type GroupCurrencyToken = {
   mintFeePerThousand: number
   minted: string
   members: Array<any> // TODO define Member's Group type
+  onlyTrustedCanMint: boolean
+  onlyOwnerCanMint: boolean
+}
+
+export enum AllowedMintingUser {
+  all = 'ALL',
+  trusted = 'TRUSTED',
+  owners = 'OWNERS',
+}
+
+export const getAllowedMintingUser = (group: GroupCurrencyToken) => {
+  if (group.onlyOwnerCanMint) return AllowedMintingUser.owners
+  if (group.onlyTrustedCanMint) return AllowedMintingUser.trusted
+  return AllowedMintingUser.all
 }
 
 const transformToGroupCurrencyToken = (
@@ -36,6 +50,8 @@ const transformToGroupCurrencyToken = (
     mintFeePerThousand: stringToValidFloat(group.mintFeePerThousand ?? '') / 10,
     minted: formatNumber(circlesToTC(group.minted)) ?? '0',
     members: group.members,
+    onlyTrustedCanMint: group.onlyTrustedCanMint ?? false,
+    onlyOwnerCanMint: group.onlyOwnerCanMint ?? false,
   }
 }
 
