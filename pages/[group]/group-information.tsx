@@ -13,8 +13,12 @@ import { Columns } from '@/src/components/layout/Columns'
 import { UsersList } from '@/src/components/lists/UsersList'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { genericSuspense } from '@/src/components/safeSuspense'
+import { MIN_SEARCH_NUMBER } from '@/src/constants/misc'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
-import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
+import {
+  useGroupMembersByGroupId,
+  useGroupMembersByGroupIdSearch,
+} from '@/src/hooks/subgraph/useGroupMembers'
 
 const NO_RESULTS_TEXT = 'There are no members on this group.'
 
@@ -47,13 +51,19 @@ const H2 = styled.h2`
 const ConfigurateGroup: NextPage = () => {
   const router = useRouter()
   const groupAddr = String(router.query?.group)
-  const { groupMembers } = useGroupMembersByGroupId(groupAddr)
   const { group } = useGroupCurrencyTokensById(groupAddr)
+  const {
+    allGroupMembers,
+    members,
+    query: membersQuery,
+    search: searchGroupMembers,
+  } = useGroupMembersByGroupIdSearch(groupAddr)
 
   const { connected, safe } = useSafeAppsSDK()
   const [currentUser] = useState(safe.safeAddress.toLowerCase())
   const isOwner = group?.owner === currentUser
   const groupFeeText = `${group?.mintFeePerThousand ?? 0}%`
+  const NO_RESULTS_MEMBERS_QUERY = `The user ${membersQuery} is not a member of the group.`
   return (
     <>
       <TitleGroup hasBackButton information="Group information" text={group?.name ?? ''} />
@@ -93,7 +103,14 @@ const ConfigurateGroup: NextPage = () => {
           <ListWrapper>
             <H2>Group members</H2>
             <UserListWrapper>
-              <UsersList noResultText={NO_RESULTS_TEXT} users={groupMembers} />
+              <UsersList
+                noResultText={NO_RESULTS_MEMBERS_QUERY}
+                onSearch={
+                  allGroupMembers.length > MIN_SEARCH_NUMBER ? searchGroupMembers : undefined
+                }
+                query={membersQuery}
+                users={members}
+              />
             </UserListWrapper>
           </ListWrapper>
         </Columns>
