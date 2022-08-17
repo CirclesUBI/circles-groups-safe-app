@@ -10,11 +10,16 @@ import { AnimatePresence } from 'framer-motion'
 import { AlertMessage } from '@/src/components/assets/AlertMessage'
 import { InformationPod } from '@/src/components/assets/InformationPod'
 import { Input } from '@/src/components/assets/Input'
+import { InputLabelText } from '@/src/components/assets/InputLabelText'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
+import { LabeledCheckbox } from '@/src/components/form/LabeledCheckbox'
 import { Columns } from '@/src/components/layout/Columns'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { useGroupCurrencyTokenCall } from '@/src/hooks/contracts/useGroupCurrencyTokenCall'
-import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
+import {
+  AllowedMintingUser,
+  useGroupCurrencyTokensById,
+} from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useChangeOwner } from '@/src/hooks/useChangeOwner'
 import { validNetwork } from '@/src/utils/validNetwork'
 
@@ -24,6 +29,7 @@ const FormWrapper = styled.div`
   gap: ${({ theme }) => theme.general.space * 2}px;
   margin-top: ${({ theme }) => theme.general.space * 4}px;
   padding: 0 ${({ theme }) => theme.general.space * 2}px;
+  font-size: 16px;
 `
 
 const ActionWrapper = styled.div`
@@ -41,11 +47,17 @@ const ConfigurateGroup: NextPage = () => {
   const currentUser = safe.safeAddress.toLowerCase()
 
   const [notification, setNotification] = useState<boolean>(false)
+  const [allowedUserNotification, setAllowedUserNotification] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [owner, setOwner] = useState(group?.owner ?? '')
   const [groupOwner, refetchGroupOwner] = useGroupCurrencyTokenCall(groupAddr, 'owner', [])
   const isOwner = groupOwner && groupOwner.toLowerCase() === currentUser
   const groupFeeText = `${group?.mintFeePerThousand ?? 0}%`
+
+  const currentAllowedMintingUser = group?.allowedMintingUser
+  const [allowedMintingUser, setAllowedMintingUser] = useState<AllowedMintingUser>(
+    group?.allowedMintingUser ?? AllowedMintingUser.all,
+  )
 
   // @TODO Improve validation
   const isDisabledSaveButton =
@@ -72,6 +84,11 @@ const ConfigurateGroup: NextPage = () => {
       setOwner(groupOwner)
     }
   }, [groupOwner])
+
+  const CHANGE_OWNER_NOTIFICATION_TEXT = `Are you sure you want to change Group Owner to ${owner}?`
+  const CHANGE_MINT_SETTINGS_NOTIFICATION_TEXT = `Are you sure you want to change group mint settings to ${allowedMintingUser}?`
+  const isDisabledSaveMintButton = currentAllowedMintingUser === allowedMintingUser
+
   return (
     <>
       {notification && (
@@ -82,7 +99,18 @@ const ConfigurateGroup: NextPage = () => {
               saveConfiguration()
             }}
             onCloseAlert={() => setNotification(false)}
-            text={`Are you sure you want to change Group Owner to ${owner}?`}
+            text={CHANGE_OWNER_NOTIFICATION_TEXT}
+          />
+        </AnimatePresence>
+      )}
+      {allowedUserNotification && (
+        <AnimatePresence>
+          <AlertMessage
+            confirmAction={() => {
+              setAllowedUserNotification(false)
+            }}
+            onCloseAlert={() => setAllowedUserNotification(false)}
+            text={CHANGE_MINT_SETTINGS_NOTIFICATION_TEXT}
           />
         </AnimatePresence>
       )}
@@ -106,7 +134,39 @@ const ConfigurateGroup: NextPage = () => {
             disabled={isDisabledSaveButton || loading}
             onClick={() => setNotification(true)}
           >
-            Save configuration
+            Save Owner Configuration
+          </ButtonPrimary>
+        </ActionWrapper>
+      </FormWrapper>
+      <hr />
+      <FormWrapper>
+        <Columns columnsNumber={1}>
+          <InputLabelText label={'Group Mint Settings'} mandatory />
+          <LabeledCheckbox
+            active={allowedMintingUser === AllowedMintingUser.all}
+            onClick={() => setAllowedMintingUser(AllowedMintingUser.all)}
+          >
+            all
+          </LabeledCheckbox>
+          <LabeledCheckbox
+            active={allowedMintingUser === AllowedMintingUser.trusted}
+            onClick={() => setAllowedMintingUser(AllowedMintingUser.trusted)}
+          >
+            only trusted
+          </LabeledCheckbox>
+          <LabeledCheckbox
+            active={allowedMintingUser === AllowedMintingUser.owners}
+            onClick={() => setAllowedMintingUser(AllowedMintingUser.owners)}
+          >
+            only owners
+          </LabeledCheckbox>
+        </Columns>
+        <ActionWrapper>
+          <ButtonPrimary
+            disabled={isDisabledSaveMintButton || loading}
+            onClick={() => setAllowedUserNotification(true)}
+          >
+            Save Mint Configuration
           </ButtonPrimary>
         </ActionWrapper>
       </FormWrapper>
