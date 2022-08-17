@@ -4,9 +4,8 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 import { isAddress } from '@ethersproject/address'
-import { BigNumber } from '@ethersproject/bignumber'
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 
 import { InformationText } from '@/src/components/assets/InformationText'
 import { Input } from '@/src/components/assets/Input'

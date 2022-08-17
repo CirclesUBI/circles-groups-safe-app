@@ -47,7 +47,7 @@ export const getAllowedMintingUser = (
 }
 
 export const isUserAllowedToMint = (safeAddress: string, group: GroupCurrencyToken) => {
-  if (AllowedMintingUser.all) {
+  if (group?.allowedMintingUser === AllowedMintingUser.all) {
     return true
   }
   if (group?.allowedMintingUser === AllowedMintingUser.owners) {
