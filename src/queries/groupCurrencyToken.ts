@@ -4,8 +4,9 @@ export const GROUP_CURRENCY_TOKEN_QUERY = gql`
   query GroupCurrencyTokens(
     $where: GroupCurrencyToken_filter
     $orderBy: GroupCurrencyToken_orderBy
+    $orderDirection: OrderDirection
   ) {
-    groupCurrencyTokens(where: $where, orderBy: $orderBy) {
+    groupCurrencyTokens(where: $where, orderBy: $orderBy, orderDirection: $orderDirection) {
       id
       name
       symbol
@@ -15,6 +16,7 @@ export const GROUP_CURRENCY_TOKEN_QUERY = gql`
       treasury
       mintFeePerThousand
       minted
+      time
       suspended
       onlyOwnerCanMint
       onlyTrustedCanMint
