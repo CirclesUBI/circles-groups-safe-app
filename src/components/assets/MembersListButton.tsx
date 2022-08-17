@@ -6,10 +6,7 @@ import { AnimatePresence } from 'framer-motion'
 import { Popup } from '@/src/components/assets/Popup'
 import { UsersList } from '@/src/components/lists/UsersList'
 import { MIN_SEARCH_NUMBER } from '@/src/constants/misc'
-import {
-  useGroupMembersByGroupId,
-  useGroupMembersByGroupIdSearch,
-} from '@/src/hooks/subgraph/useGroupMembers'
+import { useGroupMembersByGroupIdSearch } from '@/src/hooks/subgraph/useGroupMembers'
 
 const MembersButton = styled.button`
   background-color: transparent;
@@ -30,11 +27,9 @@ interface Props {
 export const MembersListButton: React.FC<Props> = ({ groupId, groupName, numberMembers }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false)
   const {
-    addGroupMember,
     allGroupMembers,
     members,
     query: membersQuery,
-    removeGroupMember,
     search: searchGroupMembers,
   } = useGroupMembersByGroupIdSearch(groupId)
 
