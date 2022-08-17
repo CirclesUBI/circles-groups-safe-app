@@ -17,6 +17,7 @@ const List = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.general.space * 4}px;
   padding: ${({ theme }) => theme.general.space * 4}px 0 0;
+  overflow: hidden;
 `
 
 const GroupInfo = styled.div`
