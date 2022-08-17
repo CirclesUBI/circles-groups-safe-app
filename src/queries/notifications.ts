@@ -33,26 +33,41 @@ export const NOTIFICATIONS = gql`
       }
       groupCreation {
         id
-        group
-        name
         creator
+        group {
+          id
+          name
+        }
       }
       groupAddMember {
         id
-        user
-        group
+        user {
+          id
+        }
+        group {
+          id
+          name
+        }
       }
       groupRemoveMember {
         id
-        user
-        group
+        user {
+          id
+        }
+        group {
+          id
+          name
+        }
       }
       groupMint {
         id
         amount
         receiver
         mintFee
-        group
+        group {
+          id
+          name
+        }
       }
     }
   }

@@ -41,7 +41,7 @@ export const useCirclesBalance = (safeAddress: string, sdk: SafeAppsSDK) => {
   const { groupMints } = useGroupMints(safeAddress)
 
   const circles = useMemo(() => {
-    const groupAddresses = groupMints.map((groupMint) => groupMint.group.toLowerCase())
+    const groupAddresses = groupMints.map((groupMint) => groupMint.groupAddress.toLowerCase())
     const tokens = tokenBalances.filter((tokenBalance) => {
       const isCRC = tokenBalance.tokenInfo.symbol === CRC
       const tokenBalanceAddress = tokenBalance.tokenInfo.address.toLowerCase()

@@ -11,14 +11,16 @@ import {
 export type GroupMint = {
   amount: string
   receiver: string
-  group: string
+  groupAddress: string
+  groupName: string
 }
 
 const transformToGroupMint = (groupMint: GroupMints_groupMints): GroupMint => {
   return {
     amount: groupMint.amount ?? '',
     receiver: groupMint.receiver ?? '',
-    group: groupMint.group ?? '',
+    groupAddress: groupMint.group?.id ?? '',
+    groupName: groupMint.group?.name ?? '',
   }
 }
 
