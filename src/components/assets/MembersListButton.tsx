@@ -5,7 +5,11 @@ import { AnimatePresence } from 'framer-motion'
 
 import { Popup } from '@/src/components/assets/Popup'
 import { UsersList } from '@/src/components/lists/UsersList'
-import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
+import { MIN_SEARCH_NUMBER } from '@/src/constants/misc'
+import {
+  useGroupMembersByGroupId,
+  useGroupMembersByGroupIdSearch,
+} from '@/src/hooks/subgraph/useGroupMembers'
 
 const MembersButton = styled.button`
   background-color: transparent;
@@ -26,6 +30,14 @@ interface Props {
 export const MembersListButton: React.FC<Props> = ({ groupId, groupName, numberMembers }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false)
   const { groupMembers } = useGroupMembersByGroupId(groupId)
+  const {
+    addGroupMember,
+    allGroupMembers,
+    members,
+    query: membersQuery,
+    removeGroupMember,
+    search: searchGroupMembers,
+  } = useGroupMembersByGroupIdSearch(groupId)
 
   const handleModal = () => {
     setIsPopupOpen(true)
@@ -38,6 +50,7 @@ export const MembersListButton: React.FC<Props> = ({ groupId, groupName, numberM
     }
   }, [isPopupOpen])
 
+  const NO_RESULTS_MEMBERS_QUERY = `The user ${membersQuery} is not a member of the group.`
   return (
     <>
       <AnimatePresence>
@@ -47,7 +60,12 @@ export const MembersListButton: React.FC<Props> = ({ groupId, groupName, numberM
             subtitle="group users"
             title={groupName}
           >
-            <UsersList users={groupMembers} />
+            <UsersList
+              noResultText={NO_RESULTS_MEMBERS_QUERY}
+              onSearch={allGroupMembers.length > MIN_SEARCH_NUMBER ? searchGroupMembers : undefined}
+              query={membersQuery}
+              users={groupMembers}
+            />
           </Popup>
         )}
       </AnimatePresence>
