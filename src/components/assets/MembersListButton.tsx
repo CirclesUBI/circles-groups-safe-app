@@ -29,7 +29,6 @@ interface Props {
 
 export const MembersListButton: React.FC<Props> = ({ groupId, groupName, numberMembers }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false)
-  const { groupMembers } = useGroupMembersByGroupId(groupId)
   const {
     addGroupMember,
     allGroupMembers,
@@ -64,7 +63,7 @@ export const MembersListButton: React.FC<Props> = ({ groupId, groupName, numberM
               noResultText={NO_RESULTS_MEMBERS_QUERY}
               onSearch={allGroupMembers.length > MIN_SEARCH_NUMBER ? searchGroupMembers : undefined}
               query={membersQuery}
-              users={groupMembers}
+              users={members}
             />
           </Popup>
         )}
