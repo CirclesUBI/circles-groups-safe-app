@@ -16,6 +16,7 @@ import { genericSuspense } from '@/src/components/safeSuspense'
 import { useCreateGroupTx } from '@/src/hooks/useCreateGroup'
 import { addresses } from '@/src/utils/addresses'
 import { fixedNumber } from '@/src/utils/formatNumber'
+import { validNetwork } from '@/src/utils/validNetwork'
 
 const FormWrapper = styled.div`
   display: flex;
@@ -77,7 +78,7 @@ const CreateGroup: NextPage = () => {
     await execute(
       [
         addresses.gnosis.HUB.address, // @TODO Should work for other networks, not just gnosis
-        treasury,
+        validNetwork(treasury),
         safe.safeAddress,
         feeAmount,
         groupName,
@@ -103,9 +104,9 @@ const CreateGroup: NextPage = () => {
     }
   }
 
-  const isValidTreasury = treasury && isAddress(treasury)
+  const isValidTreasury = treasury && isAddress(validNetwork(treasury))
   const isValidFee = _isValidFee(parseFloat(fee))
-  const isCompleted = groupName && groupSymbol && treasury && fee
+  const isCompleted = groupName && groupSymbol && validNetwork(treasury) && fee
   const isDisabled = !groupName || !groupSymbol || !isValidTreasury || !isValidFee || loading
 
   return (
