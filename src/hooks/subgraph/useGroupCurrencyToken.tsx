@@ -23,6 +23,7 @@ export type GroupCurrencyToken = {
   members: Array<any> // TODO define Member's Group type
   onlyTrustedCanMint: boolean
   onlyOwnerCanMint: boolean
+  allowedMintingUser: AllowedMintingUser
 }
 
 export enum AllowedMintingUser {
@@ -31,7 +32,9 @@ export enum AllowedMintingUser {
   owners = 'OWNERS',
 }
 
-export const getAllowedMintingUser = (group: GroupCurrencyToken) => {
+export const getAllowedMintingUser = (
+  group: GroupCurrencyToken | GroupCurrencyTokens_groupCurrencyTokens,
+) => {
   if (group.onlyOwnerCanMint) return AllowedMintingUser.owners
   if (group.onlyTrustedCanMint) return AllowedMintingUser.trusted
   return AllowedMintingUser.all
@@ -52,6 +55,7 @@ const transformToGroupCurrencyToken = (
     members: group.members,
     onlyTrustedCanMint: group.onlyTrustedCanMint ?? false,
     onlyOwnerCanMint: group.onlyOwnerCanMint ?? false,
+    allowedMintingUser: getAllowedMintingUser(group),
   }
 }
 

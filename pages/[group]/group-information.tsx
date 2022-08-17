@@ -97,7 +97,7 @@ const ConfigurateGroup: NextPage = () => {
             groupId={groupAddr}
             label="What users can mint?"
             owner={isOwner}
-            text={group ? getAllowedMintingUser(group) : ''}
+            text={group?.allowedMintingUser ?? ''}
           />
         </Columns>
 
