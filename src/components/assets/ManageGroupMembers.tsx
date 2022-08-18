@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { UsersList } from '@/src/components/lists/UsersList'
-import { allUsers } from '@/src/constants/allUsers'
 import { MIN_SEARCH_NUMBER } from '@/src/constants/misc'
 import { useGroupCurrencyTokenTx } from '@/src/hooks/contracts/useGroupCurrencyTokenTx'
 import {
