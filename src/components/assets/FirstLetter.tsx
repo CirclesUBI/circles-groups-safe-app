@@ -7,7 +7,7 @@ const Character = styled.div`
   color: ${({ theme }) => theme.colors.white};
   display: flex;
   font-family: ${({ theme }) => theme.fonts.fontFamilyHeading};
-  font-size: 32px;
+  font-size: 3.2rem;
   font-weight: 900;
   height: 40px;
   justify-content: center;

@@ -45,7 +45,10 @@ const Wrapper = styled.div<{ isAdminLayout: boolean }>`
 
 export const Layout: React.FC = ({ children }) => {
   const router = useRouter()
-  const showMenu = useMemo(() => router.pathname !== '/activity-log', [router])
+  const showMenu = useMemo(
+    () => router.pathname !== '/activity-log' && router.pathname !== '/balance',
+    [router],
+  )
   const isAdminLayout = useMemo(() => router.pathname.includes('admin'), [router])
   const { connected } = useSafeAppsSDK()
 

@@ -8,7 +8,7 @@ const Wrapper = styled.div`
   color: ${({ theme: { colors } }) => colors.primary};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.general.space * 4}px;
+  gap: ${({ theme }) => theme.general.space * 3}px;
   width: 100%;
 `
 
@@ -37,15 +37,14 @@ export const ListItemMainMenu: React.FC<Props> = ({ LinksList, onClose, switchTa
     <Wrapper as={motion.div} variants={variants}>
       <AnimatePresence>
         {LinksList.map(({ gotoTab, href, title }, index) => (
-          <div key={`links_${index}`}>
-            <ItemMainMenu
-              closeMenu={() => {
-                onClose(), switchTab(gotoTab)
-              }}
-              href={href}
-              title={title}
-            />
-          </div>
+          <ItemMainMenu
+            closeMenu={() => {
+              onClose(), switchTab(gotoTab)
+            }}
+            href={href}
+            key={`links_${index}`}
+            title={title}
+          />
         ))}
       </AnimatePresence>
     </Wrapper>

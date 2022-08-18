@@ -100,18 +100,33 @@ const LinkGroup = styled(LinkButton)`
   background-color: ${({ theme }) => theme.colors.fourth};
   border-color: ${({ theme }) => theme.colors.fourth};
   padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
-  max-width: 170px;
+  max-width: 120px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
   flex-shrink: 0;
   display: block;
+  font-size: 1.2rem;
+  @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
+    font-size: 1.6rem;
+    max-width: 170px;
+  }
 `
 
-const UserWrapper = styled.div`
+const UserWrapper = styled.a`
   display: none;
+  color: ${({ theme }) => theme.colors.white};
+  text-decoration: none;
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletLandscapeStart}) {
     display: block;
+  }
+  div {
+    transition: all 0.15s ease-out;
+  }
+  &:hover {
+    > div {
+      background-color: ${({ theme }) => theme.buttonPrimary.backgroundColorHover};
+    }
   }
 `
 const UserGroups = styled.div`
@@ -215,9 +230,11 @@ export const Header: React.FC = (props) => {
           <EndWrapper>
             {isWalletConnected ? (
               <UserGroups>
-                <UserWrapper>
-                  <User headerStyle userTokens={circles} username={user?.username} />
-                </UserWrapper>
+                <Link href="/balance" passHref>
+                  <UserWrapper>
+                    <User headerStyle="header" userTokens={circles} username={user?.username} />
+                  </UserWrapper>
+                </Link>
                 {myCreatedGroups.length > 1 && <GroupSelector groups={myCreatedGroups} />}
                 {myCreatedGroups.length === 1 && (
                   <Link href="/admin" passHref>
