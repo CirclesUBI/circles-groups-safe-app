@@ -4,11 +4,10 @@ import styled from 'styled-components'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { UsersList } from '@/src/components/lists/UsersList'
-import { allUsers } from '@/src/constants/allUsers'
 import { MIN_SEARCH_NUMBER } from '@/src/constants/misc'
 import { useGroupCurrencyTokenTx } from '@/src/hooks/contracts/useGroupCurrencyTokenTx'
 import {
-  matchesGroupMember,
+  groupMemberMatches,
   useGroupMembersByGroupIdSearch,
 } from '@/src/hooks/subgraph/useGroupMembers'
 import { useSearchUsers } from '@/src/hooks/subgraph/useUsers'
@@ -134,9 +133,11 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
   if (users.length === 0) {
     NO_RESULTS_USERS_QUERY = `We couldn't find a match for ${usersQuery}.`
   } else {
-    const existMember = allGroupMembers.some((member) => matchesGroupMember(member, usersQuery))
-    if (existMember) {
+    const existMember = allGroupMembers.some((member) => groupMemberMatches(member, usersQuery))
+    if (usersWithoutMembers.length === 0 && existMember) {
       NO_RESULTS_USERS_QUERY = `The user ${usersQuery} is already a group member`
+    } else {
+      NO_RESULTS_USERS_QUERY = `We couldn't find a match for ${usersQuery}.`
     }
   }
   let NO_RESULTS_MEMBERS_QUERY = 'There are no members on this group.'

@@ -61,13 +61,20 @@ export const useGroupMemberById = (safeId?: string, groupId?: string) => {
   return { member, error, refetch: mutate }
 }
 
-export const matchesGroupMember = (member: CirclesGardenUser, query: string) => {
+export const groupMemberContains = (member: CirclesGardenUser, query: string) => {
   const doesIncludeUsername = member.username.toLowerCase().includes(query.toLowerCase())
   // @todo lets put a minimum of size to contain in the address
   const doesIncludeSafeAddress =
     query.length > MIN_ADDRESS_MATCH &&
     member.safeAddress.toLowerCase().includes(query.toLowerCase())
   return doesIncludeUsername || doesIncludeSafeAddress
+}
+
+export const groupMemberMatches = (member: CirclesGardenUser, query: string) => {
+  const matchesUsername = member.username.toLowerCase() === query.toLowerCase()
+  // @todo lets put a minimum of size to contain in the address
+  const matchesSafeAddress = member.safeAddress.toLowerCase() === query.toLowerCase()
+  return matchesUsername || matchesSafeAddress
 }
 
 /**
@@ -93,7 +100,7 @@ export const useGroupMembersByGroupIdSearch = (groupAddress: string) => {
       if (!_query) {
         setMembers(cacheMembers)
       } else {
-        const filteredMembers = cacheMembers.filter((member) => matchesGroupMember(member, _query))
+        const filteredMembers = cacheMembers.filter((member) => groupMemberContains(member, _query))
         setMembers(filteredMembers)
       }
       setLoading(false)
