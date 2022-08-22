@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
 import { TokenBalance } from '@gnosis.pm/safe-apps-sdk'
@@ -16,14 +16,23 @@ const CRC = 'CRC'
  * it only works when user is connected to the safe
  * @TODO we might want to fetch their balances using the SG
  */
-export const getCirclesFromBalances = (tokenBalances: TokenBalance[]) => {
-  const circlesAmounts = tokenBalances.map((crcToken) => crcToken.balance)
-  let accumulatorBN = BigNumber.from(0)
-  circlesAmounts.forEach((circlesAmount) => {
-    const circlesAmountBN = BigNumber.from(circlesAmount)
-    accumulatorBN = accumulatorBN.add(circlesAmountBN)
-  })
-  return accumulatorBN.toString()
+export const getCirclesFromBalances = (tokenBalances: CirclesTokenBalance[]) => {
+  const circlesAmounts = tokenBalances.map((crcToken) => crcToken.flatBalance)
+  const totalAmount = circlesAmounts.reduce((prev, current) => {
+    const bnAmount = BigNumber.from(current)
+    return prev.add(bnAmount)
+  }, BigNumber.from(0))
+
+  return totalAmount.toString()
+}
+
+type CirclesTokenBalance = {
+  isGroupCurrencyToken: boolean
+  flatBalance: string
+  balance: string
+  address: string
+  symbol: string
+  name: string
 }
 
 /**
@@ -40,18 +49,41 @@ export const useCirclesBalance = (safeAddress: string, sdk: SafeAppsSDK) => {
   const [tokenBalances] = useSafeBalances(sdk)
   const { groupMints } = useGroupMints(safeAddress)
 
-  const circles = useMemo(() => {
-    const groupAddresses = groupMints.map((groupMint) => groupMint.groupAddress.toLowerCase())
-    const tokens = tokenBalances.filter((tokenBalance) => {
-      const isCRC = tokenBalance.tokenInfo.symbol === CRC
-      const tokenBalanceAddress = tokenBalance.tokenInfo.address.toLowerCase()
-      const isGroup = groupAddresses.includes(tokenBalanceAddress)
-      return isCRC || isGroup
+  const groupAddresses = useMemo(
+    () => groupMints.map((groupMint) => groupMint.groupAddress.toLowerCase()),
+    [groupMints],
+  )
+
+  const isCRC = (tokenBalance: TokenBalance) => tokenBalance.tokenInfo.symbol === CRC
+  const isGroup = useCallback(
+    (tokenBalance: TokenBalance) =>
+      groupAddresses.includes(tokenBalance.tokenInfo.address.toLowerCase()),
+    [groupAddresses],
+  )
+
+  const getTCBalanceFromTokenBalance = (tokenBalance: TokenBalance) => {
+    return formatNumber(circlesToTC(BigNumber.from(tokenBalance.balance).toString()))
+  }
+
+  const tokens = useMemo(() => {
+    const filteredTokens = tokenBalances.filter((tb) => isCRC(tb) || isGroup(tb))
+    return filteredTokens.map<CirclesTokenBalance>((tokenBalance) => {
+      return {
+        isGroupCurrencyToken: isGroup(tokenBalance),
+        address: tokenBalance.tokenInfo.address,
+        flatBalance: tokenBalance.balance,
+        balance: getTCBalanceFromTokenBalance(tokenBalance),
+        name: tokenBalance.tokenInfo.name,
+        symbol: tokenBalance.tokenInfo.symbol,
+      }
     })
+  }, [tokenBalances, isGroup])
+
+  const circles = useMemo(() => {
     const numericBalance = getCirclesFromBalances(tokens)
     const tcBalance = circlesToTC(numericBalance)
     return formatNumber(tcBalance)
-  }, [tokenBalances, groupMints])
+  }, [tokens])
 
-  return { circles }
+  return { circles, tokens }
 }
