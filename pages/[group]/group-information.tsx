@@ -15,6 +15,7 @@ import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button
 import { genericSuspense } from '@/src/components/safeSuspense'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
+import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
 
 const NO_RESULTS_TEXT = 'There are no members on this group.'
 
@@ -46,14 +47,20 @@ const H2 = styled.h2`
 
 const ConfigurateGroup: NextPage = () => {
   const router = useRouter()
-  const groupAddr = String(router.query?.group)
-  const { groupMembers } = useGroupMembersByGroupId(groupAddr)
-  const { group } = useGroupCurrencyTokensById(groupAddr)
+  const groupAddress = String(router.query?.group)
+  const { groupMembers } = useGroupMembersByGroupId(groupAddress)
+  const { group } = useGroupCurrencyTokensById(groupAddress)
 
-  const { connected, safe } = useSafeAppsSDK()
+  const { connected, safe, sdk } = useSafeAppsSDK()
+  const { tokens } = useCirclesBalance(safe.safeAddress, sdk)
+
   const [currentUser] = useState(safe.safeAddress.toLowerCase())
   const isOwner = group?.owner === currentUser
   const groupFeeText = `${group?.mintFeePerThousand ?? 0}%`
+  const groupToken = tokens.find(
+    (token) => token.address.toLowerCase() === groupAddress.toLowerCase(),
+  )
+
   return (
     <>
       <TitleGroup hasBackButton information="Group information" text={group?.name ?? ''} />
@@ -67,7 +74,7 @@ const ConfigurateGroup: NextPage = () => {
         <Columns columnsNumber={1}>
           <InformationPod
             bgColor="lightest"
-            groupId={groupAddr}
+            groupId={groupAddress}
             label="Owner"
             owner={isOwner}
             text={group?.owner ?? ''}
@@ -81,13 +88,11 @@ const ConfigurateGroup: NextPage = () => {
         </Columns>
         <Columns columnsNumber={3}>
           <InformationPod bgColor="light" label="Fee" text={groupFeeText ?? ''} />
-          {/* @todo show Only if you have group tokens, group tokens instead of minted, 
-          Replace text with user group tokens amount */}
           <InformationPod
             bgColor="light"
             icon={<Crc />}
             label="My group tokens"
-            text={group?.minted ?? '0'}
+            text={groupToken?.balance ?? '0'}
           />
           <InformationPod
             bgColor="light"
@@ -99,7 +104,7 @@ const ConfigurateGroup: NextPage = () => {
         <Columns columnsNumber={1}>
           <InformationPod
             bgColor="lightest"
-            groupId={groupAddr}
+            groupId={groupAddress}
             label="What users can mint?"
             owner={isOwner}
             text={group?.allowedMintingUser ?? ''}
@@ -115,7 +120,7 @@ const ConfigurateGroup: NextPage = () => {
           </ListWrapper>
         </Columns>
         <ActionWrapper className={!connected ? 'not-allowed' : ''}>
-          <Link href={`/${groupAddr}/mint-tokens`} passHref>
+          <Link href={`/${groupAddress}/mint-tokens`} passHref>
             <LinkButton className={!connected ? 'disabled' : ''}>Mint Tokens</LinkButton>
           </Link>
         </ActionWrapper>
