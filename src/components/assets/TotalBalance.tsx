@@ -32,7 +32,7 @@ interface Props {
 export const TotalBalance: React.FC<Props> = ({ userTokens }) => {
   return (
     <Wrapper>
-      Total tokens
+      Total Tokens
       <strong>
         <Crc /> {userTokens}
       </strong>

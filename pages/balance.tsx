@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Image from 'next/image'
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
@@ -12,7 +12,6 @@ import { TotalBalance } from '@/src/components/assets/TotalBalance'
 import { User } from '@/src/components/assets/User'
 import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
 import { useUserSafe } from '@/src/hooks/useUserSafe'
-import formatNumber from '@/src/utils/formatNumber'
 
 const Section = styled.section`
   margin-top: ${({ theme }) => theme.general.space * 3}px;
@@ -25,7 +24,7 @@ const Section = styled.section`
   }
   h4 {
     margin: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px
-      ${({ theme }) => theme.general.space * 3}px;
+      ${({ theme }) => theme.general.space * 1}px;
   }
   br {
     content: '';
@@ -39,19 +38,20 @@ const Section = styled.section`
 
 const Balance: NextPage = () => {
   const { safe, sdk } = useSafeAppsSDK()
-  const { circles } = useCirclesBalance(safe.safeAddress, sdk)
+  const { circles, tokens } = useCirclesBalance(safe.safeAddress, sdk)
   const { user } = useUserSafe(safe.safeAddress)
 
-  // @todo REMOVE and replace with real content
-  const groupName = 'Bootnode'
-  const groupId = '0xff7D68f4BE5381Ae7d4Df449E134D51E8246C7b8'
-  const groupUserTokens = 1000
-  const groupTokenSymbol = 'BN'
+  const regularBalance = useMemo(() => {
+    const regularTokens = tokens.filter((token) => !token.isGroupCurrencyToken)
+    return regularTokens.reduce((prev, curr) => parseFloat(curr.balance) + prev, 0)
+  }, [tokens])
+  const groupTokens = useMemo(() => tokens.filter((token) => token.isGroupCurrencyToken), [tokens])
 
   return (
     <>
       <Title hasBackButton text="My Balance" />
       <Section>
+        <h4>My Regular Tokens</h4>
         <User
           headerStyle="clean"
           userImage={
@@ -67,22 +67,22 @@ const Balance: NextPage = () => {
               <></>
             )
           }
-          /* @todo replace with circles tokens without groups tokens */
-          userTokens={circles}
+          userTokens={String(regularBalance)}
           username={user?.username}
         />
 
-        <h4>My group tokens</h4>
+        <h4>My Group Tokens</h4>
         <ListContainer>
-          {/* @todo replace with real content*/}
-          <ListItemBalance
-            groupId={groupId}
-            groupIndex={1}
-            groupName={groupName}
-            groupTokenSymbol={groupTokenSymbol}
-            groupUserTokens={formatNumber(groupUserTokens)}
-            key={groupId}
-          />
+          {groupTokens.map((token, index) => (
+            <ListItemBalance
+              groupId={token.address}
+              groupIndex={index}
+              groupName={token.name}
+              groupTokenSymbol={token.symbol}
+              groupUserTokens={token.balance}
+              key={token.address}
+            />
+          ))}
         </ListContainer>
         <br />
         <TotalBalance userTokens={circles} />
