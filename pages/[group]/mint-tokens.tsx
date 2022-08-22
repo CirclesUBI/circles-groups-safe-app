@@ -8,13 +8,14 @@ import { AnimatePresence } from 'framer-motion'
 
 import { AlertMessage } from '@/src/components/assets/AlertMessage'
 import { Crc } from '@/src/components/assets/Crc'
-import { Input } from '@/src/components/assets/Input'
+import { InformationText } from '@/src/components/assets/InformationText'
 import { MintInformation } from '@/src/components/assets/MintInformation'
 import { Title } from '@/src/components/assets/Title'
 import { TransferUserInformation } from '@/src/components/assets/TransferUserInformation'
+import { Input } from '@/src/components/form/Input'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { genericSuspense } from '@/src/components/safeSuspense'
-import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
+import { isUserAllowedToMint } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
 import { useGroupMintToken } from '@/src/hooks/useGroupMintToken'
 import { useUserSafe } from '@/src/hooks/useUserSafe'
@@ -74,6 +75,11 @@ const CreateGroup: NextPage = () => {
 
   const feeNumber = group?.mintFeePerThousand ?? 0
 
+  const isAllowedUser = group ? isUserAllowedToMint(safe.safeAddress, group) : false
+
+  const isDisabledButton =
+    !connected || loading || isMintAmountInvalid || mintAmountNumber === 0 || !isAllowedUser
+
   return (
     <>
       {notification && (
@@ -126,13 +132,17 @@ const CreateGroup: NextPage = () => {
         </AnimatePresence>
       </InfoWrapper>
       <ActionWrapper>
-        <ButtonSecondary
-          disabled={!connected || loading || isMintAmountInvalid || mintAmountNumber === 0}
-          onClick={() => setNotification(true)}
-        >
+        <ButtonSecondary disabled={isDisabledButton} onClick={() => setNotification(true)}>
           Mint tokens
         </ButtonSecondary>
       </ActionWrapper>
+      <AnimatePresence exitBeforeEnter>
+        {!isAllowedUser && (
+          <InformationText>
+            *User is not allowed to mint, only allowed {group?.allowedMintingUser} members
+          </InformationText>
+        )}
+      </AnimatePresence>
     </>
   )
 }

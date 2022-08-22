@@ -88,6 +88,15 @@ const ConfigurateGroup: NextPage = () => {
             text={group?.minted ?? '0'}
           />
         </Columns>
+        <Columns columnsNumber={1}>
+          <InformationPod
+            bgColor="lightest"
+            groupId={groupAddr}
+            label="What users can mint?"
+            owner={isOwner}
+            text={group?.allowedMintingUser ?? ''}
+          />
+        </Columns>
 
         <Columns columnsNumber={1}>
           <ListWrapper>

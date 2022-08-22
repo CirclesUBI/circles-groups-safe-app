@@ -104,4 +104,10 @@ export const theme = {
     boxShadow:
       '0px 63px 109px rgba(0, 0, 0, 0.07), 0px 40.8333px 63.8356px rgba(0, 0, 0, 0.0531481), 0px 24.2667px 34.7185px rgba(0, 0, 0, 0.0425185), 0px 12.6px 17.7125px rgba(0, 0, 0, 0.035), 0px 5.13333px 8.88148px rgba(0, 0, 0, 0.0274815), 0px 1.16667px 4.28935px rgba(0, 0, 0, 0.0168519)',
   },
+  checkBox: {
+    backgroundColorActive: secondary,
+    backgroundColor: '#fff',
+    borderColor: primary,
+    dimensions: '14px',
+  },
 }
