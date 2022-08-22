@@ -39,6 +39,12 @@ const ActionWrapper = styled.div`
   margin: ${({ theme }) => theme.general.space * 2}px 0;
 `
 
+const RadioButtonsWrapper = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.general.space}px;
+  flex-direction: column;
+`
+
 const ConfigurateGroup: NextPage = () => {
   const router = useRouter()
   const groupAddr = String(router.query?.group)
@@ -145,24 +151,26 @@ const ConfigurateGroup: NextPage = () => {
       <FormWrapper>
         <Columns columnsNumber={1}>
           <InputLabelText label={'Group Mint Settings'} mandatory />
-          <LabeledCheckbox
-            active={allowedMintingUser === AllowedMintingUser.all}
-            onClick={() => setAllowedMintingUser(AllowedMintingUser.all)}
-          >
-            all
-          </LabeledCheckbox>
-          <LabeledCheckbox
-            active={allowedMintingUser === AllowedMintingUser.trusted}
-            onClick={() => setAllowedMintingUser(AllowedMintingUser.trusted)}
-          >
-            only trusted
-          </LabeledCheckbox>
-          <LabeledCheckbox
-            active={allowedMintingUser === AllowedMintingUser.owners}
-            onClick={() => setAllowedMintingUser(AllowedMintingUser.owners)}
-          >
-            only owners
-          </LabeledCheckbox>
+          <RadioButtonsWrapper>
+            <LabeledCheckbox
+              active={allowedMintingUser === AllowedMintingUser.all}
+              onClick={() => setAllowedMintingUser(AllowedMintingUser.all)}
+            >
+              All
+            </LabeledCheckbox>
+            <LabeledCheckbox
+              active={allowedMintingUser === AllowedMintingUser.trusted}
+              onClick={() => setAllowedMintingUser(AllowedMintingUser.trusted)}
+            >
+              Only trusted
+            </LabeledCheckbox>
+            <LabeledCheckbox
+              active={allowedMintingUser === AllowedMintingUser.owners}
+              onClick={() => setAllowedMintingUser(AllowedMintingUser.owners)}
+            >
+              Only owners
+            </LabeledCheckbox>
+          </RadioButtonsWrapper>
         </Columns>
         <ActionWrapper>
           <ButtonPrimary
