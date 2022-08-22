@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { isAddress } from '@ethersproject/address'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { InputLabelText } from './InputLabelText'
+import { InputLabelText } from '@/src/components/form/InputLabelText'
 import { validNetwork } from '@/src/utils/validNetwork'
 
 const Wrapper = styled.label`

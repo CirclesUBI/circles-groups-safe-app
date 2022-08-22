@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
-import { Info } from './Info'
-import { Tooltip } from './Tooltip'
+import { Info } from '@/src/components/assets/Info'
+import { Tooltip } from '@/src/components/assets/Tooltip'
 
 const LabelText = styled.div`
   color: ${({ theme }) => theme.colors.primary};
