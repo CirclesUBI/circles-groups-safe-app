@@ -39,6 +39,12 @@ const ActionWrapper = styled.div`
   margin: ${({ theme }) => theme.general.space * 2}px 0;
 `
 
+const RadioButtonsWrapper = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.general.space}px;
+  flex-direction: column;
+`
+
 const ConfigurateGroup: NextPage = () => {
   const router = useRouter()
   const groupAddr = String(router.query?.group)
@@ -144,25 +150,31 @@ const ConfigurateGroup: NextPage = () => {
       <hr />
       <FormWrapper>
         <Columns columnsNumber={1}>
-          <InputLabelText label={'Group Mint Settings'} mandatory />
-          <LabeledCheckbox
-            active={allowedMintingUser === AllowedMintingUser.all}
-            onClick={() => setAllowedMintingUser(AllowedMintingUser.all)}
-          >
-            all
-          </LabeledCheckbox>
-          <LabeledCheckbox
-            active={allowedMintingUser === AllowedMintingUser.trusted}
-            onClick={() => setAllowedMintingUser(AllowedMintingUser.trusted)}
-          >
-            only trusted
-          </LabeledCheckbox>
-          <LabeledCheckbox
-            active={allowedMintingUser === AllowedMintingUser.owners}
-            onClick={() => setAllowedMintingUser(AllowedMintingUser.owners)}
-          >
-            only owners
-          </LabeledCheckbox>
+          <InputLabelText
+            information="Change which users are able to Mint"
+            label={'Users able to Mint'}
+            mandatory
+          />
+          <RadioButtonsWrapper>
+            <LabeledCheckbox
+              active={allowedMintingUser === AllowedMintingUser.all}
+              onClick={() => setAllowedMintingUser(AllowedMintingUser.all)}
+            >
+              {AllowedMintingUser.all}
+            </LabeledCheckbox>
+            <LabeledCheckbox
+              active={allowedMintingUser === AllowedMintingUser.trusted}
+              onClick={() => setAllowedMintingUser(AllowedMintingUser.trusted)}
+            >
+              {AllowedMintingUser.trusted}
+            </LabeledCheckbox>
+            <LabeledCheckbox
+              active={allowedMintingUser === AllowedMintingUser.owners}
+              onClick={() => setAllowedMintingUser(AllowedMintingUser.owners)}
+            >
+              {AllowedMintingUser.owners}
+            </LabeledCheckbox>
+          </RadioButtonsWrapper>
         </Columns>
         <ActionWrapper>
           <ButtonPrimary

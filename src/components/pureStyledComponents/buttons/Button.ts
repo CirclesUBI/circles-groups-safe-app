@@ -163,7 +163,7 @@ export const ButtonConfirm = styled(BaseButton)`
 `
 
 export const ButtonCancel = styled(BaseButton)`
-  ${ButtonAlertCSS}
+  ${ButtonPrimaryCSS}
 `
 
 export const ButtonPrimaryLine = styled(BaseButton)`

@@ -89,6 +89,15 @@ const ConfigurateGroup: NextPage = () => {
         <Columns columnsNumber={1}>
           <InformationPod bgColor="lightest" label="Hub" text={group?.hub ?? ''} />
         </Columns>
+        <Columns columnsNumber={1}>
+          <InformationPod
+            bgColor="lightest"
+            groupId={groupAddr}
+            label="What users can mint?"
+            owner={isOwner}
+            text={group?.allowedMintingUser ?? ''}
+          />
+        </Columns>
         <Columns columnsNumber={3}>
           <InformationPod bgColor="light" label="Fee" text={groupFeeText ?? ''} />
           {/* @todo show Only if you have group tokens, group tokens instead of minted, 
@@ -104,15 +113,6 @@ const ConfigurateGroup: NextPage = () => {
             icon={<Crc />}
             label="Treasure"
             text={group?.minted ?? '0'}
-          />
-        </Columns>
-        <Columns columnsNumber={1}>
-          <InformationPod
-            bgColor="lightest"
-            groupId={groupAddr}
-            label="What users can mint?"
-            owner={isOwner}
-            text={group?.allowedMintingUser ?? ''}
           />
         </Columns>
 
