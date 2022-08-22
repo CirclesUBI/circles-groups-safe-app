@@ -16,7 +16,7 @@ import {
 } from '@/types/subgraph/__generated__/globalTypes'
 
 export type GroupSafeMember = {
-  id: string // safeAddress + groupAddress
+  id: string // safeAddress + '-' + groupAddress
   safeAddress: string
 }
 
@@ -29,7 +29,7 @@ export type GroupCurrencyToken = {
   hub: string
   mintFeePerThousand: number
   minted: string
-  members: Array<GroupSafeMember> // TODO define Member's Group type
+  members: Array<GroupSafeMember>
   onlyTrustedCanMint: boolean
   onlyOwnerCanMint: boolean
   allowedMintingUser: AllowedMintingUser
