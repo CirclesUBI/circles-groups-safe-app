@@ -150,25 +150,29 @@ const ConfigurateGroup: NextPage = () => {
       <hr />
       <FormWrapper>
         <Columns columnsNumber={1}>
-          <InputLabelText label={'Group Mint Settings'} mandatory />
+          <InputLabelText
+            information="Change which users are able to Mint"
+            label={'Users able to Mint'}
+            mandatory
+          />
           <RadioButtonsWrapper>
             <LabeledCheckbox
               active={allowedMintingUser === AllowedMintingUser.all}
               onClick={() => setAllowedMintingUser(AllowedMintingUser.all)}
             >
-              All
+              {AllowedMintingUser.all}
             </LabeledCheckbox>
             <LabeledCheckbox
               active={allowedMintingUser === AllowedMintingUser.trusted}
               onClick={() => setAllowedMintingUser(AllowedMintingUser.trusted)}
             >
-              Only trusted
+              {AllowedMintingUser.trusted}
             </LabeledCheckbox>
             <LabeledCheckbox
               active={allowedMintingUser === AllowedMintingUser.owners}
               onClick={() => setAllowedMintingUser(AllowedMintingUser.owners)}
             >
-              Only owners
+              {AllowedMintingUser.owners}
             </LabeledCheckbox>
           </RadioButtonsWrapper>
         </Columns>

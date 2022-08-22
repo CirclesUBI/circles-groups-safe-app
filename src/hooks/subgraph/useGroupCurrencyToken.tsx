@@ -36,9 +36,9 @@ export type GroupCurrencyToken = {
 }
 
 export enum AllowedMintingUser {
-  all = 'ALL',
-  trusted = 'TRUSTED',
-  owners = 'OWNERS',
+  all = 'All users',
+  trusted = 'Trusted users',
+  owners = 'Owners',
 }
 
 export const getAllowedMintingUser = (
