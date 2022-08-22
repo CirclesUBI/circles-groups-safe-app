@@ -10,7 +10,7 @@ import { ListItemBalance } from '@/src/components/assets/ListItemBalance'
 import { Title } from '@/src/components/assets/Title'
 import { TotalBalance } from '@/src/components/assets/TotalBalance'
 import { User } from '@/src/components/assets/User'
-import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
+import { getTCfromBalances, useCirclesBalance } from '@/src/hooks/useCirclesBalance'
 import { useUserSafe } from '@/src/hooks/useUserSafe'
 
 const Section = styled.section`
@@ -43,7 +43,7 @@ const Balance: NextPage = () => {
 
   const regularBalance = useMemo(() => {
     const regularTokens = tokens.filter((token) => !token.isGroupCurrencyToken)
-    return regularTokens.reduce((prev, curr) => parseFloat(curr.balance) + prev, 0)
+    return getTCfromBalances(regularTokens)
   }, [tokens])
   const groupTokens = useMemo(() => tokens.filter((token) => token.isGroupCurrencyToken), [tokens])
 
@@ -67,7 +67,7 @@ const Balance: NextPage = () => {
               <></>
             )
           }
-          userTokens={String(regularBalance)}
+          userTokens={regularBalance}
           username={user?.username}
         />
 

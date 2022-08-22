@@ -11,19 +11,16 @@ import { useSafeBalances } from './useSafeBalances'
 
 const CRC = 'CRC'
 
-/**
- * This function filter circles tokens given token balances
- * it only works when user is connected to the safe
- * @TODO we might want to fetch their balances using the SG
- */
-export const getCirclesFromBalances = (tokenBalances: CirclesTokenBalance[]) => {
+export const getTCfromBalances = (tokenBalances: CirclesTokenBalance[]) => {
   const circlesAmounts = tokenBalances.map((crcToken) => crcToken.flatBalance)
   const totalAmount = circlesAmounts.reduce((prev, current) => {
     const bnAmount = BigNumber.from(current)
     return prev.add(bnAmount)
   }, BigNumber.from(0))
 
-  return totalAmount.toString()
+  const numericBalance = totalAmount.toString()
+  const tcBalance = circlesToTC(numericBalance)
+  return formatNumber(tcBalance)
 }
 
 type CirclesTokenBalance = {
@@ -80,9 +77,7 @@ export const useCirclesBalance = (safeAddress: string, sdk: SafeAppsSDK) => {
   }, [tokenBalances, isGroup])
 
   const circles = useMemo(() => {
-    const numericBalance = getCirclesFromBalances(tokens)
-    const tcBalance = circlesToTC(numericBalance)
-    return formatNumber(tcBalance)
+    return getTCfromBalances(tokens)
   }, [tokens])
 
   return { circles, tokens }
