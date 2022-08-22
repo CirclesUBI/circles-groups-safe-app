@@ -97,7 +97,7 @@ const CreateGroup: NextPage = () => {
       <Title hasBackButton text="Send circles to a group" />
       <FormWrapper>
         <TransferUserInformation
-          amountText="Your total balance:"
+          amountText="My total balance:"
           amountValue={circles}
           label="Send from"
           name={user?.username}
@@ -107,6 +107,8 @@ const CreateGroup: NextPage = () => {
           address={groupAddress}
           amountText="Maximum amount:"
           amountValue={mintMaxAmount}
+          /* @todo replace with real values*/
+          groupUserTokens="1,000"
           label="Send to"
           name={group?.name ?? groupAddress}
         />

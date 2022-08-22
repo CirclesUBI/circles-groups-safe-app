@@ -97,7 +97,7 @@ export const MintInformation: React.FC<Props> = ({ fee, mintAmount }) => {
           <Value>{fee}%</Value>
         </Row>
         <Row>
-          <TextResult>Due to group fee charge you will receive</TextResult>
+          <TextResult>Due to group fee charge I will receive</TextResult>
           <ValueResult>
             <Crc /> {receivingTokensAmount}
           </ValueResult>

@@ -79,8 +79,16 @@ const ConfigurateGroup: NextPage = () => {
         <Columns columnsNumber={1}>
           <InformationPod bgColor="lightest" label="Hub" text={group?.hub ?? ''} />
         </Columns>
-        <Columns columnsNumber={2}>
+        <Columns columnsNumber={3}>
           <InformationPod bgColor="light" label="Fee" text={groupFeeText ?? ''} />
+          {/* @todo show Only if you have group tokens, group tokens instead of minted, 
+          Replace text with user group tokens amount */}
+          <InformationPod
+            bgColor="light"
+            icon={<Crc />}
+            label="My group tokens"
+            text={group?.minted ?? '0'}
+          />
           <InformationPod
             bgColor="light"
             icon={<Crc />}

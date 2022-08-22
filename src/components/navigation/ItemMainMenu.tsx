@@ -7,9 +7,9 @@ const Item = styled.a`
   color: ${({ theme: { colors } }) => colors.primary};
   display: block;
   font-family: ${({ theme }) => theme.fonts.fontFamilyHeading};
-  font-size: 28px;
+  font-size: 2.6rem;
   font-weight: 900;
-  line-height: 24px;
+  line-height: 0.8;
   text-decoration: none;
   width: 100%;
   &.active,

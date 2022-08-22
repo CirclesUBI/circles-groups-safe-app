@@ -5,6 +5,10 @@ export const menuLinks = [
     gotoTab: 0,
   },
   {
+    title: 'My balance',
+    href: '/balance',
+  },
+  {
     title: 'All groups',
     href: '/',
     gotoTab: 1,

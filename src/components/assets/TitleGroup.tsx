@@ -23,7 +23,7 @@ const TitleWrapper = styled.div`
 const TitleInformation = styled.div`
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.general.space * 4}px;
+  gap: ${({ theme }) => theme.general.space * 2}px;
 `
 const GroupText = styled.div``
 const GroupName = styled.h1`
