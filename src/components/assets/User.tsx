@@ -59,6 +59,9 @@ const UserWrapper = styled.div`
   &.clean {
     background-color: transparent;
     font-size: 1.6rem;
+    padding: 0;
+    margin: ${({ theme }) => `${theme.general.space * 2}px`};
+    width: auto;
     ${Tokens} {
       font-weight: 700;
     }
