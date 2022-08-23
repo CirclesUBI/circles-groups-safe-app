@@ -60,7 +60,7 @@ const CreateGroup: NextPage = () => {
   const router = useRouter()
   const groupAddress = String(router.query?.group ?? '')
   const { connected, safe, sdk } = useSafeAppsSDK()
-  const { circles } = useCirclesBalance(safe.safeAddress, sdk)
+  const { circles, tokens } = useCirclesBalance(safe.safeAddress, sdk)
   const { group, loading, mintMaxAmount, mintToken } = useGroupMintToken(
     safe.safeAddress,
     groupAddress,
@@ -84,6 +84,10 @@ const CreateGroup: NextPage = () => {
 
   const isDisabledButton =
     !connected || loading || isMintAmountInvalid || mintAmountNumber === 0 || !isAllowedUser
+
+  const groupToken = tokens.find(
+    (token) => token.address.toLowerCase() === groupAddress.toLowerCase(),
+  )
 
   return (
     <>
@@ -112,8 +116,7 @@ const CreateGroup: NextPage = () => {
           address={groupAddress}
           amountText="Maximum amount:"
           amountValue={mintMaxAmount}
-          /* @todo replace with real values*/
-          groupUserTokens="1,000"
+          groupUserTokens={groupToken?.balance ?? ''}
           label="Send to"
           name={group?.name ?? groupAddress}
         />
