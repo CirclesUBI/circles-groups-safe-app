@@ -91,9 +91,7 @@ const Balance: NextPage = () => {
             ))}
           </ListContainer>
         ) : (
-          <>
-            <NoResultsText className="notification" text="You don't have any tokens group yet." />
-          </>
+          <NoResultsText className="notification" text="You don't have any tokens group yet." />
         )}
 
         <br />
