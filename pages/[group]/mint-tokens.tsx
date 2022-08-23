@@ -51,6 +51,11 @@ const Icon = styled.div`
   pointer-events: none;
 `
 
+const AllowedUsers = styled.span`
+  text-transform: lowercase;
+  font-weight: 700;
+`
+
 const CreateGroup: NextPage = () => {
   const router = useRouter()
   const groupAddress = String(router.query?.group ?? '')
@@ -145,7 +150,7 @@ const CreateGroup: NextPage = () => {
       <AnimatePresence exitBeforeEnter>
         {!isAllowedUser && (
           <InformationText>
-            *User is not allowed to mint, only allowed {group?.allowedMintingUser} members
+            * Only <AllowedUsers>{group?.allowedMintingUser}</AllowedUsers> are allowed to mint.
           </InformationText>
         )}
       </AnimatePresence>

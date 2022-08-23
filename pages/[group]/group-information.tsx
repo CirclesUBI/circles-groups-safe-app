@@ -94,6 +94,15 @@ const ConfigurateGroup: NextPage = () => {
         <Columns columnsNumber={1}>
           <InformationPod bgColor="lightest" label="Hub" text={group?.hub ?? ''} />
         </Columns>
+        <Columns columnsNumber={1}>
+          <InformationPod
+            bgColor="lightest"
+            groupId={groupAddress}
+            label="What users can mint?"
+            owner={isOwner}
+            text={group?.allowedMintingUser ?? ''}
+          />
+        </Columns>
         <Columns columnsNumber={3}>
           <InformationPod bgColor="light" label="Fee" text={groupFeeText ?? ''} />
           <InformationPod
