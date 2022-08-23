@@ -7,6 +7,7 @@ import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 
 import { ListContainer } from '@/src/components/assets/ListContainer'
 import { ListItemBalance } from '@/src/components/assets/ListItemBalance'
+import { NoResultsText } from '@/src/components/assets/NoResultsText'
 import { Title } from '@/src/components/assets/Title'
 import { TotalBalance } from '@/src/components/assets/TotalBalance'
 import { User } from '@/src/components/assets/User'
@@ -23,8 +24,12 @@ const Section = styled.section`
     gap: ${({ theme }) => theme.general.space * 2}px;
   }
   h4 {
-    margin: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px
-      ${({ theme }) => theme.general.space * 1}px;
+    font-size: 1.4rem;
+    margin: ${({ theme }) => theme.general.space * 2}px ${({ theme }) => theme.general.space * 2}px
+      ${({ theme }) => theme.general.space * 2}px;
+    &.noBottomMargin {
+      margin-bottom: 0;
+    }
   }
   br {
     content: '';
@@ -51,7 +56,7 @@ const Balance: NextPage = () => {
     <>
       <Title hasBackButton text="My Balance" />
       <Section>
-        <h4>My Regular Tokens</h4>
+        <h4 className="noBottomMargin">My Regular Tokens</h4>
         <User
           headerStyle="clean"
           userImage={
@@ -72,18 +77,23 @@ const Balance: NextPage = () => {
         />
 
         <h4>My Group Tokens</h4>
-        <ListContainer>
-          {groupTokens.map((token, index) => (
-            <ListItemBalance
-              groupId={token.address}
-              groupIndex={index}
-              groupName={token.name}
-              groupTokenSymbol={token.symbol}
-              groupUserTokens={token.balance}
-              key={token.address}
-            />
-          ))}
-        </ListContainer>
+        {groupTokens.length !== 0 ? (
+          <ListContainer>
+            {groupTokens.map((token, index) => (
+              <ListItemBalance
+                groupId={token.address}
+                groupIndex={index}
+                groupName={token.name}
+                groupTokenSymbol={token.symbol}
+                groupUserTokens={token.balance}
+                key={token.address}
+              />
+            ))}
+          </ListContainer>
+        ) : (
+          <NoResultsText className="notification" text="You don't have any tokens group yet." />
+        )}
+
         <br />
         <TotalBalance userTokens={circles} />
       </Section>
