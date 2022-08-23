@@ -116,7 +116,6 @@ const CreateGroup: NextPage = () => {
           address={groupAddress}
           amountText="Maximum amount:"
           amountValue={mintMaxAmount}
-          /* @todo replace with real values*/
           groupUserTokens={groupToken?.balance ?? ''}
           label="Send to"
           name={group?.name ?? groupAddress}
