@@ -23,9 +23,11 @@ export const ImportCsvFile: React.FC<Props> = ({ groupAddress }) => {
 
   const csvFileToArray = (file: string) => {
     // TODO: finish refactoring csv values iteration just to take all rows without deliminters
-    const csvRows = file.slice(file.indexOf('\n')).split('\n')
-    const userAddressesList = csvRows.map((rowValue) => {
-      return rowValue
+    const csvRows = file.split('\n')
+    const userAddressesList = csvRows.filter((rowValue) => {
+      if (rowValue) {
+        return rowValue
+      }
     })
     setUsersBatch(userAddressesList)
   }
