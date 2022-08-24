@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react'
 import { isAddress } from '@ethersproject/address'
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 
+import { getUsers } from '../utils/circlesGardenAPI'
 import useSafeTransaction from '@/src/hooks/useSafeTransaction'
 import { useWeb3Connected } from '@/src/providers/web3ConnectionProvider'
 import encodeGCTTransaction from '@/src/utils/contracts/encodeGCTTransaction'
@@ -10,12 +11,6 @@ import hubCall from '@/src/utils/contracts/hubCall'
 
 export const useImportCsv = (groupAddress: string) => {
   const [loading, setLoading] = useState<boolean>(false)
-  // const [userTokens, setUserTokens] = useState<string[]>([])
-  // const [addMemberTxs, setAddMemberTxs] = useState<BaseTransaction[]>([])
-  // const [importReport, setImportReport] = useState({
-  //   successed: 0,
-  //   failed: 0,
-  // })
   const { sdk } = useSafeAppsSDK()
   const { isAppConnected, web3Provider } = useWeb3Connected()
   const { execute } = useSafeTransaction(sdk)
@@ -23,6 +18,10 @@ export const useImportCsv = (groupAddress: string) => {
   const addUsersToGroup = useCallback(
     async (userAddresses: string[]) => {
       try {
+        const isCirclesUser = async (userAddress: string) => {
+          const fetchedUsers = await getUsers([userAddress])
+          return fetchedUsers.length !== 0
+        }
         const getUserToken = async (userAddress: string) => {
           if (!isAppConnected) {
             throw new Error('App is not connected')
@@ -39,23 +38,8 @@ export const useImportCsv = (groupAddress: string) => {
         }
         const provider = web3Provider.getSigner()
         const userTokenPromises = userAddresses.map(async (userAddress) => {
-          // TODO: make use of contractTxs callbacks for import report
-          // const onSuccess = () => {
-          //   setImportReport((importReport) => ({
-          //     ...importReport,
-          //     successed: importReport.successed + 1,
-          //   }))
-          // }
-          // const onError = () => {
-          //   setImportReport((importReport) => ({ ...importReport, failed: importReport.failed + 1 }))
-          // }
-          // TODO: Address Validations
-          //   * valid address
-          //   * already group member
-          //   * existant circles user
-          if (isAddress(userAddress)) {
+          if (isAddress(userAddress) && (await isCirclesUser(userAddress))) {
             const userToken = await getUserToken(userAddress)
-            // setUserTokens((userTokens) => [...userTokens, userToken])
             return userToken
           }
           return ''
@@ -91,7 +75,6 @@ export const useImportCsv = (groupAddress: string) => {
   )
   return {
     addUsersToGroup,
-    // importReport,
     loading,
   }
 }
