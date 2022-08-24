@@ -2,7 +2,6 @@ import Image from 'next/image'
 import { useState } from 'react'
 import styled from 'styled-components'
 
-import { ImportCsvFile } from '../actions/ImportCsvFile'
 import { FirstLetter } from '../assets/FirstLetter'
 import { AddRemoveUserNotification, AddRemoveUsers } from '@/src/components/actions/AddRemoveUsers'
 import { ActionAddDelete, AddDeleteButton } from '@/src/components/assets/AddDeleteButton'
@@ -130,7 +129,6 @@ export const UsersList: React.FC<Props> = ({
       )}
       <List>
         {onSearch && <SearchInput onChange={(e) => searchUserHandler(e)} value={query} />}
-        {action && <ImportCsvFile groupAddress={groupAddress} />}
         <ListContainer>
           {users.length > 0 ? (
             users

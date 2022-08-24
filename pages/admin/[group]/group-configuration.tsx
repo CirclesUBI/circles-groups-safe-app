@@ -7,6 +7,7 @@ import { isAddress } from '@ethersproject/address'
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 import { AnimatePresence } from 'framer-motion'
 
+import { ImportCsvFile } from '@/src/components/actions/ImportCsvFile'
 import { AlertMessage } from '@/src/components/assets/AlertMessage'
 import { InformationPod } from '@/src/components/assets/InformationPod'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
@@ -193,6 +194,8 @@ const ConfigurateGroup: NextPage = () => {
         <InformationPod bgColor="lightest" label="Hub" text={group?.hub ?? ''} />
         <InformationPod bgColor="lightest" label="Fee" text={groupFeeText ?? ''} />
       </FormWrapper>
+      <hr />
+      <ImportCsvFile groupAddress={groupAddr} />
     </>
   )
 }

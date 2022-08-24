@@ -184,7 +184,6 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
             ) : (
               <UsersList
                 action={'add'}
-                groupAddress={groupAddress}
                 noResultText={NO_RESULTS_USERS_QUERY}
                 onAddUser={addUser}
                 onSearch={searchUsers}
