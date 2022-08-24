@@ -6,7 +6,7 @@ const Li = styled.li`
   align-items: flex-start;
   list-style: none;
   margin: 0 ${({ theme }) => theme.general.space * 2}px;
-  display: flex;
+  display: block;
   flex-direction: row;
   justify-content: space-between;
   &:not(:last-child) {
@@ -22,6 +22,7 @@ const Li = styled.li`
     }
   }
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    display: flex;
     align-items: center;
     flex-direction: row;
     &:not(:last-child) {
@@ -38,14 +39,13 @@ interface Props {
 export const ListItem: React.FC<Props> = ({ children, custom = '', unsetColors = false }) => {
   return (
     <Li
-      animate={{ opacity: 1 }}
+      animate={{ y: 0, opacity: 1 }}
       as={motion.li}
       className={unsetColors ? 'noColors' : 'withColors'}
-      exit={{ opacity: 0 }}
-      initial={{ opacity: 0 }}
+      exit={{ y: 10, opacity: 0 }}
+      initial={{ y: -5, opacity: 0 }}
       key={custom}
-      layout
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.4 }}
     >
       {children}
     </Li>

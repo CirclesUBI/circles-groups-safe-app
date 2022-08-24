@@ -16,7 +16,7 @@ const Ul = styled.ul`
 export const ListContainer: React.FC = ({ children }) => {
   return (
     <Ul>
-      <AnimatePresence> {children} </AnimatePresence>
+      <AnimatePresence exitBeforeEnter> {children} </AnimatePresence>
     </Ul>
   )
 }

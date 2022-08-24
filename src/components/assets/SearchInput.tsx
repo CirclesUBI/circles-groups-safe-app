@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
 const Search = styled.div`
@@ -33,10 +32,10 @@ const Search = styled.div`
 
 interface Props {
   onChange: (e: string) => void
+  value?: string
 }
 
-export const SearchInput: React.FC<Props> = ({ onChange }) => {
-  const router = useRouter()
+export const SearchInput: React.FC<Props> = ({ onChange, value }) => {
   return (
     <Search>
       <input
@@ -44,6 +43,7 @@ export const SearchInput: React.FC<Props> = ({ onChange }) => {
         onChange={(e) => onChange(e.target.value)}
         placeholder="Buscar"
         type="text"
+        value={value}
       />
       <div className="icon">
         <Image alt="search" height={15} src="/images/icon-search.svg" width={15} />

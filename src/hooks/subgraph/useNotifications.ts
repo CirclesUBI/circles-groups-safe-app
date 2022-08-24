@@ -6,6 +6,8 @@ import {
   Notifications,
   NotificationsVariables,
   Notifications_notifications,
+  Notifications_notifications_groupAddMember,
+  Notifications_notifications_groupRemoveMember,
 } from '@/types/subgraph/__generated__/Notifications'
 import {
   NotificationType,
@@ -31,21 +33,23 @@ export type EventOwnershipData = {
 }
 
 export type EventGroupCreationData = {
-  group: string
-  creator: string
-  name: string
+  groupAddress: string
+  groupName: string
+  creatorAddress: string
 }
 
 export type EventGroupMintData = {
   receiver: string
   amount: string
   mintFee: string
-  group: string
+  groupAddress: string
+  groupName: string
 }
 
 export type EventGroupMemberUpdateData = {
-  user: string
-  group: string
+  userAddress: string
+  groupAddress: string
+  groupName: string
 }
 
 export type UserNotification = {
@@ -91,9 +95,9 @@ const transformGroupCreation = (
   notification: Notifications_notifications,
 ): EventGroupCreationData => {
   return {
-    creator: notification.groupCreation?.creator ?? '',
-    group: notification.groupCreation?.group ?? '',
-    name: notification.groupCreation?.name ?? '',
+    creatorAddress: notification.groupCreation?.creator ?? '',
+    groupAddress: notification.groupCreation?.group?.id ?? '',
+    groupName: notification.groupCreation?.group?.name ?? '',
   }
 }
 const transformGroupMint = (notification: Notifications_notifications): EventGroupMintData => {
@@ -101,15 +105,20 @@ const transformGroupMint = (notification: Notifications_notifications): EventGro
     receiver: notification.groupMint?.receiver ?? '',
     amount: notification.groupMint?.amount ?? '',
     mintFee: notification.groupMint?.mintFee ?? '',
-    group: notification.groupMint?.group ?? '',
+    groupAddress: notification.groupMint?.group?.id ?? '',
+    groupName: notification.groupMint?.group?.name ?? '',
   }
 }
 const transformGroupMemberUpdate = (
-  notification: Notifications_notifications,
+  memberUpdate:
+    | Notifications_notifications_groupAddMember
+    | Notifications_notifications_groupRemoveMember
+    | null,
 ): EventGroupMemberUpdateData => {
   return {
-    group: notification.groupAddMember?.group ?? '',
-    user: notification.groupAddMember?.user ?? '',
+    groupAddress: memberUpdate?.group?.id ?? '',
+    groupName: memberUpdate?.group?.name ?? '',
+    userAddress: memberUpdate?.user?.id ?? '',
   }
 }
 
@@ -136,8 +145,8 @@ const transformToUserNotification = (
     ownership: transformToOwnership(notification),
     groupCreation: transformGroupCreation(notification),
     groupMint: transformGroupMint(notification),
-    groupAddMember: transformGroupMemberUpdate(notification),
-    groupRemoveMember: transformGroupMemberUpdate(notification),
+    groupAddMember: transformGroupMemberUpdate(notification.groupAddMember),
+    groupRemoveMember: transformGroupMemberUpdate(notification.groupRemoveMember),
   }
 }
 
@@ -147,6 +156,7 @@ export const fetchNotifications = async (safeAddress: string) => {
     {
       where: {
         safe: safeAddress.toLowerCase(),
+        type_in: VALID_NOTIFICATION_TYPES, // @todo: we only show notifications related to groups
       },
       orderBy: Notification_orderBy.time,
       orderDirection: OrderDirection.desc,

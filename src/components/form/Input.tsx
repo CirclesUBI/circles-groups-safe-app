@@ -4,8 +4,8 @@ import styled from 'styled-components'
 import { isAddress } from '@ethersproject/address'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { Info } from '@/src/components/assets/Info'
-import { Tooltip } from '@/src/components/assets/Tooltip'
+import { InputLabelText } from '@/src/components/form/InputLabelText'
+import { validNetwork } from '@/src/utils/validNetwork'
 
 const Wrapper = styled.label`
   color: ${({ theme }) => theme.colors.primary};
@@ -54,12 +54,7 @@ const InputField = styled.input<{ error: boolean }>`
     cursor: not-allowed;
   }
 `
-const LabelText = styled.div`
-  color: ${({ theme }) => theme.colors.primary};
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`
+
 const ErrorText = styled(motion.small)`
   color: ${({ theme }) => theme.colors.error};
   text-align: right;
@@ -104,7 +99,7 @@ export const Input: React.FC<Props> = ({
       setErrorMessage('This field is required')
       setErrors(true)
     } else {
-      if (addressField && !isAddress(value)) {
+      if (addressField && !isAddress(validNetwork(value))) {
         setErrorMessage('Not a valid address')
         setErrors(true)
       } else {
@@ -114,16 +109,7 @@ export const Input: React.FC<Props> = ({
   }
   return (
     <Wrapper>
-      <LabelText>
-        <strong>
-          {label} {mandatory && '*'}
-        </strong>
-        {information && (
-          <Tooltip text={information}>
-            <Info />
-          </Tooltip>
-        )}
-      </LabelText>
+      <InputLabelText information={information} label={label} mandatory={mandatory} />
       <InputFieldWrapper className={errors ? 'whithErrors' : 'noErrors'}>
         {icon}
         <InputField

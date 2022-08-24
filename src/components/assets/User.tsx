@@ -1,29 +1,12 @@
 import styled from 'styled-components'
 
-import { Crc } from '@/src/components/assets/Crc'
+import { isAddress } from '@ethersproject/address'
 
-const UserWrapper = styled.div<{ headerStyle: boolean }>`
-  align-items: center;
-  background: ${(props) =>
-    props.headerStyle ? ({ theme }) => theme.colors.primary : 'rgba(233, 232, 221, 0.5)'};
-  border-radius: ${({ theme }) => theme.general.borderRadius};
-  display: flex;
-  justify-content: space-between;
-  font-size: 1.4rem;
-  gap: ${({ theme }) => theme.general.space * 2}px;
-  padding: ${(props) =>
-    props.headerStyle
-      ? ({ theme }) => `${theme.general.space}px ${theme.general.space * 2}px`
-      : ({ theme }) => `${theme.general.space * 2}px`};
-  position: relative;
-  width: 100%;
-  img {
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-`
-const UserName = styled.div<{ headerStyle: boolean }>`
-  font-weight: ${(props) => (props.headerStyle ? 500 : 700)};
+import { Crc } from '@/src/components/assets/Crc'
+import { shortenAddress } from '@/src/utils/tools'
+
+const UserName = styled.div`
+  font-weight: 700;
   max-width: 120px;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -50,19 +33,60 @@ const Tokens = styled.div`
   }
 `
 
+const UserWrapper = styled.div`
+  align-items: center;
+  background-color: rgba(233, 232, 221, 0.5);
+  border-radius: ${({ theme }) => theme.general.borderRadius};
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.4rem;
+  gap: ${({ theme }) => theme.general.space * 2}px;
+  padding: ${({ theme }) => `${theme.general.space * 2}px`};
+  position: relative;
+  width: 100%;
+  img {
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  &.header {
+    background-color: ${({ theme }) => theme.colors.primary};
+    border-radius: 30px;
+    padding: ${({ theme }) => theme.general.space}px ${({ theme }) => theme.general.space * 2}px;
+    ${UserName} {
+      font-weight: 500;
+    }
+  }
+  &.clean {
+    background-color: transparent;
+    font-size: 1.6rem;
+    padding: 0;
+    margin: ${({ theme }) => `${theme.general.space * 2}px`};
+    width: auto;
+    ${Tokens} {
+      font-weight: 700;
+    }
+  }
+`
+const formatName = (text: string) => {
+  if (isAddress(text)) {
+    return shortenAddress(text)
+  }
+  return text
+}
+
 interface Props {
   username: string
   userTokens: string
   userImage?: React.ReactNode
-  headerStyle?: boolean
+  headerStyle?: string
 }
 
-export const User: React.FC<Props> = ({ headerStyle = false, userImage, userTokens, username }) => {
+export const User: React.FC<Props> = ({ headerStyle = '', userImage, userTokens, username }) => {
   return (
-    <UserWrapper headerStyle={headerStyle}>
+    <UserWrapper className={headerStyle}>
       <UserInformation>
         {userImage}
-        <UserName headerStyle={headerStyle}>@{username}</UserName>
+        <UserName>@{formatName(username)}</UserName>
       </UserInformation>
       <Tokens>
         <Crc /> {userTokens}

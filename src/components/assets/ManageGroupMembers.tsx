@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { UsersList } from '@/src/components/lists/UsersList'
+import { MIN_SEARCH_NUMBER } from '@/src/constants/misc'
 import { useGroupCurrencyTokenTx } from '@/src/hooks/contracts/useGroupCurrencyTokenTx'
-import { useAllUsers } from '@/src/hooks/subgraph/useUsers'
+import {
+  groupMemberMatches,
+  useGroupMembersByGroupIdSearch,
+} from '@/src/hooks/subgraph/useGroupMembers'
+import { useSearchUsers } from '@/src/hooks/subgraph/useUsers'
 import { useWeb3Connected } from '@/src/providers/web3ConnectionProvider'
-import { CirclesGardenUser } from '@/src/utils/circlesGardenAPI'
 import hubCall from '@/src/utils/contracts/hubCall'
 
 const Nav = styled.nav`
@@ -41,27 +45,28 @@ const Tab = styled.button`
 const Section = styled.section`
   margin-top: ${({ theme }) => theme.general.space * 6}px;
 `
-
-type groupMember = CirclesGardenUser
-
 interface Props {
   groupAddress: string
-  groupMembers: groupMember[]
 }
 
-export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers }) => {
+export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
   // @TODO we might need to delete this
   const { isAppConnected, web3Provider } = useWeb3Connected()
-  const { circlesUsers } = useAllUsers()
+  const { query: usersQuery, search: searchUsers, users } = useSearchUsers()
+  const {
+    addGroupMember,
+    allGroupMembers,
+    members,
+    query: membersQuery,
+    removeGroupMember,
+    search: searchGroupMembers,
+  } = useGroupMembersByGroupIdSearch(groupAddress)
 
   const tabs = ['Members', 'Add members']
   const [selectedTab, setSelectedTab] = useState(tabs[0])
-  // @TODO: cached users to fasten the add/remove of users
-  const [users, setUsers] = useState(groupMembers)
-  const [allUsers, setAllUsers] = useState(circlesUsers)
+
   const { execute: execRemove } = useGroupCurrencyTokenTx(groupAddress, 'removeMemberToken')
   const { execute: execAdd } = useGroupCurrencyTokenTx(groupAddress, 'addMemberToken')
-  const [membersCount, setMembersCount] = useState(groupMembers.length)
 
   const getUserToken = async (userAddress: string) => {
     if (!isAppConnected) {
@@ -81,9 +86,12 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
     try {
       const userToken = await getUserToken(userAddress)
       const onSuccess = () => {
-        const newUsers = users.filter((user) => user.safeAddress !== userAddress)
-        setUsers(newUsers)
-        setMembersCount(membersCount - 1)
+        const member = members.find(
+          (user) => user.safeAddress.toLowerCase() === userAddress.toLowerCase(),
+        )
+        if (member) {
+          removeGroupMember(member)
+        }
       }
       await execRemove([userToken], undefined, onSuccess)
     } catch (err) {
@@ -95,17 +103,12 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
     try {
       const userToken = await getUserToken(userAddress)
       const onSuccess = () => {
-        const addedUser = allUsers.find(
+        const user = users.find(
           (user) => user.safeAddress.toLowerCase() === userAddress.toLowerCase(),
         )
-        if (addedUser) {
-          setUsers([...users, addedUser])
+        if (user) {
+          addGroupMember(user)
         }
-        const nonMemberUsers = allUsers.filter(
-          (user) => user.safeAddress.toLowerCase() !== userAddress.toLowerCase(),
-        )
-        setAllUsers(nonMemberUsers)
-        setMembersCount(membersCount + 1)
       }
       await execAdd([userToken], undefined, onSuccess)
     } catch (err) {
@@ -113,10 +116,34 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
     }
   }
 
-  useEffect(() => {
-    setUsers(groupMembers)
-    setMembersCount(groupMembers.length)
-  }, [groupMembers])
+  const memberAddressesLowerCase = allGroupMembers.map((member) => member.safeAddress.toLowerCase())
+  const usersWithoutMembers = users.filter(
+    (user) => !memberAddressesLowerCase.includes(user.safeAddress.toLowerCase()),
+  )
+
+  /**
+   * @todo A couple of minor things
+   * - no results text handling could be in a different file
+   * - usersWithoutMembers could be in a useMemo
+   * - existMember could be done differently (if users > 0 and usersWithoutMembers = 0)
+   * - member search might need to match the entire query instead of including?
+   */
+
+  let NO_RESULTS_USERS_QUERY = 'There are no users.'
+  if (users.length === 0) {
+    NO_RESULTS_USERS_QUERY = `We couldn't find a match for ${usersQuery}.`
+  } else {
+    const existMember = allGroupMembers.some((member) => groupMemberMatches(member, usersQuery))
+    if (usersWithoutMembers.length === 0 && existMember) {
+      NO_RESULTS_USERS_QUERY = `The user ${usersQuery} is already a group member`
+    } else {
+      NO_RESULTS_USERS_QUERY = `We couldn't find a match for ${usersQuery}.`
+    }
+  }
+  let NO_RESULTS_MEMBERS_QUERY = 'There are no members on this group.'
+  if (membersQuery) {
+    NO_RESULTS_MEMBERS_QUERY = `The user ${membersQuery} is not a group member.`
+  }
 
   return (
     <>
@@ -127,7 +154,7 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
               <Tab key={`tab_${index}`} onClick={() => setSelectedTab(el)}>
                 <span className={selectedTab == el ? 'active' : 'inactive'}>
                   <>
-                    {el} {el === 'Members' && '(' + groupMembers.length + ')'}
+                    {el} {el === 'Members' && '(' + allGroupMembers.length + ')'}
                   </>
                 </span>
               </Tab>
@@ -145,18 +172,24 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress, groupMembers
             {selectedTab === 'Members' ? (
               <UsersList
                 action={'delete'}
-                isMemberList
+                noResultText={NO_RESULTS_MEMBERS_QUERY}
                 onRemoveUser={removeUser}
+                onSearch={
+                  allGroupMembers.length > MIN_SEARCH_NUMBER ? searchGroupMembers : undefined
+                }
+                query={membersQuery}
                 shouldShowAlert
-                users={users}
+                users={members}
               />
             ) : (
               <UsersList
                 action={'add'}
-                members={users}
+                noResultText={NO_RESULTS_USERS_QUERY}
                 onAddUser={addUser}
+                onSearch={searchUsers}
+                query={usersQuery}
                 shouldShowAlert
-                users={allUsers}
+                users={usersWithoutMembers}
               />
             )}
           </motion.div>

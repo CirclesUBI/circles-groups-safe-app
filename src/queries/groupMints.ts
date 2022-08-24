@@ -6,7 +6,10 @@ export const GROUP_MINTS = gql`
       id
       amount
       receiver
-      group
+      group {
+        id
+        name
+      }
     }
   }
 `

@@ -6,10 +6,11 @@ import styled from 'styled-components'
 import { isAddress } from '@ethersproject/address'
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 import { SendTransactionRequestParams } from '@gnosis.pm/safe-apps-sdk'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 
-import { Input } from '@/src/components/assets/Input'
+import { InformationText } from '@/src/components/assets/InformationText'
 import { Title } from '@/src/components/assets/Title'
+import { Input } from '@/src/components/form/Input'
 import { Columns } from '@/src/components/layout/Columns'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { genericSuspense } from '@/src/components/safeSuspense'
@@ -18,6 +19,7 @@ import { useWeb3Connected } from '@/src/providers/web3ConnectionProvider'
 import { addresses } from '@/src/utils/addresses'
 import encodeGroupCurrencyTokenFactoryTransaction from '@/src/utils/contracts/encodeGroupCurrencyTokenFactoryTransaction'
 import { fixedNumber } from '@/src/utils/formatNumber'
+import { validNetwork } from '@/src/utils/validNetwork'
 
 const FormWrapper = styled.div`
   display: flex;
@@ -30,23 +32,6 @@ const ActionWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-top: ${({ theme }) => theme.general.space * 3}px;
-`
-
-const InformationText = styled(motion.small)`
-  font-size: 1.3rem;
-  display: block;
-  text-align: center;
-  margin-top: ${({ theme }) => theme.general.space * 2}px;
-  position: relative;
-  &:before {
-    content: '';
-    height: 1px;
-    max-width: 150px;
-    display: block;
-    margin: 0 auto ${({ theme }) => theme.general.space * 3}px;
-    background-color: ${({ theme }) => theme.colors.primary};
-    opacity: 0.2;
-  }
 `
 
 // @TODO Max available fee amount is 25.5. See Group Contract: uint8 _mintFeePerThousand (0..255)
@@ -85,7 +70,7 @@ const CreateGroup: NextPage = () => {
       'createGroupCurrencyToken',
       [
         addresses.gnosis.HUB.address, // @TODO Should work for other networks, not just gnosis
-        treasury,
+        validNetwork(treasury),
         safe.safeAddress,
         feeAmount,
         groupName,
@@ -109,9 +94,9 @@ const CreateGroup: NextPage = () => {
     }
   }
 
-  const isValidTreasury = treasury && isAddress(treasury)
+  const isValidTreasury = treasury && isAddress(validNetwork(treasury))
   const isValidFee = _isValidFee(parseFloat(fee))
-  const isCompleted = groupName && groupSymbol && treasury && fee
+  const isCompleted = groupName && groupSymbol && validNetwork(treasury) && fee
   const isDisabled = !groupName || !groupSymbol || !isValidTreasury || !isValidFee || loading
 
   return (
@@ -170,12 +155,7 @@ const CreateGroup: NextPage = () => {
         </ActionWrapper>
         <AnimatePresence exitBeforeEnter>
           {!isCompleted && (
-            <InformationText
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -10, opacity: 0 }}
-              initial={{ y: -20, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
+            <InformationText>
               *All required fields must be completed to create a new group
             </InformationText>
           )}

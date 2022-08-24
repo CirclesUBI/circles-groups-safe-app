@@ -8,7 +8,7 @@ const Wrapper = styled.div`
   color: ${({ theme: { colors } }) => colors.primary};
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.general.space * 4}px;
+  gap: ${({ theme }) => theme.general.space * 3}px;
   width: 100%;
 `
 
@@ -42,15 +42,14 @@ export const ListCreatedGroupsMenu: React.FC<Props> = ({
     <Wrapper as={motion.div} variants={variants}>
       <AnimatePresence>
         {groupsList.map(({ name }, index) => (
-          <div key={`links_${index}`}>
-            <ItemMainMenu
-              closeMenu={() => {
-                onClose(), onClick(index)
-              }}
-              href="/admin/"
-              title={name}
-            />
-          </div>
+          <ItemMainMenu
+            closeMenu={() => {
+              onClose(), onClick(index)
+            }}
+            href="/admin/"
+            key={`links_${index}`}
+            title={name}
+          />
         ))}
       </AnimatePresence>
     </Wrapper>

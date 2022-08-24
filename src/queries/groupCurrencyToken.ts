@@ -1,8 +1,12 @@
 import gql from 'graphql-tag'
 
 export const GROUP_CURRENCY_TOKEN_QUERY = gql`
-  query GroupCurrencyTokens($where: GroupCurrencyToken_filter) {
-    groupCurrencyTokens(where: $where) {
+  query GroupCurrencyTokens(
+    $where: GroupCurrencyToken_filter
+    $orderBy: GroupCurrencyToken_orderBy
+    $orderDirection: OrderDirection
+  ) {
+    groupCurrencyTokens(where: $where, orderBy: $orderBy, orderDirection: $orderDirection) {
       id
       name
       symbol
@@ -12,6 +16,7 @@ export const GROUP_CURRENCY_TOKEN_QUERY = gql`
       treasury
       mintFeePerThousand
       minted
+      time
       suspended
       onlyOwnerCanMint
       onlyTrustedCanMint
