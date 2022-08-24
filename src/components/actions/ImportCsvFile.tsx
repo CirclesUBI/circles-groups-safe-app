@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-// import FileInput from 'react-file-input'
 
 import { Button } from '../pureStyledComponents/buttons/Button'
 import { useImportCsv } from '@/src/hooks/useImportCsv'
@@ -18,7 +17,6 @@ export const ImportCsvFile: React.FC<Props> = ({ groupAddress }) => {
       const uploadedFile = fileList.item(0)
       if (uploadedFile) {
         setFile(uploadedFile)
-        console.log(uploadedFile)
       }
     }
   }
