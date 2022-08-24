@@ -9,12 +9,18 @@ import { AnimatePresence } from 'framer-motion'
 
 import { AlertMessage } from '@/src/components/assets/AlertMessage'
 import { InformationPod } from '@/src/components/assets/InformationPod'
-import { Input } from '@/src/components/assets/Input'
 import { TitleGroup } from '@/src/components/assets/TitleGroup'
+import { Input } from '@/src/components/form/Input'
+import { InputLabelText } from '@/src/components/form/InputLabelText'
+import { LabeledCheckbox } from '@/src/components/form/LabeledCheckbox'
 import { Columns } from '@/src/components/layout/Columns'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { useGroupCurrencyTokenCall } from '@/src/hooks/contracts/useGroupCurrencyTokenCall'
-import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
+import {
+  AllowedMintingUser,
+  useGroupCurrencyTokensById,
+} from '@/src/hooks/subgraph/useGroupCurrencyToken'
+import { useAllowedMintingUser } from '@/src/hooks/useAllowedMintingUser'
 import { useChangeOwner } from '@/src/hooks/useChangeOwner'
 import { validNetwork } from '@/src/utils/validNetwork'
 
@@ -24,12 +30,19 @@ const FormWrapper = styled.div`
   gap: ${({ theme }) => theme.general.space * 2}px;
   margin-top: ${({ theme }) => theme.general.space * 4}px;
   padding: 0 ${({ theme }) => theme.general.space * 2}px;
+  font-size: 16px;
 `
 
 const ActionWrapper = styled.div`
   display: flex;
   justify-content: flex-start;
   margin: ${({ theme }) => theme.general.space * 2}px 0;
+`
+
+const RadioButtonsWrapper = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.general.space}px;
+  flex-direction: column;
 `
 
 const ConfigurateGroup: NextPage = () => {
@@ -41,11 +54,19 @@ const ConfigurateGroup: NextPage = () => {
   const currentUser = safe.safeAddress.toLowerCase()
 
   const [notification, setNotification] = useState<boolean>(false)
+  const [allowedUserNotification, setAllowedUserNotification] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [owner, setOwner] = useState(group?.owner ?? '')
   const [groupOwner, refetchGroupOwner] = useGroupCurrencyTokenCall(groupAddr, 'owner', [])
   const isOwner = groupOwner && groupOwner.toLowerCase() === currentUser
   const groupFeeText = `${group?.mintFeePerThousand ?? 0}%`
+
+  const {
+    allowedMintingUser,
+    isDisabledUpdateAllowedMinting,
+    saveAllowedUserConfiguration,
+    setAllowedMintingUser,
+  } = useAllowedMintingUser(groupAddr)
 
   // @TODO Improve validation
   const isDisabledSaveButton =
@@ -72,6 +93,10 @@ const ConfigurateGroup: NextPage = () => {
       setOwner(groupOwner)
     }
   }, [groupOwner])
+
+  const CHANGE_OWNER_NOTIFICATION_TEXT = `Are you sure you want to change Group Owner to ${owner}?`
+  const CHANGE_MINT_SETTINGS_NOTIFICATION_TEXT = `Are you sure you want to change group mint settings to ${allowedMintingUser}?`
+
   return (
     <>
       {notification && (
@@ -82,7 +107,19 @@ const ConfigurateGroup: NextPage = () => {
               saveConfiguration()
             }}
             onCloseAlert={() => setNotification(false)}
-            text={`Are you sure you want to change Group Owner to ${owner}?`}
+            text={CHANGE_OWNER_NOTIFICATION_TEXT}
+          />
+        </AnimatePresence>
+      )}
+      {allowedUserNotification && (
+        <AnimatePresence>
+          <AlertMessage
+            confirmAction={() => {
+              setAllowedUserNotification(false)
+              saveAllowedUserConfiguration()
+            }}
+            onCloseAlert={() => setAllowedUserNotification(false)}
+            text={CHANGE_MINT_SETTINGS_NOTIFICATION_TEXT}
           />
         </AnimatePresence>
       )}
@@ -106,7 +143,45 @@ const ConfigurateGroup: NextPage = () => {
             disabled={isDisabledSaveButton || loading}
             onClick={() => setNotification(true)}
           >
-            Save configuration
+            Save Owner Configuration
+          </ButtonPrimary>
+        </ActionWrapper>
+      </FormWrapper>
+      <hr />
+      <FormWrapper>
+        <Columns columnsNumber={1}>
+          <InputLabelText
+            information="Change which users are able to Mint"
+            label={'Users able to Mint'}
+            mandatory
+          />
+          <RadioButtonsWrapper>
+            <LabeledCheckbox
+              active={allowedMintingUser === AllowedMintingUser.all}
+              onClick={() => setAllowedMintingUser(AllowedMintingUser.all)}
+            >
+              {AllowedMintingUser.all}
+            </LabeledCheckbox>
+            <LabeledCheckbox
+              active={allowedMintingUser === AllowedMintingUser.trusted}
+              onClick={() => setAllowedMintingUser(AllowedMintingUser.trusted)}
+            >
+              {AllowedMintingUser.trusted}
+            </LabeledCheckbox>
+            <LabeledCheckbox
+              active={allowedMintingUser === AllowedMintingUser.owners}
+              onClick={() => setAllowedMintingUser(AllowedMintingUser.owners)}
+            >
+              {AllowedMintingUser.owners}
+            </LabeledCheckbox>
+          </RadioButtonsWrapper>
+        </Columns>
+        <ActionWrapper>
+          <ButtonPrimary
+            disabled={isDisabledUpdateAllowedMinting}
+            onClick={() => setAllowedUserNotification(true)}
+          >
+            Save Mint Configuration
           </ButtonPrimary>
         </ActionWrapper>
       </FormWrapper>

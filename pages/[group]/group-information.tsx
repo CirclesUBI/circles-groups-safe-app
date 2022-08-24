@@ -13,10 +13,10 @@ import { Columns } from '@/src/components/layout/Columns'
 import { UsersList } from '@/src/components/lists/UsersList'
 import { LinkButton } from '@/src/components/pureStyledComponents/buttons/Button'
 import { genericSuspense } from '@/src/components/safeSuspense'
+import { MIN_SEARCH_NUMBER } from '@/src/constants/misc'
 import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
-import { useGroupMembersByGroupId } from '@/src/hooks/subgraph/useGroupMembers'
-
-const NO_RESULTS_TEXT = 'There are no members on this group.'
+import { useGroupMembersByGroupIdSearch } from '@/src/hooks/subgraph/useGroupMembers'
+import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
 
 const Wrapper = styled.div`
   display: flex;
@@ -46,14 +46,29 @@ const H2 = styled.h2`
 
 const ConfigurateGroup: NextPage = () => {
   const router = useRouter()
-  const groupAddr = String(router.query?.group)
-  const { groupMembers } = useGroupMembersByGroupId(groupAddr)
-  const { group } = useGroupCurrencyTokensById(groupAddr)
+  const groupAddress = String(router.query?.group)
+  const { group } = useGroupCurrencyTokensById(groupAddress)
+  const {
+    allGroupMembers,
+    members,
+    query: membersQuery,
+    search: searchGroupMembers,
+  } = useGroupMembersByGroupIdSearch(groupAddress)
 
-  const { connected, safe } = useSafeAppsSDK()
+  const { connected, safe, sdk } = useSafeAppsSDK()
+  const { tokens } = useCirclesBalance(safe.safeAddress, sdk)
+
   const [currentUser] = useState(safe.safeAddress.toLowerCase())
   const isOwner = group?.owner === currentUser
   const groupFeeText = `${group?.mintFeePerThousand ?? 0}%`
+  const groupToken = tokens.find(
+    (token) => token.address.toLowerCase() === groupAddress.toLowerCase(),
+  )
+
+  let NO_RESULTS_MEMBERS_QUERY = 'There are no members on this group.'
+  if (membersQuery) {
+    NO_RESULTS_MEMBERS_QUERY = `The user ${membersQuery} is not a group member.`
+  }
   return (
     <>
       <TitleGroup hasBackButton information="Group information" text={group?.name ?? ''} />
@@ -67,7 +82,7 @@ const ConfigurateGroup: NextPage = () => {
         <Columns columnsNumber={1}>
           <InformationPod
             bgColor="lightest"
-            groupId={groupAddr}
+            groupId={groupAddress}
             label="Owner"
             owner={isOwner}
             text={group?.owner ?? ''}
@@ -79,8 +94,23 @@ const ConfigurateGroup: NextPage = () => {
         <Columns columnsNumber={1}>
           <InformationPod bgColor="lightest" label="Hub" text={group?.hub ?? ''} />
         </Columns>
-        <Columns columnsNumber={2}>
+        <Columns columnsNumber={1}>
+          <InformationPod
+            bgColor="lightest"
+            groupId={groupAddress}
+            label="What users can mint?"
+            owner={isOwner}
+            text={group?.allowedMintingUser ?? ''}
+          />
+        </Columns>
+        <Columns columnsNumber={3}>
           <InformationPod bgColor="light" label="Fee" text={groupFeeText ?? ''} />
+          <InformationPod
+            bgColor="light"
+            icon={<Crc />}
+            label="My group tokens"
+            text={groupToken?.balance ?? '0'}
+          />
           <InformationPod
             bgColor="light"
             icon={<Crc />}
@@ -88,17 +118,33 @@ const ConfigurateGroup: NextPage = () => {
             text={group?.minted ?? '0'}
           />
         </Columns>
+        <Columns columnsNumber={1}>
+          <InformationPod
+            bgColor="lightest"
+            groupId={groupAddress}
+            label="What users can mint?"
+            owner={isOwner}
+            text={group?.allowedMintingUser ?? ''}
+          />
+        </Columns>
 
         <Columns columnsNumber={1}>
           <ListWrapper>
             <H2>Group members</H2>
             <UserListWrapper>
-              <UsersList noResultText={NO_RESULTS_TEXT} users={groupMembers} />
+              <UsersList
+                noResultText={NO_RESULTS_MEMBERS_QUERY}
+                onSearch={
+                  allGroupMembers.length > MIN_SEARCH_NUMBER ? searchGroupMembers : undefined
+                }
+                query={membersQuery}
+                users={members}
+              />
             </UserListWrapper>
           </ListWrapper>
         </Columns>
         <ActionWrapper className={!connected ? 'not-allowed' : ''}>
-          <Link href={`/${groupAddr}/mint-tokens`} passHref>
+          <Link href={`/${groupAddress}/mint-tokens`} passHref>
             <LinkButton className={!connected ? 'disabled' : ''}>Mint Tokens</LinkButton>
           </Link>
         </ActionWrapper>

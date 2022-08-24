@@ -90,7 +90,7 @@ const HomeAdmin: NextPage = () => {
             buttonHref="/admin/create-group"
             buttonText="New group"
             hasLinkButton
-            text="Your groups"
+            text="My groups"
           />
           <NoGroupCreated
             actionText="Create new group"

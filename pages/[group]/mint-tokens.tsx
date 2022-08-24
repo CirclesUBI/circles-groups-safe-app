@@ -8,13 +8,14 @@ import { AnimatePresence } from 'framer-motion'
 
 import { AlertMessage } from '@/src/components/assets/AlertMessage'
 import { Crc } from '@/src/components/assets/Crc'
-import { Input } from '@/src/components/assets/Input'
+import { InformationText } from '@/src/components/assets/InformationText'
 import { MintInformation } from '@/src/components/assets/MintInformation'
 import { Title } from '@/src/components/assets/Title'
 import { TransferUserInformation } from '@/src/components/assets/TransferUserInformation'
+import { Input } from '@/src/components/form/Input'
 import { ButtonSecondary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { genericSuspense } from '@/src/components/safeSuspense'
-import { useGroupCurrencyTokensById } from '@/src/hooks/subgraph/useGroupCurrencyToken'
+import { isUserAllowedToMint } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import { useCirclesBalance } from '@/src/hooks/useCirclesBalance'
 import { useGroupMintToken } from '@/src/hooks/useGroupMintToken'
 import { useUserSafe } from '@/src/hooks/useUserSafe'
@@ -50,11 +51,16 @@ const Icon = styled.div`
   pointer-events: none;
 `
 
+const AllowedUsers = styled.span`
+  text-transform: lowercase;
+  font-weight: 700;
+`
+
 const CreateGroup: NextPage = () => {
   const router = useRouter()
   const groupAddress = String(router.query?.group ?? '')
   const { connected, safe, sdk } = useSafeAppsSDK()
-  const { circles } = useCirclesBalance(safe.safeAddress, sdk)
+  const { circles, tokens } = useCirclesBalance(safe.safeAddress, sdk)
   const { group, loading, mintMaxAmount, mintToken } = useGroupMintToken(
     safe.safeAddress,
     groupAddress,
@@ -74,6 +80,15 @@ const CreateGroup: NextPage = () => {
 
   const feeNumber = group?.mintFeePerThousand ?? 0
 
+  const isAllowedUser = group ? isUserAllowedToMint(safe.safeAddress, group) : false
+
+  const isDisabledButton =
+    !connected || loading || isMintAmountInvalid || mintAmountNumber === 0 || !isAllowedUser
+
+  const groupToken = tokens.find(
+    (token) => token.address.toLowerCase() === groupAddress.toLowerCase(),
+  )
+
   return (
     <>
       {notification && (
@@ -91,7 +106,7 @@ const CreateGroup: NextPage = () => {
       <Title hasBackButton text="Send circles to a group" />
       <FormWrapper>
         <TransferUserInformation
-          amountText="Your total balance:"
+          amountText="My total balance:"
           amountValue={circles}
           label="Send from"
           name={user?.username}
@@ -101,6 +116,7 @@ const CreateGroup: NextPage = () => {
           address={groupAddress}
           amountText="Maximum amount:"
           amountValue={mintMaxAmount}
+          groupUserTokens={groupToken?.balance ?? ''}
           label="Send to"
           name={group?.name ?? groupAddress}
         />
@@ -126,13 +142,17 @@ const CreateGroup: NextPage = () => {
         </AnimatePresence>
       </InfoWrapper>
       <ActionWrapper>
-        <ButtonSecondary
-          disabled={!connected || loading || isMintAmountInvalid || mintAmountNumber === 0}
-          onClick={() => setNotification(true)}
-        >
+        <ButtonSecondary disabled={isDisabledButton} onClick={() => setNotification(true)}>
           Mint tokens
         </ButtonSecondary>
       </ActionWrapper>
+      <AnimatePresence exitBeforeEnter>
+        {!isAllowedUser && (
+          <InformationText>
+            * Only <AllowedUsers>{group?.allowedMintingUser}</AllowedUsers> are allowed to mint.
+          </InformationText>
+        )}
+      </AnimatePresence>
     </>
   )
 }

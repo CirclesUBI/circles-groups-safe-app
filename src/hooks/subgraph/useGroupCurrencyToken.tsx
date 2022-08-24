@@ -8,11 +8,17 @@ import {
   GroupCurrencyTokens,
   GroupCurrencyTokensVariables,
   GroupCurrencyTokens_groupCurrencyTokens,
+  GroupCurrencyTokens_groupCurrencyTokens_members,
 } from '@/types/subgraph/__generated__/GroupCurrencyTokens'
 import {
   GroupCurrencyToken_orderBy,
   OrderDirection,
 } from '@/types/subgraph/__generated__/globalTypes'
+
+export type GroupSafeMember = {
+  id: string // safeAddress + '-' + groupAddress
+  safeAddress: string
+}
 
 export type GroupCurrencyToken = {
   id: string
@@ -23,7 +29,54 @@ export type GroupCurrencyToken = {
   hub: string
   mintFeePerThousand: number
   minted: string
-  members: Array<any> // TODO define Member's Group type
+  members: Array<GroupSafeMember>
+  onlyTrustedCanMint: boolean
+  onlyOwnerCanMint: boolean
+  allowedMintingUser: AllowedMintingUser
+}
+
+export enum AllowedMintingUser {
+  all = 'All users',
+  trusted = 'Trusted users',
+  owners = 'Owners',
+}
+
+export const getAllowedMintingUser = (
+  group: GroupCurrencyToken | GroupCurrencyTokens_groupCurrencyTokens,
+) => {
+  if (group.onlyOwnerCanMint) return AllowedMintingUser.owners
+  if (group.onlyTrustedCanMint) return AllowedMintingUser.trusted
+  return AllowedMintingUser.all
+}
+
+export const isUserAllowedToMint = (safeAddress: string, group: GroupCurrencyToken) => {
+  if (group?.allowedMintingUser === AllowedMintingUser.all) {
+    return true
+  }
+  if (group?.allowedMintingUser === AllowedMintingUser.owners) {
+    const isOwnerUser = group?.owner.toLowerCase() === safeAddress.toLowerCase()
+    return isOwnerUser
+  }
+  /**
+   * @description a trusted user is an user who is member of the group
+   * another way to verify this, is using the hub method trust!
+   */
+  if (group?.allowedMintingUser === AllowedMintingUser.trusted) {
+    const isTrustedUser = group?.members.some(
+      (member) => member.safeAddress.toLowerCase() === safeAddress.toLowerCase(),
+    )
+    return isTrustedUser
+  }
+  return false
+}
+
+const transformGroupSafeMember = (
+  gctMember: GroupCurrencyTokens_groupCurrencyTokens_members,
+): GroupSafeMember => {
+  return {
+    id: gctMember.id,
+    safeAddress: gctMember.safe.id,
+  }
 }
 
 const transformToGroupCurrencyToken = (
@@ -38,7 +91,10 @@ const transformToGroupCurrencyToken = (
     hub: group.hub ?? '',
     mintFeePerThousand: stringToValidFloat(group.mintFeePerThousand ?? '') / 10,
     minted: formatNumber(circlesToTC(group.minted)) ?? '0',
-    members: group.members,
+    members: group.members.map(transformGroupSafeMember),
+    onlyTrustedCanMint: group.onlyTrustedCanMint ?? false,
+    onlyOwnerCanMint: group.onlyOwnerCanMint ?? false,
+    allowedMintingUser: getAllowedMintingUser(group),
   }
 }
 

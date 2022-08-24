@@ -12,3 +12,7 @@ export const truncateStringInTheMiddle = (
   }
   return str
 }
+
+export const shortenAddress = (address: string, first = 6, last = 4): string => {
+  return address ? `${address.slice(0, first)}...${address.slice(-last)}` : address
+}

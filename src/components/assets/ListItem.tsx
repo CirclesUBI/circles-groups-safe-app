@@ -6,7 +6,7 @@ const Li = styled.li`
   align-items: flex-start;
   list-style: none;
   margin: 0 ${({ theme }) => theme.general.space * 2}px;
-  display: flex;
+  display: block;
   flex-direction: row;
   justify-content: space-between;
   &:not(:last-child) {
@@ -22,6 +22,7 @@ const Li = styled.li`
     }
   }
   @media (min-width: ${({ theme }) => theme.themeBreakPoints.tabletPortraitStart}) {
+    display: flex;
     align-items: center;
     flex-direction: row;
     &:not(:last-child) {
