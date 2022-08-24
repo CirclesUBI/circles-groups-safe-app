@@ -61,6 +61,7 @@ const GroupActions = styled.div`
 interface Props {
   action?: ActionAddDelete
   users: CirclesGardenUser[]
+  groupAddress?: string
   shouldShowAlert?: boolean
   onRemoveUser?: (userAddress: string) => void
   onAddUser?: (userAddress: string) => void
@@ -71,6 +72,7 @@ interface Props {
 
 export const UsersList: React.FC<Props> = ({
   action,
+  groupAddress,
   noResultText,
   onAddUser,
   onRemoveUser,
