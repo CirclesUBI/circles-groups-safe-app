@@ -9,56 +9,53 @@ interface Props {
 }
 
 export const ImportCsvFile: React.FC<Props> = ({ groupAddress }) => {
-  const [file, setFile] = useState()
-  const [usersBatch, setUsersBatch] = useState<string[]>([])
+  const [file, setFile] = useState<File | null>()
   const { addUsersToGroup } = useImportCsv(groupAddress)
 
-  const fileReader = new FileReader()
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleOnChange = (e: any) => {
-    setFile(e.target.files[0])
-    console.log(e.target.files[0])
-  }
-
-  const csvFileToArray = (file: string) => {
-    // TODO: finish refactoring csv values iteration just to take all rows without deliminters
-    const csvRows = file.split('\n')
-    const userAddressesList = csvRows.filter((rowValue) => {
-      if (rowValue) {
-        return rowValue
+  const handleOnChange = (fileList: FileList | null) => {
+    // TODO: validate if file not present or invalid to disable/enable submit button
+    if (fileList) {
+      const uploadedFile = fileList.item(0)
+      if (uploadedFile) {
+        setFile(uploadedFile)
+        console.log(uploadedFile)
       }
-    })
-    setUsersBatch(userAddressesList)
+    }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleOnSubmit = (e: any) => {
+  const csvFileToArray = (fileContent: string | ArrayBuffer) => {
+    const csvRows = String(fileContent).split('\n')
+    const filteredAddresses = csvRows.filter(Boolean)
+    return filteredAddresses
+  }
+
+  const handleOnSubmit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
     if (file) {
-      fileReader.onload = function (event) {
-        if (event.target?.result) {
-          csvFileToArray(event.target.result)
+      const fileReader = new FileReader()
+      fileReader.onload = (event) => {
+        const onloadResult = event.target?.result
+        if (onloadResult) {
+          const usersBatch = csvFileToArray(onloadResult)
+          if (usersBatch.length !== 0) {
+            addUsersToGroup(usersBatch)
+          }
         }
       }
+      // TODO: check synchronism between fileReader calls
       fileReader.readAsText(file)
-      if (usersBatch.length !== 0) {
-        addUsersToGroup(usersBatch)
-      }
     }
   }
 
   return (
     <div>
       <form>
-        <input accept={'.csv'} onChange={handleOnChange} type={'file'} />
-        <Button
-          onClick={(e) => {
-            handleOnSubmit(e)
-          }}
-        >
-          IMPORT CSV
-        </Button>
+        <input
+          accept={'.csv'}
+          onChange={(event) => handleOnChange(event.target.files)}
+          type={'file'}
+        />
+        <Button onClick={handleOnSubmit}>IMPORT CSV</Button>
       </form>
     </div>
   )
