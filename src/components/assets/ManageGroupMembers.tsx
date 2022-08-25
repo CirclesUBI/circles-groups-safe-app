@@ -171,17 +171,20 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
             transition={{ duration: 0.2 }}
           >
             {selectedTab === 'Members' ? (
-              <UsersList
-                action={'delete'}
-                noResultText={NO_RESULTS_MEMBERS_QUERY}
-                onRemoveUser={removeUser}
-                onSearch={
-                  allGroupMembers.length > MIN_SEARCH_NUMBER ? searchGroupMembers : undefined
-                }
-                query={membersQuery}
-                shouldShowAlert
-                users={members}
-              />
+              <>
+                <UsersList
+                  action={'delete'}
+                  noResultText={NO_RESULTS_MEMBERS_QUERY}
+                  onRemoveUser={removeUser}
+                  onSearch={
+                    allGroupMembers.length > MIN_SEARCH_NUMBER ? searchGroupMembers : undefined
+                  }
+                  query={membersQuery}
+                  shouldShowAlert
+                  users={members}
+                />
+                <ImportCsvFile groupAddress={groupAddress} isAdd={false} />
+              </>
             ) : (
               <>
                 <UsersList
@@ -193,7 +196,7 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
                   shouldShowAlert
                   users={usersWithoutMembers}
                 />
-                <ImportCsvFile groupAddress={groupAddress} />
+                <ImportCsvFile groupAddress={groupAddress} isAdd />
               </>
             )}
           </motion.div>

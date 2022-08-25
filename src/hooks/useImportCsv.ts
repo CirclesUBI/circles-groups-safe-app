@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 
 import { isAddress } from '@ethersproject/address'
+import { JsonRpcSigner } from '@ethersproject/providers'
 import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
 
 import { getUsers } from '../utils/circlesGardenAPI'
@@ -9,13 +10,14 @@ import useSafeTransaction from '@/src/hooks/useSafeTransaction'
 import { useWeb3Connected } from '@/src/providers/web3ConnectionProvider'
 import encodeGCTTransaction from '@/src/utils/contracts/encodeGCTTransaction'
 import hubCall from '@/src/utils/contracts/hubCall'
+import { GroupCurrencyToken } from '@/types/typechain'
 
 type User = {
   username: string
   address: string
 }
 
-export const useImportCsv = (groupAddress: string) => {
+export const useImportCsv = (groupAddress: string, isAdd = true) => {
   const [isFileLoaded, setIsFileLoaded] = useState(false)
   const [loading, setLoading] = useState<boolean>(false)
   const [validUsers, setValidUsers] = useState<User[]>([])
@@ -50,6 +52,15 @@ export const useImportCsv = (groupAddress: string) => {
     [groupMembers],
   )
 
+  const isValidMember = useCallback(
+    (address: string) => {
+      if (isAdd) {
+        return !isAlreadyAMember(address)
+      }
+      return isAlreadyAMember(address)
+    },
+    [isAlreadyAMember, isAdd],
+  )
   /**
    * @description this function returns an object with the following:
    * - valid: an array of valid addresses, an address is valid if
@@ -92,15 +103,17 @@ export const useImportCsv = (groupAddress: string) => {
           throw new Error(message)
         }
 
-        const alreadyMembers = existingUsers.filter(isAlreadyAMember).map((address) => ({
-          username: users[address.toLowerCase()],
-          address,
-        }))
-        invalid = invalid.concat(alreadyMembers)
+        const invalidMembers = existingUsers
+          .filter((address) => !isValidMember(address))
+          .map((address) => ({
+            username: users[address.toLowerCase()],
+            address,
+          }))
+        invalid = invalid.concat(invalidMembers)
 
-        const nonMemberAddresses = existingUsers.filter((address) => !isAlreadyAMember(address))
+        const nonMemberAddresses = existingUsers.filter(isValidMember)
         if (!nonMemberAddresses.length) {
-          message = 'No non-member safe addresses were given'
+          message = `No ${isAdd ? 'non' : ''} member safe addresses were given`
           throw new Error(message)
         }
 
@@ -134,7 +147,7 @@ export const useImportCsv = (groupAddress: string) => {
         message,
       }
     },
-    [isAlreadyAMember, web3Provider],
+    [isValidMember, web3Provider, isAdd],
   )
 
   const onReadFile = async (content: string | ArrayBuffer) => {
@@ -158,6 +171,19 @@ export const useImportCsv = (groupAddress: string) => {
     }
     fileReader.readAsText(file)
   }
+
+  const encodingFunction = useCallback(
+    async (userToken: User, provider: JsonRpcSigner) => {
+      // @todo: really ugly way to handle this type
+      let method: keyof GroupCurrencyToken['functions'] = 'addMemberToken'
+      if (!isAdd) {
+        method = 'removeMemberToken'
+      }
+
+      return await encodeGCTTransaction(groupAddress, provider, method, [userToken.address])
+    },
+    [groupAddress, isAdd],
+  )
 
   const onLoad = (fileList: FileList | null) => {
     // TODO: validate if file not present or invalid to disable/enable submit button
@@ -187,14 +213,11 @@ export const useImportCsv = (groupAddress: string) => {
       }
 
       const encodedTxPromises = validUsers.map(async (userToken) => {
-        const encodedTx = await encodeGCTTransaction(groupAddress, provider, 'addMemberToken', [
-          userToken.address,
-        ])
-        return encodedTx
+        return await encodingFunction(userToken, provider)
       })
       const encondedTxs = await Promise.all(encodedTxPromises)
       if (!encondedTxs.length) {
-        throw new Error('No AddMemberToken txs to execute')
+        throw new Error('No user tokens txs to execute')
       }
 
       await execute(encondedTxs)
@@ -203,7 +226,7 @@ export const useImportCsv = (groupAddress: string) => {
     } finally {
       setLoading(false)
     }
-  }, [isAppConnected, web3Provider, execute, groupAddress, validUsers])
+  }, [isAppConnected, web3Provider, execute, validUsers, encodingFunction])
   return {
     loading,
     isFileLoaded,
