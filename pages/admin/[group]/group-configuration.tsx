@@ -157,16 +157,16 @@ const ConfigurateGroup: NextPage = () => {
           />
           <RadioButtonsWrapper>
             <LabeledCheckbox
-              active={allowedMintingUser === AllowedMintingUser.all}
-              onClick={() => setAllowedMintingUser(AllowedMintingUser.all)}
-            >
-              {AllowedMintingUser.all}
-            </LabeledCheckbox>
-            <LabeledCheckbox
               active={allowedMintingUser === AllowedMintingUser.trusted}
               onClick={() => setAllowedMintingUser(AllowedMintingUser.trusted)}
             >
               {AllowedMintingUser.trusted}
+            </LabeledCheckbox>
+            <LabeledCheckbox
+              active={allowedMintingUser === AllowedMintingUser.members}
+              onClick={() => setAllowedMintingUser(AllowedMintingUser.members)}
+            >
+              {AllowedMintingUser.members}
             </LabeledCheckbox>
             <LabeledCheckbox
               active={allowedMintingUser === AllowedMintingUser.owners}
