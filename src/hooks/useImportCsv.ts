@@ -10,11 +10,16 @@ import { useWeb3Connected } from '@/src/providers/web3ConnectionProvider'
 import encodeGCTTransaction from '@/src/utils/contracts/encodeGCTTransaction'
 import hubCall from '@/src/utils/contracts/hubCall'
 
+type User = {
+  username: string
+  address: string
+}
+
 export const useImportCsv = (groupAddress: string) => {
   const [isFileLoaded, setIsFileLoaded] = useState(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const [validAddresses, setValidAddresses] = useState<string[]>([])
-  const [invalidAddresses, setInvalidAddresses] = useState<string[]>([])
+  const [validUsers, setValidUsers] = useState<User[]>([])
+  const [invalidUsers, setInvalidUsers] = useState<User[]>([])
   const [importMessage, setImportMessage] = useState<string>('')
 
   const { sdk } = useSafeAppsSDK()
@@ -25,8 +30,8 @@ export const useImportCsv = (groupAddress: string) => {
   const resetFileLoaded = () => {
     setIsFileLoaded(false)
     setLoading(false)
-    setValidAddresses([])
-    setInvalidAddresses([])
+    setValidUsers([])
+    setInvalidUsers([])
     setImportMessage('')
   }
 
@@ -55,31 +60,42 @@ export const useImportCsv = (groupAddress: string) => {
    */
   const parseAddresses = useCallback(
     async (addresses: string[]) => {
-      const valid = new Array<string>()
-      let invalid = new Array<string>()
+      const valid = new Array<User>()
+      let invalid = new Array<User>()
       let message = ''
       try {
         // @todo should we allow/add the gno:0x...
-        const validAddresses = addresses.filter((address) => isAddress(address))
-        if (!addresses.length || !validAddresses.length) {
+        const filteredAddresses = addresses.filter((address) => isAddress(address))
+        if (!addresses.length || !filteredAddresses.length) {
           message = 'No valid addresses were given'
           throw new Error(message)
         }
-        const circlesUsers = await getUsers(validAddresses)
-        const existUser = (address: string) =>
-          circlesUsers.some((user) => user.safeAddress.toLowerCase() === address.toLowerCase())
+        const circlesUsers = await getUsers(filteredAddresses)
+        const users = circlesUsers.reduce<Record<string, string>>((prev, curr) => {
+          prev[curr.safeAddress.toLowerCase()] = curr.username
+          return prev
+        }, {})
+        const existUser = (address: string) => !!users[address.toLowerCase()]
 
-        const nonExistingUsers = validAddresses.filter((address) => !existUser(address))
+        const nonExistingUsers = filteredAddresses
+          .filter((address) => !existUser(address))
+          .map((address) => ({
+            username: 'Unknown',
+            address,
+          }))
         invalid = invalid.concat(nonExistingUsers)
 
-        const existingUsers = validAddresses.filter(existUser)
+        const existingUsers = filteredAddresses.filter(existUser)
 
         if (!existingUsers.length) {
           message = 'No existing safe addresses were given'
           throw new Error(message)
         }
 
-        const alreadyMembers = existingUsers.filter(isAlreadyAMember)
+        const alreadyMembers = existingUsers.filter(isAlreadyAMember).map((address) => ({
+          username: users[address.toLowerCase()],
+          address,
+        }))
         invalid = invalid.concat(alreadyMembers)
 
         const nonMemberAddresses = existingUsers.filter((address) => !isAlreadyAMember(address))
@@ -97,11 +113,12 @@ export const useImportCsv = (groupAddress: string) => {
         })
         const userTokens = await Promise.all(userTokenPromises)
         userTokens.forEach((token) => {
+          const username = users[token.userAddress.toLowerCase()]
           if (token.tokenAddress) {
-            valid.push(token.tokenAddress)
+            valid.push({ address: token.tokenAddress, username })
           } else {
             // @todo this case should not be possible
-            invalid.push(token.userAddress)
+            invalid.push({ address: token.userAddress, username })
           }
         })
         if (!valid.length) {
@@ -126,8 +143,8 @@ export const useImportCsv = (groupAddress: string) => {
     const { invalid, message, valid } = await parseAddresses(addresses)
     setLoading(false)
     setIsFileLoaded(true)
-    setValidAddresses(valid)
-    setInvalidAddresses(invalid)
+    setValidUsers(valid)
+    setInvalidUsers(invalid)
     setImportMessage(message)
   }
 
@@ -165,13 +182,13 @@ export const useImportCsv = (groupAddress: string) => {
       }
       const provider = web3Provider.getSigner()
 
-      if (!validAddresses) {
+      if (!validUsers) {
         throw new Error('No valid addresses to submit')
       }
 
-      const encodedTxPromises = validAddresses.map(async (userToken) => {
+      const encodedTxPromises = validUsers.map(async (userToken) => {
         const encodedTx = await encodeGCTTransaction(groupAddress, provider, 'addMemberToken', [
-          userToken,
+          userToken.address,
         ])
         return encodedTx
       })
@@ -186,14 +203,14 @@ export const useImportCsv = (groupAddress: string) => {
     } finally {
       setLoading(false)
     }
-  }, [isAppConnected, web3Provider, execute, groupAddress, validAddresses])
+  }, [isAppConnected, web3Provider, execute, groupAddress, validUsers])
   return {
     loading,
     isFileLoaded,
     onLoad,
     onSubmit,
-    validAddresses,
-    invalidAddresses,
+    validUsers,
+    invalidUsers,
     importMessage,
   }
 }

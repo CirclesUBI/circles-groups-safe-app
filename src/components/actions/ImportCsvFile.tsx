@@ -8,14 +8,14 @@ interface Props {
 }
 
 export const ImportCsvFile: React.FC<Props> = ({ groupAddress }) => {
-  const { invalidAddresses, isFileLoaded, loading, onLoad, onSubmit, validAddresses } =
+  const { invalidUsers, isFileLoaded, loading, onLoad, onSubmit, validUsers } =
     useImportCsv(groupAddress)
 
   const handleOnSubmit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
     onSubmit()
   }
-  const isDisabled = !isFileLoaded || loading || !validAddresses.length
+  const isDisabled = !isFileLoaded || loading || !validUsers.length
 
   return (
     <div>
@@ -29,14 +29,18 @@ export const ImportCsvFile: React.FC<Props> = ({ groupAddress }) => {
         <>
           <div>
             <h3>Valid Addresses</h3>
-            <span>Amount of valid addresses {validAddresses.length}</span>
+            <span>Amount of valid addresses {validUsers.length}</span>
           </div>
           <div>
             <h3>Invalid Addresses</h3>
-            {invalidAddresses.length > 0 ? (
+            {invalidUsers.length > 0 ? (
               <ul>
-                {invalidAddresses.map((address, id) => (
-                  <li key={`invalid-address-${id}`}>{address}</li>
+                {invalidUsers.map((user, id) => (
+                  <li key={`invalid-user-${id}`}>
+                    <span>
+                      {user.username} - {user.address}
+                    </span>
+                  </li>
                 ))}
               </ul>
             ) : (
