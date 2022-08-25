@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-// import FileInput from 'react-file-input'
+import React from 'react'
 
 import { Button } from '../pureStyledComponents/buttons/Button'
 import { useImportCsv } from '@/src/hooks/useImportCsv'
@@ -9,54 +8,47 @@ interface Props {
 }
 
 export const ImportCsvFile: React.FC<Props> = ({ groupAddress }) => {
-  const [file, setFile] = useState<File | null>()
-  const { addUsersToGroup } = useImportCsv(groupAddress)
-
-  const handleOnChange = (fileList: FileList | null) => {
-    // TODO: validate if file not present or invalid to disable/enable submit button
-    if (fileList) {
-      const uploadedFile = fileList.item(0)
-      if (uploadedFile) {
-        setFile(uploadedFile)
-        console.log(uploadedFile)
-      }
-    }
-  }
-
-  const csvFileToArray = (fileContent: string | ArrayBuffer) => {
-    const csvRows = String(fileContent).split('\n')
-    const filteredAddresses = csvRows.filter(Boolean)
-    return filteredAddresses
-  }
+  const { invalidUsers, isFileLoaded, loading, onLoad, onSubmit, validUsers } =
+    useImportCsv(groupAddress)
 
   const handleOnSubmit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
-    if (file) {
-      const fileReader = new FileReader()
-      fileReader.onload = (event) => {
-        const onloadResult = event.target?.result
-        if (onloadResult) {
-          const usersBatch = csvFileToArray(onloadResult)
-          if (usersBatch.length !== 0) {
-            addUsersToGroup(usersBatch)
-          }
-        }
-      }
-      // TODO: check synchronism between fileReader calls
-      fileReader.readAsText(file)
-    }
+    onSubmit()
   }
+  const isDisabled = !isFileLoaded || loading || !validUsers.length
 
   return (
     <div>
       <form>
-        <input
-          accept={'.csv'}
-          onChange={(event) => handleOnChange(event.target.files)}
-          type={'file'}
-        />
-        <Button onClick={handleOnSubmit}>IMPORT CSV</Button>
+        <input accept={'.csv'} onChange={(event) => onLoad(event.target.files)} type={'file'} />
+        <Button disabled={isDisabled} onClick={handleOnSubmit}>
+          IMPORT CSV
+        </Button>
       </form>
+      {isFileLoaded && (
+        <>
+          <div>
+            <h3>Valid Addresses</h3>
+            <span>Amount of valid addresses {validUsers.length}</span>
+          </div>
+          <div>
+            <h3>Invalid Addresses</h3>
+            {invalidUsers.length > 0 ? (
+              <ul>
+                {invalidUsers.map((user, id) => (
+                  <li key={`invalid-user-${id}`}>
+                    <span>
+                      {user.username} - {user.address}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <span>No Invalid Addresses</span>
+            )}
+          </div>
+        </>
+      )}
     </div>
   )
 }

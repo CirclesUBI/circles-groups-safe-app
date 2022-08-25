@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import { AnimatePresence, motion } from 'framer-motion'
 
+import { ImportCsvFile } from '../actions/ImportCsvFile'
 import { UsersList } from '@/src/components/lists/UsersList'
 import { MIN_SEARCH_NUMBER } from '@/src/constants/misc'
 import { useGroupCurrencyTokenTx } from '@/src/hooks/contracts/useGroupCurrencyTokenTx'
@@ -182,15 +183,18 @@ export const ManageGroupMembers: React.FC<Props> = ({ groupAddress }) => {
                 users={members}
               />
             ) : (
-              <UsersList
-                action={'add'}
-                noResultText={NO_RESULTS_USERS_QUERY}
-                onAddUser={addUser}
-                onSearch={searchUsers}
-                query={usersQuery}
-                shouldShowAlert
-                users={usersWithoutMembers}
-              />
+              <>
+                <UsersList
+                  action={'add'}
+                  noResultText={NO_RESULTS_USERS_QUERY}
+                  onAddUser={addUser}
+                  onSearch={searchUsers}
+                  query={usersQuery}
+                  shouldShowAlert
+                  users={usersWithoutMembers}
+                />
+                <ImportCsvFile groupAddress={groupAddress} />
+              </>
             )}
           </motion.div>
         </AnimatePresence>
