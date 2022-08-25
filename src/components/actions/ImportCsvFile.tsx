@@ -5,11 +5,14 @@ import { useImportCsv } from '@/src/hooks/useImportCsv'
 
 interface Props {
   groupAddress: string
+  isAdd?: boolean
 }
 
-export const ImportCsvFile: React.FC<Props> = ({ groupAddress }) => {
-  const { invalidUsers, isFileLoaded, loading, onLoad, onSubmit, validUsers } =
-    useImportCsv(groupAddress)
+export const ImportCsvFile: React.FC<Props> = ({ groupAddress, isAdd = true }) => {
+  const { invalidUsers, isFileLoaded, loading, onLoad, onSubmit, validUsers } = useImportCsv(
+    groupAddress,
+    isAdd,
+  )
 
   const handleOnSubmit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
@@ -22,7 +25,7 @@ export const ImportCsvFile: React.FC<Props> = ({ groupAddress }) => {
       <form>
         <input accept={'.csv'} onChange={(event) => onLoad(event.target.files)} type={'file'} />
         <Button disabled={isDisabled} onClick={handleOnSubmit}>
-          IMPORT CSV
+          Import CSV file
         </Button>
       </form>
       {isFileLoaded && (
