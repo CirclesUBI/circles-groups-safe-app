@@ -195,7 +195,6 @@ const ConfigurateGroup: NextPage = () => {
         <InformationPod bgColor="lightest" label="Fee" text={groupFeeText ?? ''} />
       </FormWrapper>
       <hr />
-      <ImportCsvFile groupAddress={groupAddr} />
     </>
   )
 }
