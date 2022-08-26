@@ -1,8 +1,8 @@
 import Image from 'next/image'
-import Link from 'next/link'
 import React from 'react'
 import styled from 'styled-components'
 
+import { SuccessAddRemoveUsers } from '@/src/components/assets/SuccessAddRemoveUsers'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { useImportCsv } from '@/src/hooks/useImportCsv'
 import { shortenAddress } from '@/src/utils/tools'
@@ -53,14 +53,13 @@ const FormActions = styled.div`
   display: flex;
   justify-content: space-between;
   margin-left: ${({ theme }) => theme.general.space * 2}px;
-`
-
-const FileLink = styled.a`
-  color: ${({ theme }) => theme.colors.primary};
-  text-decoration: underline;
-  &:hover,
-  &:focus {
-    color: ${({ theme }) => theme.colors.fourth};
+  a {
+    color: ${({ theme }) => theme.colors.primary};
+    text-decoration: underline;
+    &:hover,
+    &:focus {
+      color: ${({ theme }) => theme.colors.fourth};
+    }
   }
 `
 
@@ -74,7 +73,7 @@ const FileResults = styled.div`
 const ValidUsersText = styled.h5`
   font-size: 1.6rem;
   font-weight: 500;
-  margin: 0 0 ${({ theme }) => theme.general.space * 3}px;
+  margin: 0 0 ${({ theme }) => theme.general.space}px;
   color: ${({ theme }) => theme.colors.primary};
 `
 const InvalidUsersWrapper = styled.div`
@@ -106,7 +105,7 @@ const InvalidUsersWrapper = styled.div`
 const InvalidUsersText = styled.h5`
   font-size: 1.6rem;
   font-weight: 700;
-  margin: 0 0 ${({ theme }) => theme.general.space * 2}px;
+  margin: ${({ theme }) => theme.general.space * 2}px 0;
   color: ${({ theme }) => theme.colors.secondary};
 `
 const MessageResult = styled.p`
@@ -114,35 +113,6 @@ const MessageResult = styled.p`
   font-size: 1.6rem;
   font-weight: 700;
   margin-left: ${({ theme }) => theme.general.space * 2}px;
-`
-
-const Success = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: ${({ theme }) => theme.general.space}px;
-  color: ${({ theme }) => theme.colors.white};
-  background-color: ${({ theme }) => theme.colors.fourth};
-  border-radius: ${({ theme }) => theme.general.borderRadius};
-  margin-top: ${({ theme }) => theme.general.space * 6}px;
-  padding: ${({ theme }) => theme.general.space * 4}px ${({ theme }) => theme.general.space * 2}px;
-  p {
-    text-align: center;
-    font-size: 1.8rem;
-    margin: 0;
-    strong {
-      display: block;
-    }
-  }
-`
-const ImageBox = styled.div`
-  background-color: ${({ theme }) => theme.colors.white};
-  border-radius: 50%;
-  height: 80px;
-  width: 80px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `
 
 interface Props {
@@ -162,35 +132,22 @@ export const ImportCsvFile: React.FC<Props> = ({ groupAddress, isAdd = true }) =
   }
   const isDisabled = !isFileLoaded || loading || !validUsers.length
 
-  let title = 'Bulk add members'
-  let actionText = 'will be added'
   let messageResultText = ''
-  let buttonText = 'Add members'
 
   if (invalidUsers.length > 0) {
     if (validUsers.length === 0) {
-      messageResultText = 'No users will be added'
+      messageResultText = `No members will be ${isAdd ? 'added' : 'removed'}`
     } else {
-      messageResultText = 'Some members will not be added. Do you want to continue?'
+      messageResultText = `Some members will not be ${
+        isAdd ? 'added' : 'removed'
+      }. Do you want to continue?`
     }
-    if (!isAdd) {
-      if (validUsers.length === 0) {
-        messageResultText = 'No users will be removed'
-      } else {
-        messageResultText = 'Some members will not be removed. Do you want to continue?'
-      }
-    }
-  }
-  if (!isAdd) {
-    title = 'Bulk remove members'
-    actionText = 'will be removed'
-    buttonText = 'Remove members'
   }
 
   return (
     <>
       <Wrapper>
-        <h4>{title}</h4>
+        <h4>Bulk {isAdd ? 'add' : 'remove'} members</h4>
         <form>
           <InputWrapper>
             <input accept={'.csv'} onChange={(event) => onLoad(event.target.files)} type={'file'} />
@@ -199,10 +156,10 @@ export const ImportCsvFile: React.FC<Props> = ({ groupAddress, isAdd = true }) =
             <>
               <FileResults>
                 <ValidUsersText>
-                  {validUsers.length} {actionText}
+                  {validUsers.length} members will be {isAdd ? 'added' : 'removed'}
                 </ValidUsersText>
                 <InvalidUsersWrapper>
-                  {invalidUsers.length > 0 ? (
+                  {invalidUsers.length > 0 && (
                     <>
                       <InvalidUsersText>{invalidUsers.length} failed</InvalidUsersText>
                       <ul>
@@ -223,8 +180,6 @@ export const ImportCsvFile: React.FC<Props> = ({ groupAddress, isAdd = true }) =
                         ))}
                       </ul>
                     </>
-                  ) : (
-                    <span>No Invalid Addresses</span>
                   )}
                 </InvalidUsersWrapper>
               </FileResults>
@@ -232,23 +187,16 @@ export const ImportCsvFile: React.FC<Props> = ({ groupAddress, isAdd = true }) =
             </>
           )}
           <FormActions>
-            <Link href="#" passHref>
-              <FileLink>Download CSV file with valid structure</FileLink>
-            </Link>
+            <a download href="/filse/import-file.csv">
+              Download CSV file with valid structure
+            </a>
             <ButtonPrimary disabled={isDisabled} onClick={handleOnSubmit}>
-              {buttonText}
+              {isAdd ? 'Add' : 'Remove'} members
             </ButtonPrimary>
           </FormActions>
         </form>
       </Wrapper>
-      <Success>
-        <ImageBox>
-          <Image alt="Failed" height={16} src="/images/icon-success.svg" width={23} />
-        </ImageBox>
-        <p>
-          <strong>709 members</strong> were succesfully added.
-        </p>
-      </Success>
+      <SuccessAddRemoveUsers isAdd={isAdd} numberMembers={validUsers.length} />
     </>
   )
 }
