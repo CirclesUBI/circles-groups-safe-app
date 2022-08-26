@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import { isAddress } from '@ethersproject/address'
 import { JsonRpcSigner } from '@ethersproject/providers'
@@ -150,8 +150,8 @@ export const useImportCsv = (groupAddress: string, isAdd = true) => {
     [isValidMember, web3Provider, isAdd],
   )
 
-  const onReadFile = async (content: string | ArrayBuffer) => {
-    const addresses = csvFileToArray(content)
+  const onReadFile = async (fileContent: string | ArrayBuffer) => {
+    const addresses = csvFileToArray(fileContent)
     setLoading(true)
     const { invalid, message, valid } = await parseAddresses(addresses)
     setLoading(false)
@@ -164,9 +164,9 @@ export const useImportCsv = (groupAddress: string, isAdd = true) => {
   const readFile = (file: File) => {
     const fileReader = new FileReader()
     fileReader.onload = (event) => {
-      const onloadResult = event.target?.result
-      if (onloadResult) {
-        onReadFile(onloadResult)
+      const fileContent = event.target?.result
+      if (fileContent) {
+        onReadFile(fileContent)
       }
     }
     fileReader.readAsText(file)
@@ -200,33 +200,42 @@ export const useImportCsv = (groupAddress: string, isAdd = true) => {
     }
   }
 
-  const onSubmit = useCallback(async () => {
-    try {
-      setLoading(true)
-      if (!isAppConnected) {
-        throw new Error('App is not connected')
-      }
-      const provider = web3Provider.getSigner()
+  const onSubmit = useCallback(
+    async (onSuccess?: () => void, onError?: () => void) => {
+      try {
+        setLoading(true)
+        if (!isAppConnected) {
+          throw new Error('App is not connected')
+        }
+        const provider = web3Provider.getSigner()
 
-      if (!validUsers) {
-        throw new Error('No valid addresses to submit')
-      }
+        if (!validUsers) {
+          throw new Error('No valid addresses to submit')
+        }
 
-      const encodedTxPromises = validUsers.map(async (userToken) => {
-        return await encodingFunction(userToken, provider)
-      })
-      const encondedTxs = await Promise.all(encodedTxPromises)
-      if (!encondedTxs.length) {
-        throw new Error('No user tokens txs to execute')
-      }
+        const encodedTxPromises = validUsers.map(async (userToken) => {
+          return await encodingFunction(userToken, provider)
+        })
+        const encondedTxs = await Promise.all(encodedTxPromises)
+        if (!encondedTxs.length) {
+          throw new Error('No user tokens txs to execute')
+        }
 
-      await execute(encondedTxs)
-    } catch (e) {
-      console.log(e)
-    } finally {
-      setLoading(false)
-    }
-  }, [isAppConnected, web3Provider, execute, validUsers, encodingFunction])
+        await execute(encondedTxs, onSuccess, onError)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        setLoading(false)
+      }
+    },
+    [isAppConnected, web3Provider, execute, validUsers, encodingFunction],
+  )
+
+  useEffect(() => {
+    // @todo should we keep the file loaded?
+    resetFileLoaded()
+  }, [groupAddress])
+
   return {
     loading,
     isFileLoaded,
@@ -235,5 +244,6 @@ export const useImportCsv = (groupAddress: string, isAdd = true) => {
     validUsers,
     invalidUsers,
     importMessage,
+    resetFileLoaded,
   }
 }
