@@ -1,6 +1,8 @@
 import Image from 'next/image'
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
+
+import { AnimatePresence } from 'framer-motion'
 
 import { SuccessAddRemoveUsers } from '@/src/components/assets/SuccessAddRemoveUsers'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
@@ -121,14 +123,26 @@ interface Props {
 }
 
 export const ImportCsvFile: React.FC<Props> = ({ groupAddress, isAdd = true }) => {
-  const { invalidUsers, isFileLoaded, loading, onLoad, onSubmit, validUsers } = useImportCsv(
-    groupAddress,
-    isAdd,
-  )
+  const { invalidUsers, isFileLoaded, loading, onLoad, onSubmit, resetFileLoaded, validUsers } =
+    useImportCsv(groupAddress, isAdd)
+  const [openModal, setOpenModal] = useState(false)
+
+  const onError = () => {
+    // @todo shall we do something?
+  }
+
+  const onSuccess = () => {
+    const OPEN_MODAL_TIME = 10000 // 10seconds
+    setOpenModal(true)
+    setTimeout(() => {
+      setOpenModal(false)
+      resetFileLoaded()
+    }, OPEN_MODAL_TIME)
+  }
 
   const handleOnSubmit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
-    onSubmit()
+    onSubmit(onSuccess, onError)
   }
   const isDisabled = !isFileLoaded || loading || !validUsers.length
 
@@ -152,7 +166,7 @@ export const ImportCsvFile: React.FC<Props> = ({ groupAddress, isAdd = true }) =
           <InputWrapper>
             <input accept={'.csv'} onChange={(event) => onLoad(event.target.files)} type={'file'} />
           </InputWrapper>
-          {isFileLoaded && (
+          {isFileLoaded && !openModal && (
             <>
               <FileResults>
                 <ValidUsersText>
@@ -196,7 +210,11 @@ export const ImportCsvFile: React.FC<Props> = ({ groupAddress, isAdd = true }) =
           </FormActions>
         </form>
       </Wrapper>
-      <SuccessAddRemoveUsers isAdd={isAdd} numberMembers={validUsers.length} />
+      {openModal && (
+        <AnimatePresence>
+          <SuccessAddRemoveUsers isAdd={isAdd} numberMembers={validUsers.length} />
+        </AnimatePresence>
+      )}
     </>
   )
 }

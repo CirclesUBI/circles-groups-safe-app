@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import styled from 'styled-components'
 
+import { motion } from 'framer-motion'
+
 const Success = styled.div`
   display: flex;
   flex-direction: column;
@@ -37,7 +39,13 @@ interface Props {
 
 export const SuccessAddRemoveUsers: React.FC<Props> = ({ isAdd = false, numberMembers = '' }) => {
   return (
-    <Success>
+    <Success
+      animate={{ opacity: 1 }}
+      as={motion.div}
+      exit={{ opacity: 0 }}
+      initial={{ opacity: 0 }}
+      transition={{ duration: 0.1, type: 'spring', stiffness: 1000, damping: 100 }}
+    >
       <ImageBox>
         <Image alt="Failed" height={16} src="/images/icon-success.svg" width={23} />
       </ImageBox>
