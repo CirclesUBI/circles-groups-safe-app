@@ -17,7 +17,7 @@ export const useAllowedMintingUser = (groupAddress: string) => {
 
   // @todo the handling to update the group settings could be done in a different hook/file
   const [allowedMintingUser, setAllowedMintingUser] = useState<AllowedMintingUser>(
-    group?.allowedMintingUser ?? AllowedMintingUser.all,
+    group?.allowedMintingUser ?? AllowedMintingUser.trusted,
   )
 
   const saveAllowedUserConfiguration = useCallback(async () => {
@@ -41,7 +41,7 @@ export const useAllowedMintingUser = (groupAddress: string) => {
       if (allowedMintingUser === AllowedMintingUser.owners) {
         setOnlyOwnerCanMint = true
         setOnlyTrustedCanMint = false
-      } else if (allowedMintingUser === AllowedMintingUser.trusted) {
+      } else if (allowedMintingUser === AllowedMintingUser.members) {
         setOnlyOwnerCanMint = false
         setOnlyTrustedCanMint = true
       } else {
