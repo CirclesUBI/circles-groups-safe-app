@@ -207,7 +207,7 @@ export const ImportCsvFile: React.FC<Props> = ({ groupAddress, isAdd = true }) =
             </>
           )}
           <FormActions>
-            <a download href="/filse/import-file.csv">
+            <a download href="/files/import-file.csv">
               Download CSV file with valid structure
             </a>
             <ButtonPrimary disabled={isDisabled} onClick={handleOnSubmit}>
