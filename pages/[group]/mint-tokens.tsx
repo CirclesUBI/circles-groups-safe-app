@@ -51,11 +51,6 @@ const Icon = styled.div`
   pointer-events: none;
 `
 
-const AllowedUsers = styled.span`
-  text-transform: lowercase;
-  font-weight: 700;
-`
-
 const CreateGroup: NextPage = () => {
   const router = useRouter()
   const groupAddress = String(router.query?.group ?? '')
