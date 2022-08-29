@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 
-import { BaseTransaction, SendTransactionsResponse } from '@gnosis.pm/safe-apps-sdk'
+import { BaseTransaction } from '@gnosis.pm/safe-apps-sdk'
 import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk/dist/src/sdk'
 import {
   TransactionDetails,
@@ -9,26 +9,35 @@ import {
 import { toast } from 'react-hot-toast'
 
 import { retry } from '../utils/tools'
-import { getGnosisExplorerUrl } from '../web3/explorerUrls'
+import { getGnosisExplorerUrl, getGnosisSafeUrl } from '../web3/explorerUrls'
 import { notify } from '@/src/components/toast/Toast'
 import { FAILED_TYPE, SUCCESS_TYPE, WAITING_TYPE } from '@/src/components/toast/types'
 import { createTransactionError } from '@/src/utils/TransactionError'
 
-export default function useSafeTransaction(sdk: SafeAppsSDK) {
-  const waitForConfirmations = useCallback(
+export default function useSafeTransaction(sdk: SafeAppsSDK, safeAddress: string) {
+  /**
+   * @todo There are some 'weird' cases when we can not generate the tx url for
+   * the gnosis explorer, instead we return the url to the gnosis safe transactions.
+   * There seems to be an issue with the 'getBySafeTxHash' function which returns
+   * a cancelled tx detail which does not have a txHash associated.
+   */
+  const getUrlAfterConfirmations = useCallback(
     async (safeTxHash: string) => {
       if (!sdk) return ''
 
-      const getDetails = (_safeTxHash: string) => {
-        return sdk.txs.getBySafeTxHash(_safeTxHash)
+      const getDetails = () => {
+        return sdk.txs.getBySafeTxHash(safeTxHash)
       }
       const untilFinished = (txDetails: TransactionDetails) => {
         return txDetails.txStatus !== TransactionStatus.AWAITING_CONFIRMATIONS
       }
-      const details = await retry(safeTxHash, getDetails, untilFinished, 0)
-      return details?.txHash ?? ''
+      const details = await retry(safeTxHash, getDetails, untilFinished)
+      if (details?.txStatus === TransactionStatus.SUCCESS && details?.txHash) {
+        return getGnosisExplorerUrl(details?.txHash)
+      }
+      return getGnosisSafeUrl(safeAddress)
     },
-    [sdk],
+    [sdk, safeAddress],
   )
 
   const execute = useCallback(
@@ -38,21 +47,17 @@ export default function useSafeTransaction(sdk: SafeAppsSDK) {
         return null
       }
 
-      let txResponse: SendTransactionsResponse
-      let txHash: string
-      let txExplorerUrl
       try {
         console.info('Please sign the transaction.')
-        txResponse = await sdk.txs.send({
+        const txResponse = await sdk.txs.send({
           txs,
         })
         const safeTxHash = txResponse.safeTxHash
         notify({ type: WAITING_TYPE, message: 'waiting for approval' })
-        txHash = await waitForConfirmations(safeTxHash)
-        txExplorerUrl = getGnosisExplorerUrl(txHash)
-        notify({ type: SUCCESS_TYPE, explorerUrl: txExplorerUrl })
+        const txURL = await getUrlAfterConfirmations(safeTxHash)
+        notify({ type: SUCCESS_TYPE, explorerUrl: txURL })
         if (onSuccess) onSuccess()
-        return txResponse.safeTxHash
+        return safeTxHash
       } catch (e: any) {
         toast.dismiss()
         const error = createTransactionError(e)
@@ -67,7 +72,7 @@ export default function useSafeTransaction(sdk: SafeAppsSDK) {
         return null
       }
     },
-    [sdk, waitForConfirmations],
+    [sdk, getUrlAfterConfirmations],
   )
 
   return useMemo(() => {
