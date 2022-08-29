@@ -39,7 +39,7 @@ export const retry = async <P, R>(
   args: P,
   fun: (args: P) => Promise<R>,
   until: (result: R) => boolean,
-  attempt = 0,
+  attempt = 1,
   time?: number,
   maxAttempt?: number,
 ): Promise<R | null> => {
