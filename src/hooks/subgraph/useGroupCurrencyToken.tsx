@@ -36,8 +36,8 @@ export type GroupCurrencyToken = {
 }
 
 export enum AllowedMintingUser {
-  all = 'All users',
-  trusted = 'Trusted users',
+  trusted = 'Trusted Users',
+  members = 'Group Members',
   owners = 'Owners',
 }
 
@@ -45,12 +45,12 @@ export const getAllowedMintingUser = (
   group: GroupCurrencyToken | GroupCurrencyTokens_groupCurrencyTokens,
 ) => {
   if (group.onlyOwnerCanMint) return AllowedMintingUser.owners
-  if (group.onlyTrustedCanMint) return AllowedMintingUser.trusted
-  return AllowedMintingUser.all
+  if (group.onlyTrustedCanMint) return AllowedMintingUser.members
+  return AllowedMintingUser.trusted
 }
 
 export const isUserAllowedToMint = (safeAddress: string, group: GroupCurrencyToken) => {
-  if (group?.allowedMintingUser === AllowedMintingUser.all) {
+  if (group?.allowedMintingUser === AllowedMintingUser.trusted) {
     return true
   }
   if (group?.allowedMintingUser === AllowedMintingUser.owners) {
@@ -61,7 +61,7 @@ export const isUserAllowedToMint = (safeAddress: string, group: GroupCurrencyTok
    * @description a trusted user is an user who is member of the group
    * another way to verify this, is using the hub method trust!
    */
-  if (group?.allowedMintingUser === AllowedMintingUser.trusted) {
+  if (group?.allowedMintingUser === AllowedMintingUser.members) {
     const isTrustedUser = group?.members.some(
       (member) => member.safeAddress.toLowerCase() === safeAddress.toLowerCase(),
     )

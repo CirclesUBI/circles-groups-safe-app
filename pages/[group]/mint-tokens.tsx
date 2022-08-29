@@ -51,11 +51,6 @@ const Icon = styled.div`
   pointer-events: none;
 `
 
-const AllowedUsers = styled.span`
-  text-transform: lowercase;
-  font-weight: 700;
-`
-
 const CreateGroup: NextPage = () => {
   const router = useRouter()
   const groupAddress = String(router.query?.group ?? '')
@@ -77,6 +72,7 @@ const CreateGroup: NextPage = () => {
     stringToValidFloat(mintAmount) > stringToValidFloat(mintMaxAmount)
   const isZero = stringToValidFloat(mintAmount) === 0
   const isMintAmountInvalid = isMintAmountGreaterThanMaxAmount || isZero
+  const isTrustedPath = stringToValidFloat(mintMaxAmount) !== 0
 
   const feeNumber = group?.mintFeePerThousand ?? 0
 
@@ -88,6 +84,19 @@ const CreateGroup: NextPage = () => {
   const groupToken = tokens.find(
     (token) => token.address.toLowerCase() === groupAddress.toLowerCase(),
   )
+
+  let notAllowedText = ''
+  if (!connected) {
+    notAllowedText = 'Only connected users can mint'
+  } else {
+    if (!isAllowedUser) {
+      notAllowedText = `Only ${group?.allowedMintingUser} are allowed to mint.`
+    } else if (!isTrustedPath) {
+      notAllowedText = 'Only users with a trust path to the group are allowed to mint'
+    } else if (isMintAmountGreaterThanMaxAmount) {
+      notAllowedText = "You don't have enough balance"
+    }
+  }
 
   return (
     <>
@@ -147,11 +156,7 @@ const CreateGroup: NextPage = () => {
         </ButtonSecondary>
       </ActionWrapper>
       <AnimatePresence exitBeforeEnter>
-        {!isAllowedUser && (
-          <InformationText>
-            * Only <AllowedUsers>{group?.allowedMintingUser}</AllowedUsers> are allowed to mint.
-          </InformationText>
-        )}
+        {notAllowedText && <InformationText>* {notAllowedText}</InformationText>}
       </AnimatePresence>
     </>
   )
