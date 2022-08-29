@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 import { AnimatePresence } from 'framer-motion'
 
+import { LoadingMessage } from '@/src/components/assets/LoadingMessage'
 import { SuccessAddRemoveUsers } from '@/src/components/assets/SuccessAddRemoveUsers'
 import { ButtonPrimary } from '@/src/components/pureStyledComponents/buttons/Button'
 import { useImportCsv } from '@/src/hooks/useImportCsv'
@@ -166,6 +167,11 @@ export const ImportCsvFile: React.FC<Props> = ({ groupAddress, isAdd = true }) =
           <InputWrapper>
             <input accept={'.csv'} onChange={(event) => onLoad(event.target.files)} type={'file'} />
           </InputWrapper>
+          {loading && (
+            <AnimatePresence>
+              <LoadingMessage text="Loading file..." />
+            </AnimatePresence>
+          )}
           {isFileLoaded && !openModal && (
             <>
               <FileResults>
