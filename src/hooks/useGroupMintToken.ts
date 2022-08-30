@@ -33,7 +33,7 @@ export const useGroupMintToken = (userAddress: string, groupAddress: string, sdk
   // @TODO we dont need this provider most of the time, we can get rid of it
   const { isAppConnected, web3Provider } = useWeb3Connected()
   const { group } = useGroupCurrencyTokensById(groupAddress)
-  const { execute } = useSafeTransaction(sdk)
+  const { execute } = useSafeTransaction(sdk, userAddress)
 
   const [loading, setLoading] = useState<boolean>(false)
 

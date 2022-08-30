@@ -1,38 +1,43 @@
 import { useCallback, useMemo } from 'react'
 
-import { BaseTransaction, SendTransactionsResponse } from '@gnosis.pm/safe-apps-sdk'
+import { BaseTransaction } from '@gnosis.pm/safe-apps-sdk'
 import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk/dist/src/sdk'
+import {
+  TransactionDetails,
+  TransactionStatus,
+} from '@gnosis.pm/safe-apps-sdk/node_modules/@gnosis.pm/safe-react-gateway-sdk'
 import { toast } from 'react-hot-toast'
 
-import { getGnosisExplorerUrl } from '../web3/explorerUrls'
+import { retry } from '../utils/tools'
+import { getGnosisExplorerUrl, getGnosisSafeUrl } from '../web3/explorerUrls'
 import { notify } from '@/src/components/toast/Toast'
 import { FAILED_TYPE, SUCCESS_TYPE, WAITING_TYPE } from '@/src/components/toast/types'
 import { createTransactionError } from '@/src/utils/TransactionError'
 
-export default function useSafeTransaction(sdk: SafeAppsSDK) {
+export default function useSafeTransaction(sdk: SafeAppsSDK, safeAddress: string) {
   /**
-   * @todo this is a really BAD approach to handle confirmations:
-   * a better way would be using a library which allow to wait for X time before
-   * recalling a function
+   * @todo There are some 'weird' cases when we can not generate the tx url for
+   * the gnosis explorer, instead we return the url to the gnosis safe transactions.
+   * There seems to be an issue with the 'getBySafeTxHash' function which returns
+   * a cancelled tx detail which does not have a txHash associated.
    */
-  const waitForConfirmations = useCallback(
+  const getUrlAfterConfirmations = useCallback(
     async (safeTxHash: string) => {
-      let attempts = 0
-      let finished = false
-      let txHash = ''
-      if (!sdk) return txHash
+      if (!sdk) return ''
 
-      while (!finished || attempts < 15) {
-        const txDetails = await sdk.txs.getBySafeTxHash(safeTxHash)
-        finished = txDetails && txDetails.txStatus !== 'AWAITING_EXECUTION'
-        if (txDetails.txHash) {
-          txHash = txDetails.txHash
-        }
-        attempts += 1
+      const getDetails = () => {
+        return sdk.txs.getBySafeTxHash(safeTxHash)
       }
-      return txHash
+      const untilFinished = (txDetails: TransactionDetails) => {
+        return txDetails.txStatus !== TransactionStatus.AWAITING_CONFIRMATIONS
+      }
+      const details = await retry(safeTxHash, getDetails, untilFinished)
+      if (details?.txStatus === TransactionStatus.SUCCESS && details?.txHash) {
+        return getGnosisExplorerUrl(details?.txHash)
+      }
+      return getGnosisSafeUrl(safeAddress)
     },
-    [sdk],
+    [sdk, safeAddress],
   )
 
   const execute = useCallback(
@@ -42,26 +47,19 @@ export default function useSafeTransaction(sdk: SafeAppsSDK) {
         return null
       }
 
-      let txResponse: SendTransactionsResponse
-      let txHash: string
-      let txExplorerUrl
       try {
         console.info('Please sign the transaction.')
-        txResponse = await sdk.txs.send({
+        const txResponse = await sdk.txs.send({
           txs,
         })
         const safeTxHash = txResponse.safeTxHash
         notify({ type: WAITING_TYPE, message: 'waiting for approval' })
-        txHash = await waitForConfirmations(safeTxHash)
-        txExplorerUrl = getGnosisExplorerUrl(txHash)
-
-        notify({ type: SUCCESS_TYPE, explorerUrl: txExplorerUrl })
+        const txURL = await getUrlAfterConfirmations(safeTxHash)
+        notify({ type: SUCCESS_TYPE, explorerUrl: txURL })
         if (onSuccess) onSuccess()
-        return txResponse.safeTxHash
+        return safeTxHash
       } catch (e: any) {
         toast.dismiss()
-        console.log({ e })
-
         const error = createTransactionError(e)
         if (error.code === 4001) {
           notify({ type: FAILED_TYPE, message: 'User denied signature' })
@@ -69,13 +67,12 @@ export default function useSafeTransaction(sdk: SafeAppsSDK) {
           return null
         }
         console.error('Transaction error', error.message)
-        // notify({ type: FAILED_TYPE, explorerUrl: txExplorerUrl })
         notify({ type: FAILED_TYPE, message: error.message })
         if (onError) onError()
         return null
       }
     },
-    [sdk, waitForConfirmations],
+    [sdk, getUrlAfterConfirmations],
   )
 
   return useMemo(() => {

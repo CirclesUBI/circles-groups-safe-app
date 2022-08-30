@@ -24,9 +24,9 @@ export const useImportCsv = (groupAddress: string, isAdd = true) => {
   const [invalidUsers, setInvalidUsers] = useState<User[]>([])
   const [importMessage, setImportMessage] = useState<string>('')
 
-  const { sdk } = useSafeAppsSDK()
+  const { safe, sdk } = useSafeAppsSDK()
   const { isAppConnected, web3Provider } = useWeb3Connected()
-  const { execute } = useSafeTransaction(sdk)
+  const { execute } = useSafeTransaction(sdk, safe.safeAddress)
   const { groupMembers } = useGroupMembersByGroupId(groupAddress)
 
   const resetFileLoaded = () => {
