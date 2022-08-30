@@ -11,8 +11,8 @@ import useSafeTransaction from './useSafeTransaction'
 export const useAllowedMintingUser = (groupAddress: string) => {
   const { group, refetch } = useGroupCurrencyTokensById(groupAddress)
   const { isAppConnected, web3Provider } = useWeb3Connected()
-  const { sdk } = useSafeAppsSDK()
-  const { execute } = useSafeTransaction(sdk)
+  const { safe, sdk } = useSafeAppsSDK()
+  const { execute } = useSafeTransaction(sdk, safe.safeAddress)
   const [loading, setLoading] = useState<boolean>(false)
 
   // @todo the handling to update the group settings could be done in a different hook/file
