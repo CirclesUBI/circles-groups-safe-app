@@ -52,6 +52,13 @@ export type EventGroupMemberUpdateData = {
   groupName: string
 }
 
+export type EventGroupOwnerChange = {
+  oldOwner: string
+  newOwner: string
+  groupName: string
+  groupAddress: string
+}
+
 export type UserNotification = {
   id: string
   transactionHash: string
@@ -66,6 +73,7 @@ export type UserNotification = {
   groupMint?: EventGroupMintData
   groupAddMember?: EventGroupMemberUpdateData
   groupRemoveMember?: EventGroupMemberUpdateData
+  groupOwnerChange?: EventGroupOwnerChange
 }
 
 const transformToTrust = (notification: Notifications_notifications): EventTrustData => {
@@ -122,12 +130,24 @@ const transformGroupMemberUpdate = (
   }
 }
 
+const transformGroupOwnerChange = (
+  notification: Notifications_notifications,
+): EventGroupOwnerChange => {
+  return {
+    groupName: notification.groupOwnerChange?.group?.name ?? '',
+    groupAddress: notification.groupOwnerChange?.group?.id ?? '',
+    oldOwner: notification.groupOwnerChange?.oldOwner ?? '',
+    newOwner: notification.groupOwnerChange?.newOwner ?? '',
+  }
+}
+
 // @TODO keep only group notifications
 const VALID_NOTIFICATION_TYPES = [
   NotificationType.GROUP_CREATION,
   NotificationType.GROUP_ADD_MEMBER,
   NotificationType.GROUP_REMOVE_MEMBER,
   NotificationType.GROUP_MINT,
+  NotificationType.GROUP_OWNER_CHANGE,
 ]
 const transformToUserNotification = (
   notification: Notifications_notifications,
@@ -147,6 +167,7 @@ const transformToUserNotification = (
     groupMint: transformGroupMint(notification),
     groupAddMember: transformGroupMemberUpdate(notification.groupAddMember),
     groupRemoveMember: transformGroupMemberUpdate(notification.groupRemoveMember),
+    groupOwnerChange: transformGroupOwnerChange(notification),
   }
 }
 

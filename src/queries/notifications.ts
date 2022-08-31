@@ -69,6 +69,16 @@ export const NOTIFICATIONS = gql`
           name
         }
       }
+
+      groupOwnerChange {
+        id
+        newOwner
+        oldOwner
+        group {
+          id
+          name
+        }
+      }
     }
   }
 `
