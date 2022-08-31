@@ -78,6 +78,18 @@ export const formatActivityMessage = (notification: UserNotification): ActivityM
     groupId = notification.groupMint.groupAddress
     message = `You have minted ${tc} CRC on ${groupName} group`
   }
+  if (notification.type === NotificationType.GROUP_OWNER_CHANGE && notification.groupOwnerChange) {
+    groupId = notification.groupOwnerChange.groupAddress
+    const groupName = notification.groupOwnerChange.groupName
+    const newOwner = notification.groupOwnerChange.newOwner
+    const isNewOwner = notification.groupOwnerChange.newOwner === notification.safeAddress
+    if (isNewOwner) {
+      message = `You are the new owner of ${groupName} group`
+    } else {
+      message = `You are no longer the owner of ${groupName} group. The new owner is ${newOwner}.`
+    }
+  }
+
   if (!message) {
     message = `Unknown activity type: ${notification.type}`
   }
