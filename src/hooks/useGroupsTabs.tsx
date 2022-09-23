@@ -18,7 +18,7 @@ export default function GroupsTabs() {
     () => [
       {
         title: 'My groups',
-        header: 'Groups where i belong',
+        header: 'Groups I belong to',
         content: <GroupList canMint={connected} groups={groupsByMember} />,
       },
       {
