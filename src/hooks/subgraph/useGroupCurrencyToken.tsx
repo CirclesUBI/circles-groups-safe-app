@@ -36,7 +36,7 @@ export type GroupCurrencyToken = {
 }
 
 export enum AllowedMintingUser {
-  trusted = 'Trusted Users',
+  trusted = 'Anyone',
   members = 'Group Members',
   owners = 'Owners',
 }
