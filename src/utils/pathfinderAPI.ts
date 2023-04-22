@@ -24,19 +24,36 @@ export type PathfinderTransfer = {
 }
 
 export const getPath = async (fromAddress: string, toAddress: string, amount?: string) => {
-  const url = `${PATHFINDER_API}flow`
-  const body = {
+  const computeTransferParams = {
     from: fromAddress,
     to: toAddress,
-    value: amount ?? MAX_VALUE_FROM_PATH,
+    value: amount,
+    iterative: false,
+    prune: true,
   }
+
+  const headers = {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  }
+
+  const body = JSON.stringify(
+    {
+      id: Date.now(),
+      method: 'compute_transfer',
+      params: computeTransferParams,
+    },
+    null,
+    2,
+  )
+
   try {
-    const response = await fetch(url, {
+    const result = await fetch(PATHFINDER_API, {
       method: 'POST',
-      body: JSON.stringify(body),
+      headers,
+      body,
     })
-    const data = (await response.json()) as PathfinderFlowResponse
-    return data
+    return (await result.json()) as PathfinderFlowResponse
   } catch (_e) {
     console.log({ _e })
     return undefined
