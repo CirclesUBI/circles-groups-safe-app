@@ -12,7 +12,7 @@ module.exports = {
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: 'https://dolphin-app-27r5c.ondigitalocean.app',
+            value: 'https://app.safe.global',
           },
           {
             key: 'Access-Control-Allow-Methods',
