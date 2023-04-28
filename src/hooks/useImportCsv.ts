@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { isAddress } from '@ethersproject/address'
 import { JsonRpcSigner } from '@ethersproject/providers'
-import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
+import { useSafeAppsSDK } from '@safe-global/safe-apps-react-sdk'
 
 import { getUsers } from '../utils/circlesGardenAPI'
 import { useGroupMembersByGroupId } from './subgraph/useGroupMembers'

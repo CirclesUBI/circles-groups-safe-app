@@ -4,7 +4,7 @@ import { useState } from 'react'
 import styled from 'styled-components'
 
 import { isAddress } from '@ethersproject/address'
-import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
+import { useSafeAppsSDK } from '@safe-global/safe-apps-react-sdk'
 import { AnimatePresence } from 'framer-motion'
 
 import { InformationText } from '@/src/components/assets/InformationText'

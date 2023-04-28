@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
+import { useSafeAppsSDK } from '@safe-global/safe-apps-react-sdk'
 
 import { GroupList } from '@/src/components/lists/GroupList'
 import { useGroupCurrencyTokens } from '@/src/hooks/subgraph/useGroupCurrencyToken'

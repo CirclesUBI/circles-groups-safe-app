@@ -11,15 +11,17 @@ import hubCall from './contracts/hubCall'
 const MAX_VALUE_FROM_PATH = '1000000000000000000000000000000'
 
 export type PathfinderFlowResponse = {
-  flow: string // a number represented in a string
-  transfers: PathfinderTransfer[]
+  result: {
+    maxFlowValue: string // a number represented in a string
+    transferSteps: PathfinderTransfer[]
+  }
 }
 
 export type PathfinderTransfer = {
   from: string
   to: string
   token: string
-  tokenOwner: string
+  token_owner: string
   value: string // a number represented in a string
 }
 
@@ -70,7 +72,7 @@ export type TransferThroughParam = {
 export const transformPathToTransferThroughParams = (
   path: PathfinderTransfer[],
 ): TransferThroughParam => {
-  const tokenOwners = path.map((p) => p.tokenOwner)
+  const tokenOwners = path.map((p) => p.token_owner)
   const srcs = path.map((p) => p.from)
   const dests = path.map((p) => p.to)
   const wads = path.map((p) => {

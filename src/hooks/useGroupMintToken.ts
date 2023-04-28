@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 
 import { getAddress } from '@ethersproject/address'
-import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk/dist/src/sdk'
+import SafeAppsSDK from '@safe-global/safe-apps-react-sdk/node_modules/@safe-global/safe-apps-sdk/dist/src/sdk'
 import useSWR from 'swr'
 
 import { useWeb3Connected } from '../providers/web3ConnectionProvider'
@@ -24,8 +24,8 @@ const fetchGroupMintTokenData = async (from: string, to: string, amount?: string
   const checksumFromAddress = getAddress(from)
   const checksumToAddress = getAddress(to)
   const data = await getPath(checksumFromAddress, checksumToAddress, amount)
-  const path = data?.transfers ?? []
-  const mintMaxAmount = data?.flow ?? '0'
+  const path = data?.result?.transferSteps ?? []
+  const mintMaxAmount = data?.result?.maxFlowValue ?? '0'
   return { path, mintMaxAmount }
 }
 
