@@ -15,7 +15,7 @@ type ToastComponentProps = {
   message?: string
 }
 
-const VerifyNetworkText = 'Click to verify on Blockscout'
+const VerifyNetworkText = 'Click to verify on GnosisScan'
 
 const ToastTypes = {
   [WAITING_TYPE]: ({ explorerUrl, message, t }: ToastComponentProps) => (
