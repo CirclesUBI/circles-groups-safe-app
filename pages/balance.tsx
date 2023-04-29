@@ -3,7 +3,7 @@ import Image from 'next/image'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
-import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
+import { useSafeAppsSDK } from '@safe-global/safe-apps-react-sdk'
 
 import { ListContainer } from '@/src/components/assets/ListContainer'
 import { ListItemBalance } from '@/src/components/assets/ListItemBalance'

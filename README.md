@@ -4,7 +4,7 @@ Circles Web application to run as a [Gnosis Safe App](https://help.gnosis-safe.i
 
 ## Setup
 
-> Run this application with Node 14
+> Run this application with Node 14.17
 
 1. Copy `.env.example` as `.env` (modify expected values)
 

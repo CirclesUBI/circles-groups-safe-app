@@ -2,6 +2,8 @@
 module.exports = {
   reactStrictMode: true,
   images: {
-    domains: ['circles-ubi.s3.amazonaws.com']
-  }
+    unoptimized: true,
+    domains: ['app.safe.global']
+  },
+  output: 'export'
 }

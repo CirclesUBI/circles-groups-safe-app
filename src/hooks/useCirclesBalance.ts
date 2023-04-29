@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react'
 
 import { BigNumber } from '@ethersproject/bignumber'
-import { TokenBalance } from '@gnosis.pm/safe-apps-sdk'
-import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk/dist/src/sdk'
+import SafeAppsSDK from '@safe-global/safe-apps-react-sdk/node_modules/@safe-global/safe-apps-sdk/dist/src/sdk'
+import { TokenBalance } from '@safe-global/safe-apps-sdk'
 
 import { circlesToTC } from '../utils/circleConversor'
 import formatNumber from '../utils/formatNumber'

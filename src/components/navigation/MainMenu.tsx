@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import styled from 'styled-components'
 
-import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
+import { useSafeAppsSDK } from '@safe-global/safe-apps-react-sdk'
 
 import { CloseButton } from '@/src/components/assets/CloseButton'
 import { User } from '@/src/components/assets/User'

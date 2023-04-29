@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
+import { useSafeAppsSDK } from '@safe-global/safe-apps-react-sdk'
 
 import { CONFIRMATION_TIME } from '../constants/misc'
 import { useWeb3Connected } from '../providers/web3ConnectionProvider'

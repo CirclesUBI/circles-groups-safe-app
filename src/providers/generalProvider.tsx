@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, createContext, useContext, useEffect, useState } from 'react'
 
-import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
+import { useSafeAppsSDK } from '@safe-global/safe-apps-react-sdk'
 
 import { useGroupCurrencyTokensByOwner } from '@/src/hooks/subgraph/useGroupCurrencyToken'
 import GroupsTabs from '@/src/hooks/useGroupsTabs'

@@ -8,7 +8,7 @@ import {
   ContractTransaction,
   Overrides,
 } from '@ethersproject/contracts'
-import { useSafeAppsSDK } from '@gnosis.pm/safe-apps-react-sdk'
+import { useSafeAppsSDK } from '@safe-global/safe-apps-react-sdk'
 import { toast } from 'react-hot-toast'
 
 import { getGnosisExplorerUrl, getGnosisSafeUrl } from '../web3/explorerUrls'

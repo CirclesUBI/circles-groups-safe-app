@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import SafeAppsSDK, { TokenBalance } from '@gnosis.pm/safe-apps-sdk'
+import SafeAppsSDK from '@safe-global/safe-apps-react-sdk/node_modules/@safe-global/safe-apps-sdk/dist/src/sdk'
+import { TokenBalance } from '@safe-global/safe-apps-sdk'
 
 function useSafeBalances(sdk: SafeAppsSDK): [TokenBalance[], boolean] {
   const [assets, setAssets] = useState<TokenBalance[]>([])
@@ -8,7 +9,6 @@ function useSafeBalances(sdk: SafeAppsSDK): [TokenBalance[], boolean] {
 
   const loadBalances = useCallback(async () => {
     const balances = await sdk.safe.experimental_getBalances()
-
     setAssets(balances.items)
     setLoaded(true)
   }, [sdk])

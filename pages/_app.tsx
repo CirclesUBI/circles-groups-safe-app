@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import { ThemeProvider } from 'styled-components'
 
+import SafeProvider from '@safe-global/safe-apps-react-sdk'
 import { SWRConfig } from 'swr'
 
 import 'sanitize.css'
@@ -15,10 +16,6 @@ import { theme } from '@/src/theme'
 import { GlobalStyle } from '@/src/theme/globalStyle'
 
 const Web3ConnectionProvider = dynamic(() => import('@/src/providers/web3ConnectionProvider'), {
-  ssr: false,
-})
-
-const SafeProvider = dynamic(() => import('@gnosis.pm/safe-apps-react-sdk'), {
   ssr: false,
 })
 

@@ -1,11 +1,8 @@
 import { useCallback, useMemo } from 'react'
 
-import { BaseTransaction } from '@gnosis.pm/safe-apps-sdk'
-import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk/dist/src/sdk'
-import {
-  TransactionDetails,
-  TransactionStatus,
-} from '@gnosis.pm/safe-apps-sdk/node_modules/@gnosis.pm/safe-react-gateway-sdk'
+import { BaseTransaction, TransactionStatus } from '@gnosis.pm/safe-apps-sdk'
+import SafeAppsSDK from '@safe-global/safe-apps-react-sdk/node_modules/@safe-global/safe-apps-sdk/dist/src/sdk'
+import { TransactionDetails } from '@safe-global/safe-gateway-typescript-sdk'
 import { toast } from 'react-hot-toast'
 
 import { retry } from '../utils/tools'
@@ -31,6 +28,8 @@ export default function useSafeTransaction(sdk: SafeAppsSDK, safeAddress: string
       const untilFinished = (txDetails: TransactionDetails) => {
         return txDetails.txStatus !== TransactionStatus.AWAITING_CONFIRMATIONS
       }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       const details = await retry(safeTxHash, getDetails, untilFinished)
       if (details?.txStatus === TransactionStatus.SUCCESS && details?.txHash) {
         return getGnosisExplorerUrl(details?.txHash)
