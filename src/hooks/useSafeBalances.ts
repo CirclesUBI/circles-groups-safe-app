@@ -9,7 +9,6 @@ function useSafeBalances(sdk: SafeAppsSDK): [TokenBalance[], boolean] {
 
   const loadBalances = useCallback(async () => {
     const balances = await sdk.safe.experimental_getBalances()
-    // console.log('balances: ', balances);
     setAssets(balances.items)
     setLoaded(true)
   }, [sdk])
