@@ -98,9 +98,6 @@ export default function useTransaction<
         } else {
           url = getGnosisSafeUrl(safe.safeAddress)
         }
-        if (receipt.transactionHash) {
-          url = getGnosisExplorerUrl(receipt.transactionHash)
-        }
 
         console.log(url, 'Transaction success')
 

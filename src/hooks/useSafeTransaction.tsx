@@ -34,9 +34,6 @@ export default function useSafeTransaction(sdk: SafeAppsSDK, safeAddress: string
       if (details?.txStatus === TransactionStatus.SUCCESS && details?.txHash) {
         return getGnosisExplorerUrl(details.txHash)
       }
-      if (details?.txHash) {
-        return getGnosisExplorerUrl(details.txHash)
-      }
       return getGnosisSafeUrl(safeAddress)
     },
     [sdk, safeAddress],
