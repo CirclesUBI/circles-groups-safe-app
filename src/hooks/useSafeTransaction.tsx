@@ -32,7 +32,10 @@ export default function useSafeTransaction(sdk: SafeAppsSDK, safeAddress: string
       // @ts-ignore
       const details = await retry(safeTxHash, getDetails, untilFinished)
       if (details?.txStatus === TransactionStatus.SUCCESS && details?.txHash) {
-        return getGnosisExplorerUrl(details?.txHash)
+        return getGnosisExplorerUrl(details.txHash)
+      }
+      if (details?.txHash) {
+        return getGnosisExplorerUrl(details.txHash)
       }
       return getGnosisSafeUrl(safeAddress)
     },

@@ -66,7 +66,7 @@ export const chainsConfig: Record<ChainsValues, ChainConfig> = {
     chainIdHex: '0x64',
     rpcUrl: RPC_URL_GNOSIS,
     blockExplorerUrls: [
-      'https://blockscout.com/xdai/mainnet',
+      'https://gnosisscan.io',
       'https://gnosis-safe.io/app/gno:SAFE_ADDRESS/transactions/history',
     ],
     iconUrls: [],
